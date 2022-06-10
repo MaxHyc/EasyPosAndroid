@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Easy POS</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Nombre de Usuario Loggueado</string>
+    <string name="nav_header_subtitle">N° Caja</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <!--Menu de inicio-->
+    <string name="menu_pdv">Punto de venta</string>
+    <string name="menu_articulos">Artículos</string>
+    <string name="menu_caja">Movimientos de caja</string>
+    <string name="menu_documentos">Tickets</string>
+    <string name="menu_configuracion">Configuración</string>
+    <string name="menu_impresora">Impresora</string>
+    <string name="menu_encabezado">Menú Principal</string>
+    <string name="menu_listaArticulo">Lista de Artículos</string>
+    <string name="menu_cerrarsesion">Cerrar sesión</string>
+    <string name="Error">¡Error!</string>
+    <string name="Atencion">¡Atención!</string>
+
+    <string-array name="EstadosServicios">
+        <item>PENDIENTE</item>
+        <item>FINALIZADOS</item>
+        <item>CANCELADAS</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

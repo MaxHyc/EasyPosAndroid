@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/menuPrincipalFragment">
+
+    <fragment
+        android:id="@+id/nav_cajaFragment"
+        android:name="com.devhyc.easypos.ui.caja.CajaFragment"
+        android:label="@string/menu_caja"
+        tools:layout="@layout/fragment_caja" >
+        <action
+            android:id="@+id/action_IngresoR"
+            app:destination="@id/ingresoRetiroFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/nav_cajaFragment">
+            <argument
+                android:name="TipoMovimiento"
+                android:defaultValue="0" />
+        </action>
+        <action
+            android:id="@+id/action_ReporteCierre"
+            app:destination="@id/cierreCajaFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            app:popUpTo="@id/nav_cajaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_documentosFragment"
+        android:name="com.devhyc.easypos.ui.documentos.DocumentosFragment"
+        android:label="@string/menu_documentos"
+        tools:layout="@layout/fragment_documentos" />
+    <fragment
+        android:id="@+id/ingresoRetiroFragment"
+        android:name="com.devhyc.easypos.IngresoRetiroFragment"
+        android:label="fragment_ingreso_retiro"
+        tools:layout="@layout/fragment_ingreso_retiro" >
+        <argument
+            android:name="TipoMovimiento"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/cierreCajaFragment"
+        android:name="com.devhyc.easypos.CierreCajaFragment"
+        android:label="fragment_cierre_caja"
+        tools:layout="@layout/fragment_cierre_caja" >
+        <argument
+            android:name="Tipo"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/docFragment"
+        android:name="com.devhyc.easypos.DocFragment"
+        android:label="Documento"
+        tools:layout="@layout/fragment_doc">
+        <action
+            android:id="@+id/docToItemDoc"
+            app:destination="@id/itemDocFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/docFragment" />
+        <action
+            android:id="@+id/docToCabezal"
+            app:destination="@id/cabezalFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:launchSingleTop="true"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:popUpTo="@id/docFragment" />
+        <action
+            android:id="@+id/action_docFragment_to_observacionesFragment"
+            app:destination="@id/observacionesFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/docFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/observacionesFragment"
+        android:name="com.devhyc.easypos.ObservacionesFragment"
+        android:label="Observaciones"
+        tools:layout="@layout/fragment_observaciones"/>
+    <fragment
+        android:id="@+id/itemDocFragment"
+        android:name="com.devhyc.easypos.ItemDocFragment"
+        android:label="Agregar Item"
+        tools:layout="@layout/fragment_item_doc"/>
+    <fragment
+        android:id="@+id/cabezalFragment"
+        android:name="com.devhyc.easypos.CabezalFragment"
+        android:label="Cliente"
+        tools:layout="@layout/fragment_cabezal" />
+    <fragment
+        android:id="@+id/listaDeArticulosFragment"
+        android:name="com.devhyc.easypos.ui.articulos.ListaDeArticulosFragment"
+        android:label="Lista de Artículos"
+        tools:layout="@layout/fragment_lista_de_articulos" />
+    <fragment
+        android:id="@+id/configuracionDeCajaFragment"
+        android:name="com.devhyc.easypos.ConfiguracionDeCajaFragment"
+        android:label="fragment_configuracion_de_caja"
+        tools:layout="@layout/fragment_configuracion_de_caja" />
+    <fragment
+        android:id="@+id/menuPrincipalFragment"
+        android:name="com.devhyc.easypos.MenuPrincipalFragment"
+        android:label="Menu Principal"
+        tools:layout="@layout/fragment_menu_principal">
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_docFragment"
+            app:destination="@id/docFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_nav_documentosFragment"
+            app:destination="@id/nav_documentosFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_nav_cajaFragment"
+            app:destination="@id/nav_cajaFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_listaDeArticulosFragment"
+            app:destination="@id/listaDeArticulosFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_configuracionDeCajaFragment"
+            app:destination="@id/configuracionDeCajaFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
+    </fragment>
+</navigation>

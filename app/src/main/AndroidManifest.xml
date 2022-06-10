@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.devhyc.easypos">
+    <!-- INTERNET -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- BLUETOOTH -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <uses-permission-sdk-23 android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission-sdk-23 android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission-sdk-23 android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission-sdk-23 android:name="android.permission.BLUETOOTH" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- WIFI -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-permission-sdk-23 android:name="android.permission.INTERNET" />
+    <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission-sdk-23 android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name="com.devhyc.easypos.EasyManagementMobile"
+        android:allowBackup="true"
+        android:icon="@drawable/easyposlogo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/easyposlogo"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.JamesMobile"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name="com.devhyc.easypos.ui.impresora.Impresora"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/menu_impresora"
+            android:theme="@style/Theme.JamesMobile" />
+        <activity
+            android:name="com.devhyc.easypos.LoginActivity"
+            android:exported="true"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.JamesMobile.NoActionBar">
+        </activity>
+        <activity
+            android:name="com.devhyc.easypos.MainActivity"
+            android:exported="true"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.JamesMobile.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
