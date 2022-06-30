@@ -106,13 +106,13 @@ class MainActivity : AppCompatActivity() {
         if (Globales.CajaActual != null)
         {
             AlertView.showAlert("Caja abierta","Fecha: ${Globales.Herramientas.convertirFechaHora(Globales.CajaActual.FechaHora.toString())} \n Nro caja: ${Globales.CajaActual.Nro} \n Usuario que abrió la caja: ${Globales.CajaActual.Usuario}",this)
-            nav_Menu.findItem(R.id.docFragment).setVisible(true)
+            //nav_Menu.findItem(R.id.docFragment).setVisible(true)
             //navView.setCheckedItem(R.id.docFragment)
         }
         else
         {
-            navView.setCheckedItem(R.id.nav_cajaFragment)
-            nav_Menu.findItem(R.id.docFragment).setVisible(false)
+            //navView.setCheckedItem(R.id.nav_cajaFragment)
+            //nav_Menu.findItem(R.id.docFragment).setVisible(false)
         }
         //
     }

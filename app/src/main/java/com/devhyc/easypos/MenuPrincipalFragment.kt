@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.devhyc.easypos.databinding.FragmentMenuPrincipalBinding
-import com.devhyc.easypos.ui.impresora.Impresora
 import com.devhyc.easypos.utilidades.Globales
 import java.util.*
 
@@ -61,7 +60,10 @@ class MenuPrincipalFragment : Fragment() {
         _binding = FragmentMenuPrincipalBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //NAVEGACION DEL MENU
-        binding.buttonIrImpresora.setOnClickListener { startActivity(Intent(requireActivity(), Impresora::class.java)) }
+        binding.buttonIrImpresora.setOnClickListener {
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToConexionImpresora()
+            view?.findNavController()?.navigate(action)
+        }
         binding.buttonIRarticulos.setOnClickListener {
             val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToListaDeArticulosFragment()
             view?.findNavController()?.navigate(action)

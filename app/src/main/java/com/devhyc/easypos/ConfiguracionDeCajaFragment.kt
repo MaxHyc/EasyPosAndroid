@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.findNavController
 import com.devhyc.easypos.databinding.FragmentConfiguracionDeCajaBinding
 import com.devhyc.easypos.utilidades.Globales
+import com.google.android.material.snackbar.Snackbar
 
 class ConfiguracionDeCajaFragment : Fragment() {
 
@@ -57,7 +59,8 @@ class ConfiguracionDeCajaFragment : Fragment() {
             Globales.NroCaja = binding.etNroCaja.text.toString()
             Globales.DireccionServidor = binding.etDireccionServidor.text.toString()
             //
-            Toast.makeText(activity,"Opciones guardadas",Toast.LENGTH_SHORT).show()
+            Snackbar.make(requireView(),"Configuraciones guardadas",Snackbar.LENGTH_SHORT).show()
+            view?.findNavController()?.navigateUp()
         }
         catch (e: Exception)
         {

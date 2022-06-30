@@ -57,9 +57,9 @@
         android:backgroundTint="@color/red"
         android:text="Cierre de Caja"
         app:icon="@drawable/ic_close"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnReporteX" />
 
     <Button
         android:id="@+id/btnRetiroDinero"

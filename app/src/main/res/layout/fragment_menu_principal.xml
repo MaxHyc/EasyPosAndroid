@@ -20,55 +20,73 @@
         android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animationWelcome"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/button20"
+                app:layout_constraintStart_toStartOf="@+id/button20"
+                app:layout_constraintTop_toTopOf="parent"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
                 app:lottie_rawRes="@raw/welcomeaboard"
                 tools:ignore="MissingConstraints" />
 
+            <Button
+                android:id="@+id/button20"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:backgroundTint="@color/red"
+                android:text="@string/menu_cerrarsesion"
+                android:textSize="6sp"
+                app:cornerRadius="10dp"
+                app:icon="@drawable/ic_baseline_logout_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/animationWelcome" />
+
             <TextView
                 android:id="@+id/tvSaludo"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:gravity="center_horizontal"
                 android:text="¡Bienvenido!"
                 android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/animationWelcome"
+                app:layout_constraintTop_toTopOf="@+id/animationWelcome" />
 
             <TextView
                 android:id="@+id/tvCajaActual"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:gravity="center_horizontal"
                 android:text="Nro Caja"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/animationWelcome"
+                app:layout_constraintTop_toBottomOf="@+id/tvSaludo" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
-                android:id="@+id/button20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:backgroundTint="@color/red"
-                android:text="@string/menu_cerrarsesion"
-                android:textSize="10sp"
-                app:cornerRadius="10dp" />
-        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
     <ScrollView
@@ -98,9 +116,9 @@
                         android:id="@+id/buttonIrPuntoDeVenta"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="@string/menu_pdv"
-                        app:cornerRadius="10dp"
+                        app:cornerRadius="5dp"
                         app:icon="@drawable/ic_pdv"
                         app:iconGravity="textTop"
                         app:iconPadding="10dp"
@@ -123,9 +141,9 @@
                         android:id="@+id/buttonIRarticulos"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="@string/menu_articulos"
-                        app:cornerRadius="10dp"
+                        app:cornerRadius="5dp"
                         app:icon="@drawable/ic_clear"
                         app:iconGravity="textTop"
                         app:iconPadding="10dp"
@@ -151,9 +169,9 @@
                         android:id="@+id/buttonIrDocumentos"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="@string/menu_documentos"
-                        app:cornerRadius="10dp"
+                        app:cornerRadius="5dp"
                         app:icon="@drawable/ic_baseline_receipt_long_24"
                         app:iconGravity="textTop"
                         app:iconPadding="10dp"
@@ -176,9 +194,9 @@
                         android:id="@+id/buttonIrMovimientosCaja"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="@string/menu_caja"
-                        app:cornerRadius="10dp"
+                        app:cornerRadius="5dp"
                         app:icon="@drawable/ic_baseline_currency_exchange_24"
                         app:iconGravity="textTop"
                         app:iconPadding="10dp"
@@ -204,9 +222,9 @@
                         android:id="@+id/buttonIrConfiguracion"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="@string/menu_configuracion"
-                        app:cornerRadius="10dp"
+                        app:cornerRadius="5dp"
                         app:icon="@drawable/ic_reportex"
                         app:iconGravity="textTop"
                         app:iconPadding="10dp"
@@ -229,9 +247,9 @@
                         android:id="@+id/buttonIrImpresora"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="@string/menu_impresora"
-                        app:cornerRadius="10dp"
+                        app:cornerRadius="5dp"
                         app:icon="@drawable/ic_baseline_print_24"
                         app:iconGravity="textTop"
                         app:iconPadding="10dp"

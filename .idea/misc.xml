@@ -54,6 +54,7 @@
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyManagementMobile/app/src/main/res/layout/item_servicio.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyManagementMobile/app/src/main/res/layout/nav_header_main.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyManagementMobile/app/src/main/res/menu/activity_main_drawer.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/drawable/ic_addnuevodoc.xml" value="0.193" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/activity_impresora.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/activity_login.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/activity_main.xml" value="0.2713541666666667" />
@@ -62,19 +63,22 @@
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_cabezal.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_caja.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_cierre_caja.xml" value="0.2994791666666667" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_conexion_impresora.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_configuracion_de_caja.xml" value="0.28229166666666666" />
-        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_doc.xml" value="0.371875" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_doc.xml" value="0.33" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_documentos.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_firma.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_ingreso_retiro.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_item_doc.xml" value="0.23645833333333333" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_lista_de_articulos.xml" value="0.371875" />
-        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_menu_principal.xml" value="0.29545454545454547" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_login.xml" value="0.18489583333333334" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_menu_principal.xml" value="0.67" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_observaciones.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_ok.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_opciones.xml" value="0.28229166666666666" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_articulo.xml" value="0.5" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_documento.xml" value="0.5" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_impresora.xml" value="0.18489583333333334" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/nav_header_main.xml" value="0.2682291666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/menu/activity_main_drawer.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/menu/main.xml" value="0.25104166666666666" />

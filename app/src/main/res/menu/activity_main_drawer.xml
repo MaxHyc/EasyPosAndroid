@@ -5,11 +5,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/menuPrincipalFragment"
-            android:icon="@drawable/ic_baseline_home_24"
-            android:title="@string/menu_encabezado" />
-        />
-        <item
             android:id="@+id/docFragment"
             android:icon="@drawable/ic_pdv"
             android:title="@string/menu_pdv" />
@@ -25,6 +20,18 @@
             android:id="@+id/nav_documentosFragment"
             android:icon="@drawable/ic_baseline_receipt_long_24"
             android:title="@string/menu_documentos" />
+       <item android:title="Opciones">
+            <menu>
+                <item
+                    android:id="@+id/configuracionDeCajaFragment"
+                    android:icon="@drawable/ic_baseline_miscellaneous_services_24"
+                    android:title="@string/menu_configuracion" />
+                <item
+                    android:id="@+id/conexionImpresora"
+                    android:icon="@drawable/ic_baseline_print_24"
+                    android:title="@string/menu_impresora" />
+            </menu>
+        </item>>
     </group>
 
 </menu>

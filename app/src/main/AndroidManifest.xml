@@ -34,11 +34,6 @@
         android:theme="@style/Theme.JamesMobile"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.devhyc.easypos.ui.impresora.Impresora"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/menu_impresora"
-            android:theme="@style/Theme.JamesMobile" />
-        <activity
             android:name="com.devhyc.easypos.LoginActivity"
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize"

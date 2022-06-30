@@ -61,7 +61,7 @@
     <fragment
         android:id="@+id/docFragment"
         android:name="com.devhyc.easypos.DocFragment"
-        android:label="Documento"
+        android:label="@string/menu_documentos"
         tools:layout="@layout/fragment_doc">
         <action
             android:id="@+id/docToItemDoc"
@@ -105,12 +105,12 @@
     <fragment
         android:id="@+id/listaDeArticulosFragment"
         android:name="com.devhyc.easypos.ui.articulos.ListaDeArticulosFragment"
-        android:label="Lista de Artículos"
+        android:label="@string/menu_listaArticulo"
         tools:layout="@layout/fragment_lista_de_articulos" />
     <fragment
         android:id="@+id/configuracionDeCajaFragment"
         android:name="com.devhyc.easypos.ConfiguracionDeCajaFragment"
-        android:label="fragment_configuracion_de_caja"
+        android:label="@string/menu_configuracion"
         tools:layout="@layout/fragment_configuracion_de_caja" />
     <fragment
         android:id="@+id/menuPrincipalFragment"
@@ -142,5 +142,14 @@
             app:destination="@id/configuracionDeCajaFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_conexionImpresora"
+            app:destination="@id/conexionImpresora"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/conexionImpresora"
+        android:name="com.devhyc.jamesmobile.ui.impresora.ConexionImpresora"
+        android:label="@string/menu_impresora" />
 </navigation>
