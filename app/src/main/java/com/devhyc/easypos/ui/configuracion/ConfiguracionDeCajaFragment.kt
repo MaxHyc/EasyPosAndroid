@@ -1,4 +1,4 @@
-package com.devhyc.easypos
+package com.devhyc.easypos.ui.configuracion
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.navigation.findNavController
 import com.devhyc.easypos.databinding.FragmentConfiguracionDeCajaBinding
 import com.devhyc.easypos.utilidades.Globales
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 
 class ConfiguracionDeCajaFragment : Fragment() {
@@ -59,7 +60,7 @@ class ConfiguracionDeCajaFragment : Fragment() {
             Globales.NroCaja = binding.etNroCaja.text.toString()
             Globales.DireccionServidor = binding.etDireccionServidor.text.toString()
             //
-            Snackbar.make(requireView(),"Configuraciones guardadas",Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(requireView(),"Configuraciones guardadas",Snackbar.LENGTH_SHORT).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show()
             view?.findNavController()?.navigateUp()
         }
         catch (e: Exception)

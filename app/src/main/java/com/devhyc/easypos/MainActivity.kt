@@ -20,9 +20,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.ui.*
 import com.devhyc.easypos.databinding.ActivityMainBinding
-import com.devhyc.easypos.utilidades.AlertView
+import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.utilidades.Globales
-import com.devhyc.easypos.utilidades.Herramientas
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -49,12 +48,9 @@ class MainActivity : AppCompatActivity() {
             this, arrayOf(
                 Manifest.permission.BLUETOOTH,
                 Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.ACCESS_WIFI_STATE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_ADVERTISE,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ),
             PERMISO
@@ -96,37 +92,29 @@ class MainActivity : AppCompatActivity() {
             val nrocaja = headerview.findViewById<TextView>(R.id.tvnroCaja)
             if (Globales.UsuarioLoggueado!= null)
             {
-                nombreUsuario.text= "${Globales.UsuarioLoggueado.nombre} ${Globales.UsuarioLoggueado.apellido} "
+                nombreUsuario.text= "${Globales.UsuarioLoggueado.nombre} ${Globales.UsuarioLoggueado.apellido}"
             }
             if (Globales.Terminal != null)
             {
                 nrocaja.text = Globales.Terminal.Descripcion
             }
         }
-        if (Globales.CajaActual != null)
-        {
-            AlertView.showAlert("Caja abierta","Fecha: ${Globales.Herramientas.convertirFechaHora(Globales.CajaActual.FechaHora.toString())} \n Nro caja: ${Globales.CajaActual.Nro} \n Usuario que abrió la caja: ${Globales.CajaActual.Usuario}",this)
-            //nav_Menu.findItem(R.id.docFragment).setVisible(true)
-            //navView.setCheckedItem(R.id.docFragment)
-        }
-        else
-        {
-            //navView.setCheckedItem(R.id.nav_cajaFragment)
-            //nav_Menu.findItem(R.id.docFragment).setVisible(false)
-        }
-        //
     }
 
-    private fun DialogoCerrarSesion()
+    fun DialogoCerrarSesion()
     {
-            dialog=AlertDialog.Builder(this)
+        dialog= AlertDialog.Builder(this)
             .setIcon(R.drawable.atencion)
             .setTitle("¡Atención!")
             .setMessage("¿Desea cerrar la sesión actual?")
             .setPositiveButton("Si", DialogInterface.OnClickListener {
-                    dialogInterface, i -> startActivity(Intent(this, LoginActivity::class.java))
+                    dialogInterface, i ->
+                run {
+                    Globales.UsuarioLoggueado = null
+                    startActivity(Intent(this, LoginActivity::class.java))
+                }
             })
-            .setNegativeButton("No",DialogInterface.OnClickListener {
+            .setNegativeButton("No", DialogInterface.OnClickListener {
                     dialogInterface, i -> dialog.dismiss()
             })
             .setCancelable(true)
@@ -158,5 +146,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+    override fun onBackPressed() {
+        if (!Globales.EnPrincipal)
+        {
+            super.onBackPressed()
+        }
+        else
+        {
+            DialogoCerrarSesion()
+        }
+        //super.onBackPressed()
+    }
 }

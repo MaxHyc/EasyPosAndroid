@@ -1,4 +1,4 @@
-package com.devhyc.easypos
+package com.devhyc.easypos.ui.login
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase, val getTerminalUseCase: GetTerminalUseCase,val getCajaAbiertaUseCase: GetCajaAbiertaUseCase): ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
-    val LoginModel = MutableLiveData<Resultado<DTLogin>>()
+    val LoginModel = MutableLiveData<DTLogin>()
     val iniciar = MutableLiveData<Boolean>()
     val mensaje = MutableLiveData<String>()
     val cajaAbierta = MutableLiveData<DTCaja>()
@@ -31,21 +31,14 @@ class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase,
             isLoading.postValue(true)
             var userlogin:DTLoginRequest = DTLoginRequest(user,pass)
             val result = loginUseCase(userlogin)
-            if (result != null)
+            if (result!!.ok)
             {
-                if(result.ok)
-                {
-                    LoginModel.postValue(result!!)
-                }
-                else
-                {
-                    iniciar.postValue(false)
-                    mensaje.postValue(result.mensaje)
-                }
+                iniciar.postValue(true)
+                LoginModel.postValue(result.elemento!!)
             }
             else
             {
-                iniciar.postValue(false)
+                mensaje.postValue(result.mensaje)
             }
             isLoading.postValue(false)
         }
@@ -66,6 +59,10 @@ class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase,
                 {
                     mensaje.postValue(terminal.mensaje)
                 }
+            }
+            else
+            {
+                mensaje.postValue("No existe la terminal ingresada")
             }
             isLoading.postValue(false)
         }

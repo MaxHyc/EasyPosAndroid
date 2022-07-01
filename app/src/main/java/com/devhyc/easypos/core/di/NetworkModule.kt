@@ -52,8 +52,7 @@ object NetworkModule {
         return retrofit.create(ApiClient::class.java)
     }
 
-
-    private fun getUnsafeOkHttpClient(): OkHttpClient? {
+    private fun getUnsafeOkHttpClient(): OkHttpClient {
         return try {
             // Create a trust manager that does not validate certificate chains
             val trustAllCerts =
@@ -89,14 +88,7 @@ object NetworkModule {
             builder.addInterceptor(HeaderInterceptor())
             //
             builder.sslSocketFactory(sslSocketFactory)
-            builder.hostnameVerifier(object : HostnameVerifier {
-                override fun verify(
-                    hostname: String?,
-                    session: SSLSession?
-                ): Boolean {
-                    return true
-                }
-            })
+            builder.hostnameVerifier { hostname, session -> true }
             builder.build()
         } catch (e: Exception) {
             throw RuntimeException(e)

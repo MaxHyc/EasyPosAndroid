@@ -1,5 +1,6 @@
-package com.devhyc.easypos
+package com.devhyc.easypos.ui.login
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -18,6 +19,8 @@ class LoginActivity : AppCompatActivity() {
 
     private val loginViewModel: LoginActivityViewModel by viewModels()
 
+    private lateinit var dialogo:ProgressDialog
+
     override  fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -33,36 +36,45 @@ class LoginActivity : AppCompatActivity() {
         }
        loginViewModel.isLoading.observe(this, Observer {
            binding.progressCargandoLogin.isVisible = it
+           if (it)
+           {
+               dialogo = ProgressDialog(this)
+               dialogo.setTitle("Iniciando sesión")
+               dialogo.setMessage("Comprobando credenciales, aguarde un instante")
+               dialogo.setCancelable(true)
+               dialogo.show()
+           }
        })
         loginViewModel.iniciar.observe(this, Observer {
             if (it)
             {
-                //loginViewModel.obtenerTerminal()
-                //loginViewModel.obtenerCajaAbierta()
-                finish()
-            }
-            else
-            {
-                AlertView.showAlert("¡Atención!","No se pudo iniciar la sesión",binding.root.context)
+                Thread.sleep(500)
+                this.finish()
             }
         })
         loginViewModel.LoginModel.observe(this, Observer {
-            if (it.ok)
+            if (it != null)
             {
                 //Guardar usuario loggueado
-                    Globales.UsuarioLoggueado = it.elemento
-                //
+                Globales.UsuarioLoggueado = it
                 loginViewModel.obtenerTerminal()
                 loginViewModel.obtenerCajaAbierta()
-                Toast.makeText(binding.root.context,"Bienvenido ${it.elemento.nombre} ${it.elemento.apellido}",Toast.LENGTH_LONG).show()
-            }
-            else
-            {
-                AlertView.showAlert("¡Atención!","${it.mensaje}",binding.root.context)
+                Toast.makeText(binding.root.context,"Bienvenido ${it.nombre} ${it.apellido}",Toast.LENGTH_LONG).show()
             }
         })
         loginViewModel.mensaje.observe(this, Observer {
-            Toast.makeText(this,it,Toast.LENGTH_LONG).show()
+            try
+            {
+                AlertView.showAlert("¡Atención!",it,this)
+                if (dialogo != null)
+                {
+                    dialogo.dismiss()
+                }
+            }
+            catch (e:Exception)
+            {
+                Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
+            }
         })
     }
 

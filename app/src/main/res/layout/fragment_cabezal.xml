@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.devhyc.easypos.CabezalFragment" >
+    tools:context="com.devhyc.easypos.ui.cabezal.CabezalFragment" >
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton3"

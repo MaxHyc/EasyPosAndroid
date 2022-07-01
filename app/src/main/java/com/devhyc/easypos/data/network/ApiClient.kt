@@ -14,6 +14,7 @@ import java.util.ArrayList
 interface ApiClient {
     //LOGIN
     @POST("usuarios/login")
+    //suspend fun login(@Body login: DTLoginRequest): Response<DTLogin>
     suspend fun login(@Body login: DTLoginRequest): Response<Resultado<DTLogin>>
 
     //CAJA ABIERTA

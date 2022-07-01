@@ -13,19 +13,42 @@ class Repository @Inject constructor(
     private val api: ApiService,
     private val appProvider: AppProvider ) {
 
-    suspend fun login(userlogin:DTLoginRequest): Resultado<DTLogin>?
+    //NUEVO LOGIN COMENTADO
+    /*suspend fun login(userlogin:DTLoginRequest): Resultado<DTLogin>
     {
         return try {
             val response = api.login(userlogin)
-            appProvider.login = response
-            response
-        } catch (e:Exception) {
-            null
+            if (response.isSuccessful)
+            {
+                var a = response.body()!!.nombre
+                Resultado(true,"",response.body()!!)
+            }
+            else
+            {
+                Resultado(false,response.errorBody()?.string().toString(),null)
+            }
         }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }*/
+
+    suspend fun login(userlogin:DTLoginRequest): Resultado<DTLogin>?
+    {
+        try {
+             val response = api.login(userlogin)
+             appProvider.login = response
+             return response
+         }
+         catch (e:Exception)
+         {
+            return null
+         }
     }
 
     suspend fun getCajaAbierta(nroTerminal:String): Resultado<DTCaja>? {
-        try {
+       return try {
             val response = api.getCajaAbierta(nroTerminal)
             appProvider.cajaabierta = response
             return response

@@ -101,5 +101,4 @@ class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: Get
             isLoading.postValue(false)
         }
     }
-
 }

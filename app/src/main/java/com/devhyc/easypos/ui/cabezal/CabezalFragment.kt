@@ -1,12 +1,11 @@
-package com.devhyc.easypos
+package com.devhyc.easypos.ui.cabezal
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import java.time.format.DateTimeFormatter
-import java.util.*
+import com.devhyc.easypos.R
 
 class CabezalFragment : Fragment() {
 

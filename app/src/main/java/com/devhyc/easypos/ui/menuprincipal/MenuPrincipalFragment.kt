@@ -1,5 +1,6 @@
-package com.devhyc.easypos
+package com.devhyc.easypos.ui.menuprincipal
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,7 +10,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentMenuPrincipalBinding
+import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.utilidades.Globales
 import java.util.*
 
@@ -21,13 +24,29 @@ class MenuPrincipalFragment : Fragment() {
     lateinit var dialog: AlertDialog
 
     override fun onResume() {
+        Globales.EnPrincipal = true
         (requireActivity() as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         try {
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.hide()
            if (Globales.UsuarioLoggueado != null)
             {
                 binding.tvSaludo.text = "¡Bienvenido ${Globales.UsuarioLoggueado.nombre}!"
-                binding.tvCajaActual.text = "Nro Caja: ${Globales.NroCaja}"
+                if (Globales.Terminal != null)
+                {
+                    binding.tvCajaActual.text = Globales.Terminal.Descripcion
+                }
+                else
+                {
+                    binding.tvCajaActual.text = "Caja: ${Globales.NroCaja}"
+                }
+            }
+            if (Globales.CajaActual != null)
+            {
+                binding.tvInfoAbierto.text = "Caja abierta: ${Globales.Herramientas.convertirFechaHora(Globales.CajaActual.FechaHora.toString())} \n Nro: ${Globales.CajaActual.Nro} \n Usuario que inició: ${Globales.CajaActual.Usuario}"
+            }
+            else
+            {
+                binding.tvInfoAbierto.text= ""
             }
         }
         catch (e:Exception)
@@ -39,6 +58,7 @@ class MenuPrincipalFragment : Fragment() {
 
     override fun onPause() {
         try {
+            Globales.EnPrincipal = false
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.show()
         }
         catch (e:Exception)
@@ -59,6 +79,9 @@ class MenuPrincipalFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentMenuPrincipalBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        Globales.EnPrincipal = true
+        //Cerrar sesion
+        binding.btnCerrarSesion.setOnClickListener { DialogoCerrarSesion() }
         //NAVEGACION DEL MENU
         binding.buttonIrImpresora.setOnClickListener {
             val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToConexionImpresora()
@@ -87,5 +110,26 @@ class MenuPrincipalFragment : Fragment() {
         //MOSTRAR VERSION
         binding.tvVersion.text = "HyC Hardware ${Calendar.getInstance().get(Calendar.YEAR)} - Version " + requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
         return root
+    }
+
+    fun DialogoCerrarSesion()
+    {
+        dialog= AlertDialog.Builder(requireActivity())
+            .setIcon(R.drawable.atencion)
+            .setTitle("¡Atención!")
+            .setMessage("¿Desea cerrar la sesión actual?")
+            .setPositiveButton("Si", DialogInterface.OnClickListener {
+                    dialogInterface, i ->
+                run {
+                    Globales.UsuarioLoggueado = null
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                }
+            })
+            .setNegativeButton("No", DialogInterface.OnClickListener {
+                    dialogInterface, i -> dialog.dismiss()
+            })
+            .setCancelable(true)
+            .setOnCancelListener { "Cancelar" }
+            .show()
     }
 }

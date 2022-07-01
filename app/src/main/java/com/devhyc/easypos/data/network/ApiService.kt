@@ -15,9 +15,12 @@ import javax.inject.Inject
 
 class ApiService @Inject constructor(private val api:ApiClient) {
 
+    //suspend fun login(userlogin:DTLoginRequest): Response<DTLogin>
+
     suspend fun login(userlogin:DTLoginRequest): Resultado<DTLogin> {
         return withContext(Dispatchers.IO)
         {
+           //api.login(userlogin)
             val response: Response<Resultado<DTLogin>> = api.login(userlogin)
             response.body()!!
         }

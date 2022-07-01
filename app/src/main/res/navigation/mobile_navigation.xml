@@ -40,7 +40,7 @@
         tools:layout="@layout/fragment_documentos" />
     <fragment
         android:id="@+id/ingresoRetiroFragment"
-        android:name="com.devhyc.easypos.IngresoRetiroFragment"
+        android:name="com.devhyc.easypos.ui.ingresoretiro.IngresoRetiroFragment"
         android:label="fragment_ingreso_retiro"
         tools:layout="@layout/fragment_ingreso_retiro" >
         <argument
@@ -50,7 +50,7 @@
     </fragment>
     <fragment
         android:id="@+id/cierreCajaFragment"
-        android:name="com.devhyc.easypos.CierreCajaFragment"
+        android:name="com.devhyc.easypos.ui.cierrecaja.CierreCajaFragment"
         android:label="fragment_cierre_caja"
         tools:layout="@layout/fragment_cierre_caja" >
         <argument
@@ -60,8 +60,8 @@
     </fragment>
     <fragment
         android:id="@+id/docFragment"
-        android:name="com.devhyc.easypos.DocFragment"
-        android:label="@string/menu_documentos"
+        android:name="com.devhyc.easypos.ui.documento.DocFragment"
+        android:label="@string/menu_pdv"
         tools:layout="@layout/fragment_doc">
         <action
             android:id="@+id/docToItemDoc"
@@ -89,17 +89,17 @@
     </fragment>
     <fragment
         android:id="@+id/observacionesFragment"
-        android:name="com.devhyc.easypos.ObservacionesFragment"
+        android:name="com.devhyc.easypos.ui.observaciones.ObservacionesFragment"
         android:label="Observaciones"
         tools:layout="@layout/fragment_observaciones"/>
     <fragment
         android:id="@+id/itemDocFragment"
-        android:name="com.devhyc.easypos.ItemDocFragment"
+        android:name="com.devhyc.easypos.ui.itemDoc.ItemDocFragment"
         android:label="Agregar Item"
         tools:layout="@layout/fragment_item_doc"/>
     <fragment
         android:id="@+id/cabezalFragment"
-        android:name="com.devhyc.easypos.CabezalFragment"
+        android:name="com.devhyc.easypos.ui.cabezal.CabezalFragment"
         android:label="Cliente"
         tools:layout="@layout/fragment_cabezal" />
     <fragment
@@ -109,12 +109,12 @@
         tools:layout="@layout/fragment_lista_de_articulos" />
     <fragment
         android:id="@+id/configuracionDeCajaFragment"
-        android:name="com.devhyc.easypos.ConfiguracionDeCajaFragment"
+        android:name="com.devhyc.easypos.ui.configuracion.ConfiguracionDeCajaFragment"
         android:label="@string/menu_configuracion"
         tools:layout="@layout/fragment_configuracion_de_caja" />
     <fragment
         android:id="@+id/menuPrincipalFragment"
-        android:name="com.devhyc.easypos.MenuPrincipalFragment"
+        android:name="com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragment"
         android:label="Menu Principal"
         tools:layout="@layout/fragment_menu_principal">
         <action

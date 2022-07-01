@@ -16,6 +16,7 @@ public class Globales {
     public static DTLogin UsuarioLoggueado;
     public static String NroCaja="";
     public static Boolean CerrarApp=false;
+    public static Boolean EnPrincipal=false;
     //TERMINAL
     public static DTTerminalPos Terminal;
     //

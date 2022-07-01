@@ -1,4 +1,4 @@
-package com.devhyc.easypos
+package com.devhyc.easypos.ui.ingresoretiro
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
