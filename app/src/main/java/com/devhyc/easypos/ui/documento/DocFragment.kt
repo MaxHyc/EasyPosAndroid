@@ -4,24 +4,34 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentDocBinding
 import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragmentDirections
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.jamesmobile.ui.documento.adapter.ItemDocAdapter
+import com.devhyc.jamesmobile.ui.documento.adapter.ItemDocTouchHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.dialog.MaterialDialogs
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DocFragment : Fragment() {
 
     private var _binding: FragmentDocBinding? = null
     private val binding get() = _binding!!
+    //
+    private lateinit var adapterItems: ItemDocAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +50,11 @@ class DocFragment : Fragment() {
             view?.findNavController()?.navigate(action)
         }
         //
+        binding.flAddRut.setOnClickListener {
+            val action = DocFragmentDirections.docToCabezal()
+            view?.findNavController()?.navigate(action)
+        }
+        //
         if(Globales.CajaActual != null)
         {
             (activity as? AppCompatActivity)?.supportActionBar?.setTitle(R.string.menu_pdv)
@@ -47,8 +62,7 @@ class DocFragment : Fragment() {
         }
         else
         {
-            //AlertView.showAlert(getString(R.string.Atencion),"Debe iniciar una caja para empezar a facturar",requireContext())
-            MaterialAlertDialogBuilder(requireContext())
+          MaterialAlertDialogBuilder(requireContext())
                 .setIcon(R.drawable.atencion)
                 .setTitle("¡Atención!")
                 .setMessage("Debe iniciar una caja para empezar a facturar.\nVaya a 'Movimientos de Caja' e inicie una caja.")
@@ -61,6 +75,24 @@ class DocFragment : Fragment() {
                 .setCancelable(false)
                 .show()
         }
+        //Cargar Items
+        CargarItems()
+        //Eventos swipe
+        val itemDocTouchHelper = object: ItemDocTouchHelper(requireContext())
+        {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                when(direction)
+                {
+                    ItemTouchHelper.LEFT ->{
+                        Globales.ItemsDeDocumento.remove(adapterItems.items[viewHolder.adapterPosition])
+                        Snackbar.make(requireView(),"Artículo eliminado", Snackbar.LENGTH_SHORT).show()
+                        CargarItems()
+                    }
+                }
+            }
+        }
+        val touchHelper = ItemTouchHelper(itemDocTouchHelper)
+        touchHelper.attachToRecyclerView(binding.rvArticulospdv)
         setHasOptionsMenu(true)
         return root
     }
@@ -75,12 +107,51 @@ class DocFragment : Fragment() {
         {
             R.id.btnGuardarDocumento ->
             {
-                Snackbar.make(requireView(),"Cobrar",Snackbar.LENGTH_SHORT).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show()
-                //val action = ModServicioFragmentDirections.modServicioToFirma()
-                //view?.findNavController()?.navigate(action)
+                val action = DocFragmentDirections.actionDocFragmentToCobroFragment()
+                view?.findNavController()?.navigate(action)
                 //Globales.oReclamoSeleccionado = oReclamoPendiente
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun CargarItems()
+    {
+        if (Globales.ItemsDeDocumento != null)
+        {
+            try {
+                adapterItems = ItemDocAdapter(Globales.ItemsDeDocumento)
+                adapterItems.setOnItemClickListener(object: ItemDocAdapter.OnItemClickListener{
+                    override fun onItemClick(position: Int) {
+
+                    }
+                })
+                binding.rvArticulospdv.layoutManager = LinearLayoutManager(activity)
+                binding.rvArticulospdv.adapter = adapterItems
+                /*if (Globales.Cabezal!=null)
+                {
+                    docViewModel.CalcularTotalDocumento(DTDoc(Globales.Cabezal,Globales.ItemsDeDocumento.toList()))
+                }*/
+            }
+            catch (e:Exception)
+            {
+                Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun ReiniciarVariables()
+    {
+        try
+        {
+            Globales.ItemsDeDocumento = ArrayList()
+            //Globales.TipoDocumentoSeleccionado = null
+            //Globales.Cabezal = null
+            //Globales.EditandoDocumento = false
+        }
+        catch (e:Exception)
+        {
+            AlertView.showError("Error al reiniciar variables",e.message,requireContext())
+        }
     }
 }

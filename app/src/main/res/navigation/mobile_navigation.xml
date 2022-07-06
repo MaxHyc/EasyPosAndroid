@@ -86,6 +86,9 @@
             app:destination="@id/observacionesFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/docFragment" />
+        <action
+            android:id="@+id/action_docFragment_to_cobroFragment"
+            app:destination="@id/cobroFragment" />
     </fragment>
     <fragment
         android:id="@+id/observacionesFragment"
@@ -152,4 +155,18 @@
         android:id="@+id/conexionImpresora"
         android:name="com.devhyc.jamesmobile.ui.impresora.ConexionImpresora"
         android:label="@string/menu_impresora" />
+    <fragment
+        android:id="@+id/cobroFragment"
+        android:name="com.devhyc.easypos.ui.cobro.CobroFragment"
+        android:label="fragment_cobro"
+        tools:layout="@layout/fragment_cobro" >
+        <action
+            android:id="@+id/action_cobroFragment_to_medioPagoFragment"
+            app:destination="@id/medioPagoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/medioPagoFragment"
+        android:name="com.devhyc.easypos.ui.mediopago.MedioPagoFragment"
+        android:label="fragment_medio_pago"
+        tools:layout="@layout/fragment_medio_pago" />
 </navigation>

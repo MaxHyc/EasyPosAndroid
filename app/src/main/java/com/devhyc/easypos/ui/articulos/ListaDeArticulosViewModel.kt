@@ -50,7 +50,7 @@ class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: Get
         }
     }
 
-    fun ListarArticulos() {
+  /*  fun ListarArticulos() {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
@@ -100,5 +100,5 @@ class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: Get
         {
             isLoading.postValue(false)
         }
-    }
+    }*/
 }

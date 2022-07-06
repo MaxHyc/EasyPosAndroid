@@ -31,9 +31,6 @@ class ListaDeArticulosFragment : Fragment() {
     private var _binding: FragmentListaDeArticulosBinding? = null
     private val binding get() = _binding!!
     //
-    private val cantidadAListar = listOf("10","100","500","1000","50000")
-    lateinit var adaptadorAListar: ArrayAdapter<String>
-    //
     private lateinit var articulosViewModels: ListaDeArticulosViewModel
     private var originalArrayList: ArrayList<DTArticulo> = ArrayList()
     private var originalArrayListRub: ArrayList<DTRubro> = ArrayList()
@@ -48,9 +45,6 @@ class ListaDeArticulosFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentListaDeArticulosBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //Spinner Cantida a listar
-        adaptadorAListar = activity?.let { ArrayAdapter(it,android.R.layout.simple_selectable_list_item,cantidadAListar) }!!
-        binding.spPorPagina.adapter = adaptadorAListar
         //Listado de articulos
         articulosViewModels.articulosModel.observe(requireActivity(), Observer {
             originalArrayList = it as ArrayList<DTArticulo>
@@ -62,6 +56,8 @@ class ListaDeArticulosFragment : Fragment() {
                 }
             })
         })
+        //Buscar rubros
+        articulosViewModels.ListarRubros()
         //Listado de Rubros
         articulosViewModels.rubrosModel.observe(requireActivity(), Observer {
             originalArrayListRub = it as ArrayList<DTRubro>
@@ -76,21 +72,6 @@ class ListaDeArticulosFragment : Fragment() {
         //Cargando
         articulosViewModels.isLoading.observe(requireActivity(), Observer {
             binding.progressBar2.isVisible =it
-        })
-        //Carga finalizada
-        articulosViewModels.cargacompletaArticulos.observe(requireActivity(), Observer {
-            if (it)
-            {
-                ListarArticulos()
-            }
-            else
-            {
-                MaterialAlertDialogBuilder(requireContext())
-                    //.setIcon(R.drawable.bombilla)
-                    .setTitle("¡Atención!")
-                    .setMessage("No se pudieron listar los artículos, verifique su conexión a internet")
-                    .show()
-            }
         })
         //Carga finalizada Rubros
         articulosViewModels.cargacompletaRubros.observe(requireActivity(), Observer {
@@ -107,46 +88,9 @@ class ListaDeArticulosFragment : Fragment() {
                     .show()
             }
         })
-        binding.spPorPagina.onItemSelectedListener = object:
-        AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                //BuscarArticulos
-                Globales.ListaDePrecioAListar = "vent"
-                Globales.CantidadAListar = binding.spPorPagina.selectedItem.toString().toInt()
-                articulosViewModels.ListarArticulos()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
-            override fun onItemClick(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-
-            }
-        }
-        //BuscarArticulos
-        Globales.ListaDePrecioAListar = "vent"
         //Esto es para que se muestren los botones en el AppBar
         setHasOptionsMenu(true)
         return root;
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun ListarArticulos()
-    {
-        binding.rvArticulos.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvArticulos.adapter = adapterArt
-        Toast.makeText(requireContext(),"${adapterArt.itemCount} artículos listados.", Toast.LENGTH_SHORT).show()
-        binding.tvCantidadArt.text="Cantidad: ${adapterArt.itemCount}"
     }
 
     @SuppressLint("SetTextI18n")
