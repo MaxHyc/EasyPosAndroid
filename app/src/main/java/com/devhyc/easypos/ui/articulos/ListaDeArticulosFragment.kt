@@ -24,6 +24,8 @@ import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.integration.easyposkotlin.data.model.DTArticulo
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class ListaDeArticulosFragment : Fragment() {
@@ -32,10 +34,11 @@ class ListaDeArticulosFragment : Fragment() {
     private val binding get() = _binding!!
     //
     private lateinit var articulosViewModels: ListaDeArticulosViewModel
-    private var originalArrayList: ArrayList<DTArticulo> = ArrayList()
     private var originalArrayListRub: ArrayList<DTRubro> = ArrayList()
-    private lateinit var adapterArt: ArticuloAdapter
+    //private lateinit var adapterArt: ArticuloAdapter
     private lateinit var adapterRub: RubroAdapter
+    //
+    private var tempArrayList: ArrayList<DTRubro> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,17 +48,6 @@ class ListaDeArticulosFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentListaDeArticulosBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //Listado de articulos
-        articulosViewModels.articulosModel.observe(requireActivity(), Observer {
-            originalArrayList = it as ArrayList<DTArticulo>
-            adapterArt = ArticuloAdapter(it)
-            adapterArt.setOnItemClickListener(object: ArticuloAdapter.onItemClickListener
-            {
-                override fun onItemClick(position: Int) {
-
-                }
-            })
-        })
         //Buscar rubros
         articulosViewModels.ListarRubros()
         //Listado de Rubros
@@ -69,15 +61,13 @@ class ListaDeArticulosFragment : Fragment() {
                 }
             })
         })
-        //Cargando
-        articulosViewModels.isLoading.observe(requireActivity(), Observer {
-            binding.progressBar2.isVisible =it
-        })
         //Carga finalizada Rubros
         articulosViewModels.cargacompletaRubros.observe(requireActivity(), Observer {
             if (it)
             {
                 ListarRubros()
+                binding.viewLoading.isVisible = false
+                binding.rvArticulos.isVisible = true
             }
             else
             {
@@ -98,7 +88,7 @@ class ListaDeArticulosFragment : Fragment() {
     {
         binding.rvArticulos.layoutManager = LinearLayoutManager(requireContext())
         binding.rvArticulos.adapter = adapterRub
-        Toast.makeText(requireContext(),"${adapterRub.itemCount} rubros listados.", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(),"${adapterRub.itemCount} rubros listados.", Toast.LENGTH_SHORT).show()
         binding.tvCantidadArt.text="Cantidad: ${adapterRub.itemCount}"
     }
 
@@ -119,24 +109,81 @@ class ListaDeArticulosFragment : Fragment() {
                 searchView.setQuery("",false)
                 searchItem.collapseActionView()
                 //
-                if (query.equals(""))
-                {
-                    //articulosViewModels.ListarArticulos()
-                    articulosViewModels.ListarRubros()
+                //Toast.makeText(requireActivity(),"Esta buscando $query",Toast.LENGTH_SHORT).show()
+                if (query != null) {
+                    filtar(query)
                 }
-                else
-                {
-                    //articulosViewModels.ListarArticulosFiltrado(3,query.toString())
-                }
-                //Toast.makeText(requireActivity(),"Resultados para: $query",Toast.LENGTH_SHORT).show()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    filtar(newText)
+                }
+                //Toast.makeText(requireActivity(),"Buscando: $newText",Toast.LENGTH_SHORT).show()
                 return false
             }
         }
         )
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId)
+        {
+            R.id.btnRecargarItems ->
+            {
+                CargarTodo()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    fun CargarTodo()
+    {
+        //Cargar Articulos
+        binding.viewLoading.isVisible = true
+        binding.rvArticulos.isVisible = false
+        articulosViewModels.ListarRubros()
+    }
+
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
+    private fun filtar(filtroDeTexto: String) {
+        try {
+            tempArrayList.clear()
+            if(filtroDeTexto.isNotEmpty())
+            {
+                originalArrayListRub.forEach{
+                    //POR CODIGO
+                    if(it.codigo.lowercase(Locale.getDefault()).contains(filtroDeTexto))
+                    {
+                        tempArrayList.add(it)
+                    }
+                    //POR NOMBRE
+                    if(it.nombre.toString().lowercase(Locale.getDefault()).contains(filtroDeTexto))
+                    {
+                        tempArrayList.add(it)
+                    }
+                    //POR IMPUESTO TASA
+                    if(it.impuestoTasa.toString().lowercase(Locale.getDefault()).contains(filtroDeTexto))
+                    {
+                        tempArrayList.add(it)
+                    }
+                }
+                adapterRub.articulos = tempArrayList
+                adapterRub.notifyDataSetChanged()
+            }
+            else
+            {
+                tempArrayList.clear()
+                tempArrayList.addAll(originalArrayListRub)
+                adapterRub.notifyDataSetChanged()
+            }
+            binding.tvCantidadArt.text="Cantidad: ${adapterRub.itemCount}"
+        }
+        catch (e:Exception)
+        {
+
+        }
     }
 }

@@ -17,6 +17,11 @@ public class AlertView
         mostrarAlerta(title, message, ctx,R.drawable.atencion);
     }
 
+    public static void showOk(String title, String message, Context ctx)
+    {
+        mostrarAlerta(title,message, ctx, R.drawable.exito);
+    }
+
     public static void mostrarAlerta(String title, String message, Context ctx,int imagen)
     {
         //Create a builder

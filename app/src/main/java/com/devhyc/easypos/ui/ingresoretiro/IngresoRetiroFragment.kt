@@ -1,12 +1,11 @@
 package com.devhyc.easypos.ui.ingresoretiro
 
+import android.app.Fragment
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import com.devhyc.easypos.databinding.FragmentIngresoRetiroBinding
 
 class IngresoRetiroFragment : Fragment() {

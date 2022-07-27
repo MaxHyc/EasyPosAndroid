@@ -1,9 +1,6 @@
 package com.devhyc.easypos.data.network
 
-import com.devhyc.easypos.data.model.DTLogin
-import com.devhyc.easypos.data.model.DTLoginRequest
-import com.devhyc.easypos.data.model.DTRubro
-import com.devhyc.easypos.data.model.Resultado
+import com.devhyc.easypos.data.model.*
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
@@ -17,9 +14,16 @@ interface ApiClient {
     //suspend fun login(@Body login: DTLoginRequest): Response<DTLogin>
     suspend fun login(@Body login: DTLoginRequest): Response<Resultado<DTLogin>>
 
-    //CAJA ABIERTA
+    //CAJA
+    //CAJA OBTENER CAJA ABIERTA
     @GET("Cajas/abierta/{nroterminal}")
     suspend fun getCajaAbierta(@Path("nroterminal") nroterminal: String?): Response<Resultado<DTCaja>>
+    //INICIAR CAJA
+    @PUT("Cajas/abierta/{nroterminal}")
+    suspend fun putIniciarCaja(@Path("nroterminal") nroterminal: String?, @Body IngresoCaja: DTIngresoCaja): Response<Resultado<DTCaja>>
+    //CERRAR CAJA
+    @POST("Cajas")
+    suspend fun postCerrarCaja(@Body totalesDeclarados: DTTotalesDeclarados): Response<Resultado<DTCaja>>
 
     //TERMINAL
     @GET("Cajas/terminal/{nroterminal}")
@@ -36,4 +40,5 @@ interface ApiClient {
     //LISTAR ARTICULOS RUBROS
     @GET("articulos/rubros")
     suspend fun getListarArticulosRubros(): Response<Resultado<ArrayList<DTRubro>>>
+
 }

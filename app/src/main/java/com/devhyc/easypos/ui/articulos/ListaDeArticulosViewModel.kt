@@ -18,10 +18,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: GetArticulosUseCase,val getArticulosFiltradoUseCase: GetArticulosFiltradoUseCase, val getArticulosRubrosUseCase: GetArticulosRubrosUseCase) : ViewModel() {
 
-    val articulosModel = MutableLiveData<List<DTArticulo>>()
     val rubrosModel = MutableLiveData<List<DTRubro>>()
     val isLoading = MutableLiveData<Boolean>()
-    val cargacompletaArticulos = MutableLiveData<Boolean>()
+    //val articulosModel = MutableLiveData<List<DTArticulo>>()
+    //val cargacompletaArticulos = MutableLiveData<Boolean>()
     val cargacompletaRubros = MutableLiveData<Boolean>()
 
     fun ListarRubros() {

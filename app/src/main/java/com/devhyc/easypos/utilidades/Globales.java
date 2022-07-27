@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.devhyc.easypos.data.model.DTDocItem;
 import com.devhyc.easypos.data.model.DTLogin;
+import com.devhyc.easypos.data.model.DTMedioPago;
 import com.integration.easyposkotlin.data.model.DTCaja;
 import com.integration.easyposkotlin.data.model.DTTerminalPos;
 
@@ -25,6 +26,8 @@ public class Globales {
     public static String NroCaja="";
     //HERRAMIENTAS
     public static Herramientas Herramientas=new Herramientas();
-    //DOCUMENTO
+    //DATOS DEL DOCUMENTO///////////
     public static ArrayList<DTDocItem> ItemsDeDocumento = new ArrayList<>();
+    public static ArrayList<DTMedioPago> MediosPagoDocumento = new ArrayList<>();
+    ////////////////////////////////
 }

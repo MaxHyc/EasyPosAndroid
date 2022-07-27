@@ -22,6 +22,8 @@ import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @AndroidEntryPoint
@@ -29,10 +31,17 @@ class ItemDocFragment : Fragment() {
 
     private var _binding: FragmentItemDocBinding? = null
     private val binding get() = _binding!!
-    //
     private lateinit var itemDocVm: ItemDocFragmentViewModel
+    //
     private lateinit var adapterRub: RubroAdapter
     private var originalArrayListRub: ArrayList<DTRubro> = ArrayList()
+    //
+    private var tempArrayList: ArrayList<DTRubro> = ArrayList()
+
+/*    override fun onResume() {
+        CargarTodo()
+        super.onResume()
+    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +61,8 @@ class ItemDocFragment : Fragment() {
             if (it)
             {
                 ListarRubros()
+                binding.viewLoading.isVisible = false
+                binding.rvRubros.isVisible = true
             }
             else
             {
@@ -82,7 +93,7 @@ class ItemDocFragment : Fragment() {
             })
         })
         //Esto es para que se muestren los botones en el AppBar
-        //setHasOptionsMenu(true)
+        setHasOptionsMenu(true)
         binding.etMonto.requestFocus()
         return root
     }
@@ -92,8 +103,32 @@ class ItemDocFragment : Fragment() {
     {
         binding.rvRubros.layoutManager = LinearLayoutManager(requireContext())
         binding.rvRubros.adapter = adapterRub
-        Toast.makeText(requireContext(),"${adapterRub.itemCount} rubros listados.", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(),"${adapterRub.itemCount} rubros listados.", Toast.LENGTH_SHORT).show()
         binding.tvCantidadRubros.text="Cantidad: ${adapterRub.itemCount}"
+    }
+
+    fun CargarTodo()
+    {
+        //Cargar Articulos
+        binding.viewLoading.isVisible = true
+        binding.rvRubros.isVisible = false
+        itemDocVm.ListarRubros()
+    }
+
+    private fun AgregarItem(position:Int)
+    {
+        try {
+            var cantidad:Double = 1.00
+            //var descuento:String = binding.etDescuento.text.toString()
+            var precio:String = binding.etMonto.text.toString()
+            Globales.ItemsDeDocumento.add(DTDocItem(adapterRub.articulos[position].id,adapterRub.articulos[position].nombre,cantidad,precio.toDouble()))
+            Snackbar.make(requireView(),"${adapterRub.articulos[position].nombre} $${binding.etMonto.text}",Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.green)).show()
+            binding.etMonto.setText("")
+        }
+        catch (e:Exception)
+        {
+            Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -113,20 +148,18 @@ class ItemDocFragment : Fragment() {
                 searchView.setQuery("",false)
                 searchItem.collapseActionView()
                 //
-                if (query.equals(""))
-                {
-                    //articulosViewModels.ListarArticulos()
-                    itemDocVm.ListarRubros()
+                //Toast.makeText(requireActivity(),"Esta buscando $query",Toast.LENGTH_SHORT).show()
+                if (query != null) {
+                    filtar(query)
                 }
-                else
-                {
-                    //articulosViewModels.ListarArticulosFiltrado(3,query.toString())
-                }
-                //Toast.makeText(requireActivity(),"Resultados para: $query",Toast.LENGTH_SHORT).show()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    filtar(newText)
+                }
+                //Toast.makeText(requireActivity(),"Buscando: $newText",Toast.LENGTH_SHORT).show()
                 return false
             }
         }
@@ -134,19 +167,54 @@ class ItemDocFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun AgregarItem(position:Int)
-    {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId)
+        {
+            R.id.btnRecargarItems ->
+            {
+                CargarTodo()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
+    private fun filtar(filtroDeTexto: String) {
         try {
-            var cantidad:Double = 1.00
-            //var descuento:String = binding.etDescuento.text.toString()
-            var precio:String = binding.etMonto.text.toString()
-            Globales.ItemsDeDocumento.add(DTDocItem(adapterRub.articulos[position].id,adapterRub.articulos[position].nombre,cantidad,precio.toDouble()))
-            Snackbar.make(requireView(),"${adapterRub.articulos[position].nombre} $${binding.etMonto.text}",Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.green)).show()
-            binding.etMonto.setText("")
+            tempArrayList.clear()
+            if(filtroDeTexto.isNotEmpty())
+            {
+                originalArrayListRub.forEach{
+                    //POR CODIGO
+                    if(it.codigo.lowercase(Locale.getDefault()).contains(filtroDeTexto))
+                    {
+                        tempArrayList.add(it)
+                    }
+                    //POR NOMBRE
+                    if(it.nombre.toString().lowercase(Locale.getDefault()).contains(filtroDeTexto))
+                    {
+                        tempArrayList.add(it)
+                    }
+                    //POR IMPUESTO TASA
+                    if(it.impuestoTasa.toString().lowercase(Locale.getDefault()).contains(filtroDeTexto))
+                    {
+                        tempArrayList.add(it)
+                    }
+                }
+                adapterRub.articulos = tempArrayList
+                adapterRub.notifyDataSetChanged()
+            }
+            else
+            {
+                tempArrayList.clear()
+                tempArrayList.addAll(originalArrayListRub)
+                adapterRub.notifyDataSetChanged()
+            }
+            binding.tvCantidadRubros.text="Cantidad: ${adapterRub.itemCount}"
         }
         catch (e:Exception)
         {
-            Toast.makeText(requireContext(),e.message,Toast.LENGTH_LONG).show()
+
         }
     }
 }

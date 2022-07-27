@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.mediopago.MedioPagoFragment" >
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flAceptarMedio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_price_check_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flCancelarMedio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:src="@drawable/ic_close"
+        app:backgroundTint="@color/blackred"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,29 +40,47 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RadioGroup
-                android:id="@+id/radioGroup"
+            <TextView
+                android:id="@+id/textView11"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:text="Seleccione medio de pago"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <RadioButton
-                    android:id="@+id/radioButton"
-                    android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="10dp">
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="($) Pesos" />
+                    android:layout_margin="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/radioButton2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="(U$S) Dolares" />
+                    <RadioButton
+                        android:id="@+id/radioPesos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="($) Pesos" />
 
-            </RadioGroup>
+                    <RadioButton
+                        android:id="@+id/radioDolares"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="(U$S) Dolares" />
+
+                </RadioGroup>
+            </androidx.cardview.widget.CardView>
 
             <EditText
                 android:id="@+id/etMontoParaMpagos"
@@ -50,27 +89,17 @@
                 android:layout_margin="10dp"
                 android:ems="10"
                 android:hint="Monto"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvMediosDePago"
                 android:layout_width="match_parent"
-                android:layout_height="299dp"
+                android:layout_height="200dp"
                 android:layout_margin="10dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
     </ScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/flAddMedioPago"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:src="@drawable/ic_baseline_add_box_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

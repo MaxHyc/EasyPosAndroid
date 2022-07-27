@@ -158,8 +158,8 @@
     <fragment
         android:id="@+id/cobroFragment"
         android:name="com.devhyc.easypos.ui.cobro.CobroFragment"
-        android:label="fragment_cobro"
-        tools:layout="@layout/fragment_cobro" >
+        android:label="Total de venta"
+        tools:layout="@layout/fragment_cobro">
         <action
             android:id="@+id/action_cobroFragment_to_medioPagoFragment"
             app:destination="@id/medioPagoFragment" />
@@ -167,6 +167,6 @@
     <fragment
         android:id="@+id/medioPagoFragment"
         android:name="com.devhyc.easypos.ui.mediopago.MedioPagoFragment"
-        android:label="fragment_medio_pago"
+        android:label="Medios de pago"
         tools:layout="@layout/fragment_medio_pago" />
 </navigation>

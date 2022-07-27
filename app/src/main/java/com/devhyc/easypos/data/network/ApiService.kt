@@ -1,14 +1,14 @@
 package com.devhyc.easypos.data.network
 
-import com.devhyc.easypos.data.model.DTLogin
-import com.devhyc.easypos.data.model.DTLoginRequest
-import com.devhyc.easypos.data.model.DTRubro
-import com.devhyc.easypos.data.model.Resultado
+import com.devhyc.easypos.data.model.*
+import com.google.gson.Gson
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 import retrofit2.Response
 import java.util.ArrayList
 import javax.inject.Inject
@@ -22,23 +22,94 @@ class ApiService @Inject constructor(private val api:ApiClient) {
         {
            //api.login(userlogin)
             val response: Response<Resultado<DTLogin>> = api.login(userlogin)
-            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
         }
     }
+
+    /////////CAJAS
 
     suspend fun getCajaAbierta(nroTerminal:String): Resultado<DTCaja> {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<DTCaja>> = api.getCajaAbierta(nroTerminal)
             response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
         }
     }
+
+    //INICIAR CAJA
+
+    suspend fun putIniciarCaja(nroTerminal:String, IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTCaja>> = api.putIniciarCaja(nroTerminal,IngresoCaja)
+            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    //CERRAR CAJA
+    suspend fun postCerrarCaja(totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTCaja>> = api.postCerrarCaja(totalesDeclarados)
+            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    //////////////////
 
     suspend fun getTerminal(nroTerminal:String): Resultado<DTTerminalPos> {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<DTTerminalPos>> = api.getTerminal(nroTerminal)
-            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
         }
     }
 
@@ -46,7 +117,16 @@ class ApiService @Inject constructor(private val api:ApiClient) {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<ArrayList<DTArticulo>>> = api.getListarArticulos(cantidad,listaprecio)
-            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
         }
     }
 
@@ -54,7 +134,16 @@ class ApiService @Inject constructor(private val api:ApiClient) {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<ArrayList<DTRubro>>> = api.getListarArticulosRubros()
-            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
         }
     }
 
@@ -62,7 +151,16 @@ class ApiService @Inject constructor(private val api:ApiClient) {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<ArrayList<DTArticulo>>> = api.getArticulosFiltrado(cantidad,listaprecio, tipoBusqueda,filtro)
-            response.body()!!
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
         }
     }
 }
