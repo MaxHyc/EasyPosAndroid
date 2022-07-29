@@ -24,14 +24,11 @@
                 android:defaultValue="0" />
         </action>
         <action
-            android:id="@+id/action_ReporteCierre"
-            app:destination="@id/cierreCajaFragment"
-            app:enterAnim="@android:anim/fade_in"
-            app:exitAnim="@android:anim/fade_out"
-            app:launchSingleTop="true"
-            app:popEnterAnim="@android:anim/fade_in"
-            app:popExitAnim="@android:anim/fade_out"
-            app:popUpTo="@id/nav_cajaFragment" />
+            android:id="@+id/action_ReporteCaja"
+            app:destination="@id/reporteDeCajaFragment" />
+        <action
+            android:id="@+id/action_CierreCaja"
+            app:destination="@id/cierreCajaFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_documentosFragment"
@@ -51,12 +48,12 @@
     <fragment
         android:id="@+id/cierreCajaFragment"
         android:name="com.devhyc.easypos.ui.cierrecaja.CierreCajaFragment"
-        android:label="fragment_cierre_caja"
-        tools:layout="@layout/fragment_cierre_caja" >
+        android:label="Cierre de caja"
+        tools:layout="@layout/fragment_cierre_caja">
         <argument
             android:name="Tipo"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/docFragment"
@@ -169,4 +166,9 @@
         android:name="com.devhyc.easypos.ui.mediopago.MedioPagoFragment"
         android:label="Medios de pago"
         tools:layout="@layout/fragment_medio_pago" />
+    <fragment
+        android:id="@+id/reporteDeCajaFragment"
+        android:name="com.devhyc.easypos.ui.reportecaja.ReporteDeCajaFragment"
+        android:label="Reporte de caja"
+        tools:layout="@layout/fragment_reporte_de_caja" />
 </navigation>

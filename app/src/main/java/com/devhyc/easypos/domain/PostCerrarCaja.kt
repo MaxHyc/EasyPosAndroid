@@ -10,5 +10,5 @@ import java.util.ArrayList
 import javax.inject.Inject
 
 class PostCerrarCaja @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja>? = repository.postCerrarCaja(totalesDeclarados)
+    suspend operator fun invoke(nroTerminal:String,totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja>? = repository.postCerrarCaja(nroTerminal,totalesDeclarados)
 }

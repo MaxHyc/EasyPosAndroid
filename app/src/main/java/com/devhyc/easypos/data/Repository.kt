@@ -63,9 +63,9 @@ class Repository @Inject constructor(
 
     //INICIAR CAJA
 
-    suspend fun putIniciarCaja(nroTerminal:String,IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
+    suspend fun putIniciarCaja(IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
         return try {
-            val response = api.putIniciarCaja(nroTerminal,IngresoCaja)
+            val response = api.putIniciarCaja(IngresoCaja)
             appProvider.cajaabierta = response
             return response
         }
@@ -77,9 +77,9 @@ class Repository @Inject constructor(
 
     //CERRAR CAJA
 
-    suspend fun postCerrarCaja(totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja> {
+    suspend fun postCerrarCaja(nroTerminal:String,totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja> {
         return try {
-            val response = api.postCerrarCaja(totalesDeclarados)
+            val response = api.postCerrarCaja(nroTerminal, totalesDeclarados)
             appProvider.cajaabierta = response
             return response
         }

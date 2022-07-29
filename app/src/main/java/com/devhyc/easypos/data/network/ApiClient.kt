@@ -19,11 +19,11 @@ interface ApiClient {
     @GET("Cajas/abierta/{nroterminal}")
     suspend fun getCajaAbierta(@Path("nroterminal") nroterminal: String?): Response<Resultado<DTCaja>>
     //INICIAR CAJA
-    @PUT("Cajas/abierta/{nroterminal}")
-    suspend fun putIniciarCaja(@Path("nroterminal") nroterminal: String?, @Body IngresoCaja: DTIngresoCaja): Response<Resultado<DTCaja>>
+    @PUT("Cajas")
+    suspend fun putIniciarCaja(@Body IngresoCaja: DTIngresoCaja): Response<Resultado<DTCaja>>
     //CERRAR CAJA
-    @POST("Cajas")
-    suspend fun postCerrarCaja(@Body totalesDeclarados: DTTotalesDeclarados): Response<Resultado<DTCaja>>
+    @POST("Cajas/{terminal_codigo}")
+    suspend fun postCerrarCaja(@Path("terminal_codigo") nroterminal: String?,@Body totalesDeclarados: DTTotalesDeclarados): Response<Resultado<DTCaja>>
 
     //TERMINAL
     @GET("Cajas/terminal/{nroterminal}")

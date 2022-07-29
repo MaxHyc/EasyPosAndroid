@@ -41,7 +41,6 @@ class ApiService @Inject constructor(private val api:ApiClient) {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<DTCaja>> = api.getCajaAbierta(nroTerminal)
-            response.body()!!
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -57,11 +56,10 @@ class ApiService @Inject constructor(private val api:ApiClient) {
 
     //INICIAR CAJA
 
-    suspend fun putIniciarCaja(nroTerminal:String, IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
+    suspend fun putIniciarCaja(IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<DTCaja>> = api.putIniciarCaja(nroTerminal,IngresoCaja)
-            response.body()!!
+            val response: Response<Resultado<DTCaja>> = api.putIniciarCaja(IngresoCaja)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -76,11 +74,10 @@ class ApiService @Inject constructor(private val api:ApiClient) {
     }
 
     //CERRAR CAJA
-    suspend fun postCerrarCaja(totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja> {
+    suspend fun postCerrarCaja(nroTerminal:String, totalesDeclarados: DTTotalesDeclarados): Resultado<DTCaja> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<DTCaja>> = api.postCerrarCaja(totalesDeclarados)
-            response.body()!!
+            val response: Response<Resultado<DTCaja>> = api.postCerrarCaja(nroTerminal, totalesDeclarados)
             if (response.isSuccessful)
             {
                 response.body()!!

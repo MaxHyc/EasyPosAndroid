@@ -6,38 +6,18 @@
     android:layout_height="match_parent"
     tools:context="com.devhyc.easypos.ui.cierrecaja.CierreCajaFragment" >
 
-    <Button
-        android:id="@+id/btnTotalDolares"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:backgroundTint="@color/black"
-        android:text="TOTAL DOLARES U$S 000000"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnTotalPesos"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:backgroundTint="@color/black"
-        android:text="TOTAL PESOS $ 000000"
-        app:layout_constraintBottom_toTopOf="@+id/btnTotalDolares"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.157"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/lvReporteX"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnTotalPesos"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical"/>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
