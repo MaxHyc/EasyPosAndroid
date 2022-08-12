@@ -57,7 +57,7 @@ class CajaFragment : Fragment() {
         })
         cajaViewModel.caja.observe(viewLifecycleOwner, Observer {
             binding.tvFechaHora.isVisible = true
-            binding.tvFechaHora.text = "Fecha y hora de apertura: ${Globales.Herramientas.convertirFechaHora(it.FechaHora)}"
+            binding.tvFechaHora.text = "Apertura: ${Globales.Herramientas.convertirFechaHora(it.FechaHora)}"
             (activity as? AppCompatActivity)?.supportActionBar?.title = "Caja N° ${it.Nro}"
         })
         cajaViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {

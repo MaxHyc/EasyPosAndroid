@@ -24,6 +24,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="10dp"
         app:cardCornerRadius="10dp"
+        app:cardElevation="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -285,6 +286,40 @@
                         app:layout_constraintStart_toStartOf="@+id/guideline3"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp">
+
+                    <Button
+                        android:id="@+id/btnIntegradores"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_margin="10dp"
+                        android:text="Integradores"
+                        app:cornerRadius="5dp"
+                        app:icon="@drawable/ic_baseline_integration_instructions_24"
+                        app:iconGravity="textTop"
+                        app:iconPadding="10dp"
+                        app:iconSize="40dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 

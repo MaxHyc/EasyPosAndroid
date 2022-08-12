@@ -13,6 +13,7 @@
         android:layout_height="0dp"
         android:layout_margin="20dp"
         android:background="#ECE7E7"
+        android:elevation="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/flBorrarFirma"
         app:layout_constraintEnd_toEndOf="parent"

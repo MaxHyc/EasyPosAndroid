@@ -13,6 +13,7 @@
     <string name="menu_documentos">Tickets</string>
     <string name="menu_configuracion">Configuración</string>
     <string name="menu_impresora">Impresora</string>
+    <string name="menu_integradores">Integradores</string>
     <string name="menu_encabezado">Menú Principal</string>
     <string name="menu_listaArticulo">Lista de Artículos</string>
     <string name="menu_cerrarsesion">Cerrar sesión</string>

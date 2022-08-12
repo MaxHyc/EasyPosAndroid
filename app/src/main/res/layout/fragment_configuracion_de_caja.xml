@@ -14,49 +14,57 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical">
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp">
 
-            <TextView
-                android:id="@+id/textView2"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="Dirección del servidor" />
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/etDireccionServidor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:ems="10"
-                android:hint="Ingrese dirección del servidor"
-                android:inputType="textPersonName" />
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Dirección del servidor" />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="N° Caja" />
+                <EditText
+                    android:id="@+id/etDireccionServidor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:ems="10"
+                    android:hint="Ingrese dirección del servidor"
+                    android:inputType="textPersonName" />
 
-            <EditText
-                android:id="@+id/etNroCaja"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:ems="10"
-                android:hint="Ingrese numero de caja"
-                android:inputType="textPersonName" />
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="N° Caja" />
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/etNroCaja"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:ems="10"
+                    android:hint="Ingrese numero de caja"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

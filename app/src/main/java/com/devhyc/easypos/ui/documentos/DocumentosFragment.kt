@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentDocumentosBinding
+import com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragmentDirections
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.DatePickerFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +32,9 @@ class DocumentosFragment : Fragment() {
             ShowDialogPickerDesde()
         }
         binding.fHasta.setOnClickListener {
-            ShowDialogPickerHasta()
+            //ShowDialogPickerHasta()
+            val action = DocumentosFragmentDirections.actionNavDocumentosFragmentToDocumentoVistaFragment()
+            view?.findNavController()?.navigate(action)
         }
         val c = Calendar.getInstance()
         val day = c.get(Calendar.DAY_OF_MONTH)

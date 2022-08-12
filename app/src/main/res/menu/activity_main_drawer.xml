@@ -30,6 +30,10 @@
                     android:id="@+id/conexionImpresora"
                     android:icon="@drawable/ic_baseline_print_24"
                     android:title="@string/menu_impresora" />
+                <item
+                    android:id="@+id/masOpcionesFragment"
+                    android:icon="@drawable/ic_baseline_integration_instructions_24"
+                    android:title="@string/menu_integradores" />
             </menu>
         </item>>
     </group>

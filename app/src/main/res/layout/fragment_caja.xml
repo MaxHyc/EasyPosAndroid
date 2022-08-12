@@ -8,7 +8,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardfechacaja"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:cardBackgroundColor="#F1DBBB"
@@ -18,41 +18,47 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationOpen"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:visibility="gone"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/open"
-                tools:ignore="MissingConstraints" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationClose"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:visibility="gone"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/closed"
-                tools:ignore="MissingConstraints" />
+                <TextView
+                    android:id="@+id/tvFechaHora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha y Hora"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tvFechaHora"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="20dp"
-                android:gravity="center_horizontal"
-                android:text="Fecha y Hora"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationOpen"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:visibility="gone"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/open"
+                    tools:ignore="MissingConstraints" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animationClose"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:visibility="gone"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/closed"
+                    tools:ignore="MissingConstraints" />
+            </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/progressCaja"

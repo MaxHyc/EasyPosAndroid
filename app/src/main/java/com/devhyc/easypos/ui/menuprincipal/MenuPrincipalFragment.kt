@@ -107,6 +107,10 @@ class MenuPrincipalFragment : Fragment() {
             val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToDocFragment()
             view?.findNavController()?.navigate(action)
         }
+        binding.btnIntegradores.setOnClickListener {
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToMasOpcionesFragment()
+            view?.findNavController()?.navigate(action)
+        }
         //MOSTRAR VERSION
         binding.tvVersion.text = "HyC Hardware ${Calendar.getInstance().get(Calendar.YEAR)} - Version " + requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
         return root

@@ -34,7 +34,11 @@
         android:id="@+id/nav_documentosFragment"
         android:name="com.devhyc.easypos.ui.documentos.DocumentosFragment"
         android:label="@string/menu_documentos"
-        tools:layout="@layout/fragment_documentos" />
+        tools:layout="@layout/fragment_documentos" >
+        <action
+            android:id="@+id/action_nav_documentosFragment_to_documentoVistaFragment"
+            app:destination="@id/documentoVistaFragment" />
+    </fragment>
     <fragment
         android:id="@+id/ingresoRetiroFragment"
         android:name="com.devhyc.easypos.ui.ingresoretiro.IngresoRetiroFragment"
@@ -147,10 +151,15 @@
             app:destination="@id/conexionImpresora"
             app:launchSingleTop="true"
             app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_masOpcionesFragment"
+            app:destination="@id/masOpcionesFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
     </fragment>
     <fragment
         android:id="@+id/conexionImpresora"
-        android:name="com.devhyc.jamesmobile.ui.impresora.ConexionImpresora"
+        android:name="com.devhyc.easypos.ui.impresora.ConexionImpresora"
         android:label="@string/menu_impresora" />
     <fragment
         android:id="@+id/cobroFragment"
@@ -171,4 +180,14 @@
         android:name="com.devhyc.easypos.ui.reportecaja.ReporteDeCajaFragment"
         android:label="Reporte de caja"
         tools:layout="@layout/fragment_reporte_de_caja" />
+    <fragment
+        android:id="@+id/documentoVistaFragment"
+        android:name="com.devhyc.easypos.ui.documentovista.DocumentoVistaFragment"
+        android:label="Ticket Vista"
+        tools:layout="@layout/fragment_documento_vista" />
+    <fragment
+        android:id="@+id/masOpcionesFragment"
+        android:name="com.devhyc.easypos.ui.masopciones.MasOpcionesFragment"
+        android:label="Integradores"
+        tools:layout="@layout/fragment_mas_opciones" />
 </navigation>

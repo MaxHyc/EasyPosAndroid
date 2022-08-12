@@ -1,10 +1,13 @@
-package com.devhyc.jamesmobile.ui.impresora
+package com.devhyc.easypos.ui.impresora
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -21,14 +24,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTImpresora
 import com.devhyc.easypos.databinding.FragmentConexionImpresoraBinding
+import com.devhyc.easypos.impresion.ImpresionSunMi
 import com.devhyc.easypos.ui.impresora.adapter.ItemImpresoraAdapter
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.jamesmobile.ui.impresora.ConexionImpresoraViewModel
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.zebra.sdk.comm.BluetoothConnection
-import java.util.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ConexionImpresora : Fragment() {
 
     private var _binding: FragmentConexionImpresoraBinding? = null
@@ -168,6 +174,13 @@ class ConexionImpresora : Fragment() {
                     //.setAction(R.string.Descartar,MyUndoListener())
                     .show()
             }
+        }
+
+        binding.flImpresionPrueba.setOnClickListener {
+            Globales.ControladoraSunMi.ImprimirPaginaDePrueba(requireContext())
+            Snackbar.make(binding.clayout,"Imprimiendo pagina de prueba",Snackbar.LENGTH_SHORT)
+                .setAnimationMode(ANIMATION_MODE_SLIDE)
+                .show()
         }
 
 
