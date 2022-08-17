@@ -42,6 +42,15 @@ class ConfiguracionDeCajaFragment : Fragment() {
         try {
             binding.etNroCaja.setText(Globales.NroCaja)
             binding.etDireccionServidor.setText(Globales.DireccionServidor)
+            when(Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.BLUETOOTH.codigo -> {
+                    binding.radioBluetooth.isChecked = true
+                }
+                Globales.eTipoImpresora.SUNMI.codigo -> {
+                    binding.radioSunmi.isChecked = true
+                }
+            }
         }
         catch (e: Exception)
         {
@@ -55,6 +64,16 @@ class ConfiguracionDeCajaFragment : Fragment() {
             val editor : SharedPreferences.Editor = Globales.sharedPreferences.edit()
             editor.putString("nrocaja", binding.etNroCaja.text.toString())
             editor.putString("direccionserver",binding.etDireccionServidor.text.toString())
+            if (binding.radioBluetooth.isChecked)
+            {
+                editor.putInt("tipo_impresora",Globales.eTipoImpresora.BLUETOOTH.codigo)
+                Globales.ImpresionSeleccionada = Globales.eTipoImpresora.BLUETOOTH.codigo
+            }
+            else
+            {
+                editor.putInt("tipo_impresora",Globales.eTipoImpresora.SUNMI.codigo)
+                Globales.ImpresionSeleccionada = Globales.eTipoImpresora.SUNMI.codigo
+            }
             editor.apply()
             //
             Globales.NroCaja = binding.etNroCaja.text.toString()

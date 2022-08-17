@@ -31,7 +31,31 @@ public class Globales {
     //DATOS DEL DOCUMENTO///////////
     public static ArrayList<DTDocItem> ItemsDeDocumento = new ArrayList<>();
     public static ArrayList<DTMedioPago> MediosPagoDocumento = new ArrayList<>();
-    ////////////////////////////////
+    //INSTANCIAS DE IMPRESION///////
     public static Impresion ControladoraDeImpresion=new Impresion();
     public static ImpresionSunMi ControladoraSunMi=new ImpresionSunMi();
+    //DATOS DE IMPRESORA////////////
+    public static Integer ImpresionSeleccionada=0;
+    public static String DireccionMac;
+
+    public enum eTipoImpresora
+    {
+        BLUETOOTH("BLUETOOTH",0), SUNMI("SUNMI",1);
+
+        private String nombre;
+        private int codigo;
+
+        private eTipoImpresora (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
 }

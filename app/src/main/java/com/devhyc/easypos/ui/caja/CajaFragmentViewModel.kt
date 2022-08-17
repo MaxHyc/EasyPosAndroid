@@ -20,18 +20,25 @@ class CajaFragmentViewModel @Inject constructor(val getCajaAbiertaUseCase: GetCa
     fun ObtenerCajaAbierta()
     {
         viewModelScope.launch {
-            isLoading.postValue(true)
-            val result = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
-            if (result!!.ok)
+            try
             {
-                iniciar.postValue(true)
-                caja.postValue(result.elemento!!)
+                isLoading.postValue(true)
+                val result = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
+                if (result!!.ok)
+                {
+                    iniciar.postValue(true)
+                    caja.postValue(result.elemento!!)
+                }
+                else
+                {
+                    iniciar.postValue(false)
+                }
+                isLoading.postValue(false)
             }
-            else
+            catch (e:Exception)
             {
-                iniciar.postValue(false)
+                mensajeDelServer.postValue(e.message)
             }
-            isLoading.postValue(false)
         }
     }
 

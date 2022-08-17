@@ -25,6 +25,21 @@
         <item>FINALIZADOS</item>
         <item>CANCELADAS</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--SHARED PREFERENCES-->
+    <string name="_sharedPreferences">preferencias</string>
+    <string name="_nrocaja">nrocaja</string>
+    <string name="_direccionserver">direccionserver</string>
+    <string name="_tipo_impresora">tipo_impresora</string>
+    <string name="_mac">MAC</string>
+    <string name="_configuracion_impresora">seconfiguro</string>
+
+    <string name="_totalPesos">Total Pesos</string>
+    <string name="_totalDolares">Total Dolares</string>
+    <string name="_totalTarjetas">Total Tarjetas</string>
+    <string name="_totalTarjetasDolares">Total Tarjetas Dolares</string>
+    <string name="_totalCheques">Total Cheques</string>
+    <string name="_totalChequesDolares">Total Cheques Dolares</string>
+    <string name="_totalCreditos">Total Creditos</string>
+    <string name="_totalTickets">Total Tickets</string>
 </resources>

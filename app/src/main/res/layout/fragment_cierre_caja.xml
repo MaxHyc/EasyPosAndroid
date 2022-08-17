@@ -14,10 +14,106 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical"/>
+            app:cardCornerRadius="10dp"
+            app:cardElevation="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/etTotalPesos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalPesos"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalDolares"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalDolares"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalTarjetas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalTarjetas"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalTarjetasDolares"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalTarjetasDolares"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalCheques"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalCheques"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalChequesDolares"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalChequesDolares"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalCreditos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalCreditos"
+                    android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/etTotalTickets"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/_totalTickets"
+                    android:inputType="numberDecimal" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flCerrarCaja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:src="@drawable/ic_baseline_price_check_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
