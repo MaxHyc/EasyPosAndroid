@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -39,6 +40,11 @@ class ListaDeArticulosFragment : Fragment() {
     private lateinit var adapterRub: RubroAdapter
     //
     private var tempArrayList: ArrayList<DTRubro> = ArrayList()
+
+    override fun onPause() {
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
+        super.onPause()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,6 +96,7 @@ class ListaDeArticulosFragment : Fragment() {
         binding.rvArticulos.adapter = adapterRub
         //Toast.makeText(requireContext(),"${adapterRub.itemCount} rubros listados.", Toast.LENGTH_SHORT).show()
         binding.tvCantidadArt.text="Cantidad: ${adapterRub.itemCount}"
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterRub.itemCount}"
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -180,6 +187,7 @@ class ListaDeArticulosFragment : Fragment() {
                 adapterRub.notifyDataSetChanged()
             }
             binding.tvCantidadArt.text="Cantidad: ${adapterRub.itemCount}"
+            (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterRub.itemCount}"
         }
         catch (e:Exception)
         {

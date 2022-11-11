@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.devhyc.easypos.R
@@ -21,6 +22,11 @@ class DocumentosFragment : Fragment() {
 
     private var _binding: FragmentDocumentosBinding? = null
     private val binding get() = _binding!!
+
+    override fun onPause() {
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
+        super.onPause()
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View?

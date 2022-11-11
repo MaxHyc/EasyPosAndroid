@@ -195,7 +195,7 @@ class ImpresionSunMi: AppCompatActivity() {
                 dialogo.dismiss()
             if (result == "OK")
             {
-                AlertView.showOk("Impresión correcta",result,cnt)
+                //AlertView.showOk("Impresión correcta",result,cnt)
             }
             else
             {
@@ -360,7 +360,7 @@ class ImpresionSunMi: AppCompatActivity() {
                 dialogo.dismiss()
             if (result == "OK")
             {
-                AlertView.showOk("Impresión correcta",result,cnt)
+                //AlertView.showOk("Impresión correcta",result,cnt)
             }
             else
             {

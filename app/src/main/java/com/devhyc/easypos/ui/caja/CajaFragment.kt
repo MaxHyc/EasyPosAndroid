@@ -21,6 +21,7 @@ class CajaFragment : Fragment() {
 
     private var _binding: FragmentCajaBinding? = null
     private val binding get() = _binding!!
+    private var ncaja:String=""
     //
     private lateinit var cajaViewModel: CajaFragmentViewModel
 
@@ -40,7 +41,7 @@ class CajaFragment : Fragment() {
             view?.findNavController()?.navigate(action)
         }
         binding.btnReporteX.setOnClickListener {
-            val action = CajaFragmentDirections.actionReporteCaja()
+            val action = CajaFragmentDirections.actionReporteCaja(ncaja)
             view?.findNavController()?.navigate(action)
         }
         binding.btnCierreCaja.setOnClickListener {
@@ -59,6 +60,7 @@ class CajaFragment : Fragment() {
             binding.tvFechaHora.isVisible = true
             binding.tvFechaHora.text = "Apertura: ${Globales.Herramientas.convertirFechaHora(it.FechaHora)}"
             (activity as? AppCompatActivity)?.supportActionBar?.title = "Caja N° ${it.Nro}"
+            ncaja = it.Nro.toString()
         })
         cajaViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {
             AlertView.showAlert("¡Atención!",it,requireActivity())

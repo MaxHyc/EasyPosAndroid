@@ -8,12 +8,6 @@
     <item android:id="@+id/descount"
         android:title="Descuento de Ticket"
         app:showAsAction="collapseActionView" />
-    <item android:id="@+id/gifcard"
-        android:title="Giftcard"
-        app:showAsAction="collapseActionView" />
-    <item android:id="@+id/tregalo"
-        android:title="Ticket regalo"
-        app:showAsAction="collapseActionView" />
     <item android:id="@+id/vpreventas"
         android:title="Ver pre ventas"
         app:showAsAction="collapseActionView" />

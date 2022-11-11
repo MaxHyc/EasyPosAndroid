@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.JamesMobile" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.EasyPosTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#FF9800</item>
-        <item name="colorPrimaryVariant">#FF9800</item>
+        <item name="colorPrimary">@color/azulmarino</item>
+        <item name="colorPrimaryVariant">@color/azulmarino</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#4CAF50</item>
@@ -14,11 +14,11 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.JamesMobile.NoActionBar">
+    <style name="Theme.EasyPosTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.JamesMobile.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="Theme.JamesMobile.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.EasyPosTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.EasyPosTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

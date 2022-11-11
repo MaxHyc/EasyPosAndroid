@@ -24,6 +24,9 @@ interface ApiClient {
     //CERRAR CAJA
     @POST("Cajas/{terminal_codigo}")
     suspend fun postCerrarCaja(@Path("terminal_codigo") nroterminal: String?,@Body totalesDeclarados: DTTotalesDeclarados): Response<Resultado<DTCaja>>
+    //ESTADO DE CAJA
+    @GET("Cajas/estado/{terminal_codigo}/{caja_nro}/{usuario_login}")
+    suspend fun getCajaEstado(@Path("terminal_codigo") nroTerminal: String?, @Path("caja_nro") nroCaja: String?, @Path("usuario_login") usuario: String?): Response<Resultado<DTCajaEstado>>
 
     //TERMINAL
     @GET("Cajas/terminal/{nroterminal}")
@@ -40,5 +43,9 @@ interface ApiClient {
     //LISTAR ARTICULOS RUBROS
     @GET("articulos/rubros")
     suspend fun getListarArticulosRubros(): Response<Resultado<ArrayList<DTRubro>>>
+
+    //LISTAR MEDIOS DE PAGO
+    @GET("MedioDePago")
+    suspend fun getListarMediosDePago(): Response<Resultado<ArrayList<DTMedioPago>>>
 
 }

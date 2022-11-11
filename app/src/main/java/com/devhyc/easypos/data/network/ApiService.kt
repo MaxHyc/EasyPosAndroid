@@ -5,12 +5,9 @@ import com.google.gson.Gson
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
 import retrofit2.Response
-import java.util.ArrayList
 import javax.inject.Inject
 
 class ApiService @Inject constructor(private val api:ApiClient) {
@@ -78,6 +75,24 @@ class ApiService @Inject constructor(private val api:ApiClient) {
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<DTCaja>> = api.postCerrarCaja(nroTerminal, totalesDeclarados)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    //ESTADO DE CAJA
+    suspend fun getCajaEstado(nroTerminal:String, nroCaja:String,usuario:String): Resultado<DTCajaEstado> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTCajaEstado>> = api.getCajaEstado(nroTerminal,nroCaja, usuario)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -160,4 +175,31 @@ class ApiService @Inject constructor(private val api:ApiClient) {
             }
         }
     }
+
+    suspend fun getListarMediosDePago(): Resultado<ArrayList<DTMedioPago>> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ArrayList<DTMedioPago>>> = api.getListarMediosDePago()
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+            //Resultado de peruba
+           /* val lista = ArrayList<DTMedioPago>()
+            var l = DTMedioPago("1","Efectivo","EF","1")
+            lista.add(l)
+            l = DTMedioPago("2","Cheque","CH","2")
+            lista.add(l)
+            l = DTMedioPago("3","Tarjeta","TJ","3")
+            lista.add(l)
+            Resultado(true,"", lista)*/
+        }
+    }
+
 }

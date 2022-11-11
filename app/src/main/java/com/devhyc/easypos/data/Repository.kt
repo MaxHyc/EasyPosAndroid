@@ -6,7 +6,6 @@ import com.devhyc.easypos.data.network.ApiService
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
-import java.util.ArrayList
 import javax.inject.Inject
 
 class Repository @Inject constructor(
@@ -89,6 +88,22 @@ class Repository @Inject constructor(
         }
     }
 
+    //ESTADO DE CAJA
+
+    suspend fun getCajaEstado(nroTerminal: String,nroCaja:String, usuario:String): Resultado<DTCajaEstado>
+    {
+        return try {
+            val response = api.getCajaEstado(nroTerminal, nroCaja, usuario)
+            appProvider.cajaEstado = response
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
+
     ////////////
 
     suspend fun getTerminal(nroTerminal:String): Resultado<DTTerminalPos> {
@@ -136,4 +151,17 @@ class Repository @Inject constructor(
             Resultado(false,e.message.toString(),null)
         }
     }
+
+    suspend fun getListaMediosDePago(): Resultado<ArrayList<DTMedioPago>>
+    {
+        return try {
+            val response = api.getListarMediosDePago()
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
 }

@@ -1,27 +1,26 @@
 package com.devhyc.easypos.ui.documento
 
+import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentDocBinding
-import com.devhyc.easypos.ui.login.LoginActivity
-import com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragmentDirections
+import com.devhyc.easypos.ui.mediopago.MedioPagoFragment
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.devhyc.jamesmobile.ui.documento.adapter.ItemDocAdapter
 import com.devhyc.jamesmobile.ui.documento.adapter.ItemDocTouchHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.dialog.MaterialDialogs
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,6 +34,18 @@ class DocFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onPause() {
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
+        super.onPause()
+    }
+
+    override fun onResume() {
+        //Ocultar Teclado
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken,0)
+        super.onResume()
     }
 
     override fun onCreateView(
@@ -85,12 +96,13 @@ class DocFragment : Fragment() {
                 {
                     ItemTouchHelper.LEFT ->{
                         Globales.ItemsDeDocumento.remove(adapterItems.items[viewHolder.adapterPosition])
-                        Snackbar.make(requireView(),"Artículo eliminado", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(requireView(),"Artículo eliminado", Snackbar.LENGTH_SHORT).setAction("Aceptar",{}).show()
                         CargarItems()
                     }
                 }
             }
         }
+        //
         val touchHelper = ItemTouchHelper(itemDocTouchHelper)
         touchHelper.attachToRecyclerView(binding.rvArticulospdv)
         setHasOptionsMenu(true)
@@ -107,9 +119,11 @@ class DocFragment : Fragment() {
         {
             R.id.btnGuardarDocumento ->
             {
-                val action = DocFragmentDirections.actionDocFragmentToCobroFragment()
+                val action = DocFragmentDirections.actionDocFragmentToMedioPagoFragment()
                 view?.findNavController()?.navigate(action)
-                //Globales.oReclamoSeleccionado = oReclamoPendiente
+                //Abrir modal
+                //val linear = MedioPagoFragment()
+                //linear.show(activity!!.supportFragmentManager,"VentanaMedioPago")
             }
         }
         return super.onOptionsItemSelected(item)

@@ -19,6 +19,8 @@ class AppProvider  @Inject constructor()  {
     var listarrubros: Resultado<ArrayList<DTRubro>>? = null
     //Caja
     var cajaabierta: Resultado<DTCaja>? = null
+    //CajaEstado
+    var cajaEstado: Resultado<DTCajaEstado>? = null
     //Terminal
     var terminal: Resultado<DTTerminalPos>? = null
 }

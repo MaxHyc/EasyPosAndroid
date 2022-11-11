@@ -17,24 +17,24 @@
     <application
         android:name="com.devhyc.easypos.EasyManagementMobile"
         android:allowBackup="true"
-        android:icon="@drawable/ic_baseline_shopping_cart_24"
+        android:icon="@drawable/pos2"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_baseline_shopping_cart_24"
+        android:roundIcon="@drawable/pos2"
         android:supportsRtl="true"
-        android:theme="@style/Theme.JamesMobile"
+        android:theme="@style/Theme.EasyPosTheme"
         android:usesCleartextTraffic="true">
         <activity
             android:name="com.devhyc.easypos.ui.login.LoginActivity"
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.JamesMobile.NoActionBar">
+            android:theme="@style/Theme.EasyPosTheme.NoActionBar">
         </activity>
         <activity
             android:name="com.devhyc.easypos.MainActivity"
             android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/Theme.JamesMobile.NoActionBar">
+            android:theme="@style/Theme.EasyPosTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -42,8 +42,8 @@ class CierreCajaFragment : Fragment() {
         {
             val bundle:Bundle = arguments as Bundle
             tipo = bundle.getInt("Tipo",0)
-
         }
+        //
         binding.flCerrarCaja.setOnClickListener {
             RealizarCierre()
         }

@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         {
             Globales.sharedPreferences = this.getSharedPreferences(getString(R.string._sharedPreferences), Context.MODE_PRIVATE)
             Globales.NroCaja = Globales.sharedPreferences.getString(getString(R.string._nrocaja),"1")
-            Globales.DireccionServidor =Globales.sharedPreferences.getString(getString(R.string._direccionserver),"https://192.168.1.18/wseasym_desa/api/")
+            Globales.DireccionServidor =Globales.sharedPreferences.getString(getString(R.string._direccionserver),"https://192.168.1.18:9083/api/")
             Globales.ImpresionSeleccionada = Globales.sharedPreferences.getInt(getString(R.string._tipo_impresora),0)
             Globales.DireccionMac = Globales.sharedPreferences.getString(getString(R.string._mac),"")
             if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.SUNMI.codigo)

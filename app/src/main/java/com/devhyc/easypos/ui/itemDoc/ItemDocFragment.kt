@@ -38,10 +38,11 @@ class ItemDocFragment : Fragment() {
     //
     private var tempArrayList: ArrayList<DTRubro> = ArrayList()
 
-/*    override fun onResume() {
-        CargarTodo()
+    override fun onResume() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         super.onResume()
-    }*/
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,8 +87,11 @@ class ItemDocFragment : Fragment() {
                     }
                     else
                     {
-                        Snackbar.make(requireView(),"Debe ingresar un monto y despues seleccionar el rubro",Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.red)).show()
+                        Snackbar.make(requireView(),"Debe ingresar un monto y despues seleccionar el rubro",Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.red)).setAction("Omitir",{}).show()
                         binding.etMonto.requestFocus()
+                        //Abrir teclado
+                        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
                     }
                 }
             })
@@ -122,7 +126,7 @@ class ItemDocFragment : Fragment() {
             //var descuento:String = binding.etDescuento.text.toString()
             var precio:String = binding.etMonto.text.toString()
             Globales.ItemsDeDocumento.add(DTDocItem(adapterRub.articulos[position].id,adapterRub.articulos[position].nombre,cantidad,precio.toDouble()))
-            Snackbar.make(requireView(),"${adapterRub.articulos[position].nombre} $${binding.etMonto.text}",Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.green)).show()
+            Snackbar.make(requireView(),"${adapterRub.articulos[position].nombre} $${binding.etMonto.text}",Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.green)).setAction("Omitir",{}).show()
             binding.etMonto.setText("")
         }
         catch (e:Exception)

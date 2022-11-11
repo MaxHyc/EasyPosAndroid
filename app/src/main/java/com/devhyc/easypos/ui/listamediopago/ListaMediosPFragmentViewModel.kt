@@ -1,18 +1,16 @@
-package com.devhyc.easypos.ui.mediopago
+package com.devhyc.easypos.ui.listamediopago
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhyc.easypos.data.model.DTMedioPago
-import com.devhyc.easypos.domain.GetArticulosRubrosUseCase
 import com.devhyc.easypos.domain.GetMediosDePagos
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MedioPagoFragmentViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos) : ViewModel() {
-
+class ListaMediosPFragmentViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val LMedioPago = MutableLiveData<List<DTMedioPago>>()
 
