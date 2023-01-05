@@ -190,16 +190,6 @@ class ApiService @Inject constructor(private val api:ApiClient) {
                 val gson = Gson().fromJson(s, Resultado::class.java)
                 Resultado(gson.ok,gson.mensaje,null)
             }
-            //Resultado de peruba
-           /* val lista = ArrayList<DTMedioPago>()
-            var l = DTMedioPago("1","Efectivo","EF","1")
-            lista.add(l)
-            l = DTMedioPago("2","Cheque","CH","2")
-            lista.add(l)
-            l = DTMedioPago("3","Tarjeta","TJ","3")
-            lista.add(l)
-            Resultado(true,"", lista)*/
         }
     }
-
 }

@@ -36,7 +36,6 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_margin="10dp"
-        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="10dp"
         app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -68,7 +67,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TOTAL"
-                    android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -92,7 +90,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="$ 0"
-                    android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -128,7 +125,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="NOMBRE Y RUT DEL CLIENTE"
-        android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/cardTotalTicket"
         app:layout_constraintEnd_toStartOf="@+id/flAddRut"

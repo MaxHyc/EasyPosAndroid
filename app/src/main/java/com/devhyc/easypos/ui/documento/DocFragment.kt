@@ -96,7 +96,11 @@ class DocFragment : Fragment() {
                 {
                     ItemTouchHelper.LEFT ->{
                         Globales.ItemsDeDocumento.remove(adapterItems.items[viewHolder.adapterPosition])
-                        Snackbar.make(requireView(),"Artículo eliminado", Snackbar.LENGTH_SHORT).setAction("Aceptar",{}).show()
+                        Snackbar.make(requireView(),"Artículo eliminado", Snackbar.LENGTH_SHORT)
+                            .setTextColor(resources.getColor(R.color.white))
+                            .setBackgroundTint(resources.getColor(R.color.red))
+                            .setAction("Cerrar",{})
+                            .show()
                         CargarItems()
                     }
                 }

@@ -98,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="CONSUMO FINAL"
-                        android:textColor="@color/black"
+                        android:textColor="@color/gold"
                         android:textStyle="bold" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -226,7 +226,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="MEDIOS DE PAGOS"
-                        android:textColor="@color/black"
+                        android:textColor="@color/gold"
                         android:textStyle="bold" />
 
                     <TextView
@@ -263,7 +263,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="ADENDA"
-                        android:textColor="@color/black"
+                        android:textColor="@color/gold"
                         android:textStyle="bold" />
 
                     <LinearLayout

@@ -15,7 +15,6 @@ android {
         targetSdk 31
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -25,6 +24,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "version"
+    productFlavors{
+        pruebaVersion {
+            applicationIdSuffix ".testing"
+            versionNameSuffix "-testing"
+            buildConfigField 'boolean', 'VERSION_TESTING', "true"
+            buildConfigField 'String', 'DIRECCION_URL', "\"https://192.168.1.18:9083/apidesa/\""
+            buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://api.testing.com.uy\""
+            resValue "string","app_name","POS TESTING"
+        }
+        produccionVersion {
+            applicationId 'com.devhyc.easypos'
+            buildConfigField 'boolean', 'VERSION_TESTING', "false"
+            buildConfigField 'String', 'DIRECCION_URL', "\"https://192.168.1.18:9083/apidesa/\""
+            buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://api.plexo.com.uy\""
+            resValue "string","app_name","Easy POS"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -70,6 +89,8 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //IMPRESORA DE SUNMI
     implementation 'com.sunmi:printerlibrary:1.0.13'
+    //SUNMI CARD
+    implementation(files("libs/PayLib-release-1.4.43.aar"))
     //zxing to generate barcode
     implementation files('libs/core-3.3.0.jar')
 }

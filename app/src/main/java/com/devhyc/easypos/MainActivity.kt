@@ -1,5 +1,11 @@
 package com.devhyc.easypos
 
+import EmvUtil
+import com.sunmi.pay.hardware.aidlv2.emv.EMVOptV2
+import com.sunmi.pay.hardware.aidlv2.pinpad.PinPadOptV2
+import com.sunmi.pay.hardware.aidlv2.readcard.ReadCardOptV2
+import sunmi.paylib.SunmiPayKernel
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,6 +27,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.navigation.ui.*
 import com.devhyc.easypos.databinding.ActivityMainBinding
 import com.devhyc.easypos.ui.login.LoginActivity
+import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 
 @AndroidEntryPoint
@@ -34,6 +41,17 @@ class MainActivity : AppCompatActivity() {
     lateinit var dialog: AlertDialog
 
     lateinit var nav_Menu:Menu
+
+    override fun onStart() {
+        super.onStart()
+        try {
+            IniciarSDK()
+            EmvUtil().init()
+        } catch (e: Exception)
+        {
+            AlertView.showAlert("No se pudo inicier los lectores de tarjetas","No se pudo iniciar los lectores de tarjetas",this)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +73,8 @@ class MainActivity : AppCompatActivity() {
             ),
             PERMISO
         )
-        PERMISO = ActivityCompat.checkSelfPermission(this,android.Manifest.permission.BLUETOOTH)
-        if (PERMISO == PackageManager.PERMISSION_DENIED)
-        {
+        PERMISO = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH)
+        if (PERMISO == PackageManager.PERMISSION_DENIED) {
             requestPermissions(arrayOf(Manifest.permission.BLUETOOTH), REQUEST)
         }
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -68,7 +85,12 @@ class MainActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.menuPrincipalFragment,R.id.docFragment, R.id.listaDeArticulosFragment,R.id.nav_cajaFragment,R.id.nav_documentosFragment,R.id.masOpcionesFragment
+                R.id.menuPrincipalFragment,
+                R.id.docFragment,
+                R.id.listaDeArticulosFragment,
+                R.id.nav_cajaFragment,
+                R.id.nav_documentosFragment,
+                R.id.masOpcionesFragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -136,9 +158,10 @@ class MainActivity : AppCompatActivity() {
     {
         try
         {
-            Globales.sharedPreferences = this.getSharedPreferences(getString(R.string._sharedPreferences), Context.MODE_PRIVATE)
+            Globales.sharedPreferences = this.getSharedPreferences(getString(R.string._sharedPreferences), MODE_PRIVATE)
             Globales.NroCaja = Globales.sharedPreferences.getString(getString(R.string._nrocaja),"1")
-            Globales.DireccionServidor =Globales.sharedPreferences.getString(getString(R.string._direccionserver),"https://192.168.1.18:9083/api/")
+            Globales.DireccionServidor = BuildConfig.DIRECCION_URL
+            Globales.DireccionPlexo = BuildConfig.DIRECCION_PLEXO
             Globales.ImpresionSeleccionada = Globales.sharedPreferences.getInt(getString(R.string._tipo_impresora),0)
             Globales.DireccionMac = Globales.sharedPreferences.getString(getString(R.string._mac),"")
             if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.SUNMI.codigo)
@@ -161,6 +184,34 @@ class MainActivity : AppCompatActivity() {
         {
             DialogoCerrarSesion()
         }
-        //super.onBackPressed()
     }
+
+    //INTEGRACION SUNMI CREDIT CARD
+
+    private fun IniciarSDK()
+    {
+        var mSMPayKernel: SunmiPayKernel? = null
+        mSMPayKernel = SunmiPayKernel.getInstance()
+        mSMPayKernel!!.initPaySDK(this,object : SunmiPayKernel.ConnectCallback {
+            override fun onDisconnectPaySDK() {
+                Toast.makeText(applicationContext,"Se ha desconectado el hardware lector de tarjetas", Toast.LENGTH_SHORT).show()
+            }
+            override fun onConnectPaySDK() {
+                try {
+                    Globales.mReadCardOptV2 = mSMPayKernel!!.mReadCardOptV2
+                    Globales.mEMVOptV2 = mSMPayKernel!!.mEMVOptV2
+                    Globales.mPinPadOptV2 = mSMPayKernel!!.mPinPadOptV2
+                    Globales.mBasicOptV2 = mSMPayKernel!!.mBasicOptV2
+                    Globales.mSecurityOptV2 = mSMPayKernel!!.mSecurityOptV2
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        })
+    }
+
+    /*private var mReadCardOptV2: ReadCardOptV2 = Globales.mReadCardOptV2!!
+    private var mEMVOptV2: EMVOptV2 = Globales.mEMVOptV2!!
+    private var mPinPadOptV2: PinPadOptV2 = Globales.mPinPadOptV2!!*/
+
 }

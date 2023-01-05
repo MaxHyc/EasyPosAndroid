@@ -100,7 +100,6 @@
                     android:layout_margin="5dp"
                     android:gravity="center_horizontal"
                     android:text="¡Bienvenido!"
-                    android:textColor="@color/black"
                     android:textSize="20sp" />
 
                 <TextView

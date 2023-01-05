@@ -14,4 +14,6 @@
     <color name="colorMercadoPago">#03A9F4</color>
     <color name="colorGeocom">@color/iconoverde_background</color>
     <color name="colorCashDro">#5C5959</color>
+    <color name="gold">#FF9800</color>
+    <color name="naranja">#E85121</color>
 </resources>

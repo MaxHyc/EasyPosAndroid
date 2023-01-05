@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import com.devhyc.easypos.BuildConfig
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentMenuPrincipalBinding
 import com.devhyc.easypos.ui.login.LoginActivity
@@ -30,24 +31,20 @@ class MenuPrincipalFragment : Fragment() {
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.hide()
            if (Globales.UsuarioLoggueado != null)
             {
-                binding.tvSaludo.text = "¡Bienvenido ${Globales.UsuarioLoggueado.nombre}!"
+               if (BuildConfig.VERSION_TESTING)
+                    binding.tvSaludo.text = "TESTING (${Globales.UsuarioLoggueado.nombre})"
+               else
+                    binding.tvSaludo.text = "¡Bienvenido ${Globales.UsuarioLoggueado.nombre}!"
+
                 if (Globales.Terminal != null)
-                {
                     binding.tvCajaActual.text = Globales.Terminal.Descripcion
-                }
                 else
-                {
                     binding.tvCajaActual.text = "Caja: ${Globales.NroCaja}"
-                }
             }
             if (Globales.CajaActual != null)
-            {
                 binding.tvInfoAbierto.text = "Caja abierta: ${Globales.Herramientas.convertirFechaHora(Globales.CajaActual.FechaHora.toString())} \n Nro: ${Globales.CajaActual.Nro} \n Usuario que inició: ${Globales.CajaActual.Usuario}"
-            }
             else
-            {
                 binding.tvInfoAbierto.text= ""
-            }
         }
         catch (e:Exception)
         {

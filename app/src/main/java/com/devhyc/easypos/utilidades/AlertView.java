@@ -3,6 +3,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import androidx.core.content.ContextCompat;
+
 import com.devhyc.easypos.R;
 
 public class AlertView
@@ -36,6 +38,12 @@ public class AlertView
         AlertDialog ad = builder.create();
         //show
         ad.show();
+        ad.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(ctx,
+                R.color.white
+        ));
+        ad.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(ctx,
+                R.color.green
+        ));
     }
 }
 

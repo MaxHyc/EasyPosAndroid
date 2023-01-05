@@ -76,6 +76,7 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this,e.message,Toast.LENGTH_SHORT).show()
             }
         })
+        binding.tvVersionDeLaApp.text = "Version " + this.packageManager.getPackageInfo(this.packageName, 0).versionName
     }
 
     fun IniciarSesion()

@@ -9,10 +9,14 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <!-- UBICACION -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
     <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <!-- PERMISOS PINPAD -->
+    <uses-permission android:name="com.sunmi.perm.MSR" />
+    <uses-permission android:name="com.sunmi.perm.ICC" />
+    <uses-permission android:name="com.sunmi.perm.PINPAD" />
+    <uses-permission android:name="com.sunmi.perm.SECURITY" />
+    <uses-permission android:name="com.sunmi.perm.CONTACTLESS_CARD" />
 
     <application
         android:name="com.devhyc.easypos.EasyManagementMobile"
