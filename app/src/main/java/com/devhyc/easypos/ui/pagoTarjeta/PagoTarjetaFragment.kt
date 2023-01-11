@@ -1,33 +1,21 @@
-package com.devhyc.easypos.ui.mediopago
+package com.devhyc.easypos.ui.pagoTarjeta
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
-import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.databinding.FragmentMedioPagoBinding
+import com.devhyc.easypos.databinding.FragmentPagoTarjetaBinding
 import com.devhyc.easypos.integracion_sunmi.util.ByteUtil
 import com.devhyc.easypos.integracion_sunmi.util.TLV
 import com.devhyc.easypos.integracion_sunmi.util.TLVUtil
-import com.devhyc.easypos.ui.caja.CajaFragmentDirections
-import com.devhyc.easypos.ui.mediopago.adapter.ItemMedioPago
 import com.devhyc.easypos.utilidades.Globales
-import com.devhyc.easypos.utilidades.Globales.*
-import com.google.android.material.snackbar.Snackbar
 import com.snor.sunmicardreader.Callback.CheckCardCallback
 import com.snor.sunmicardreader.Callback.EMVCallback
 import com.snor.sunmicardreader.Callback.PinPadCallback
@@ -37,191 +25,55 @@ import com.sunmi.pay.hardware.aidlv2.bean.EMVCandidateV2
 import com.sunmi.pay.hardware.aidlv2.bean.EMVTransDataV2
 import com.sunmi.pay.hardware.aidlv2.bean.PinPadConfigV2
 import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2
-import dagger.hilt.android.AndroidEntryPoint
-import hilt_aggregated_deps._com_devhyc_easypos_ui_mediopago_MedioPagoFragmentViewModel_HiltModules_BindsModule
-import sunmi.paylib.SunmiPayKernel
 import java.nio.charset.StandardCharsets
 import java.util.HashMap
 
+class PagoTarjetaFragment : Fragment() {
 
-@AndroidEntryPoint
-class MedioPagoFragment : DialogFragment() {
-
-    private var _binding: FragmentMedioPagoBinding? = null
+    private var _binding: FragmentPagoTarjetaBinding? = null
     private val binding get() = _binding!!
-    private lateinit var MedioPViewModel: MedioPagoFragmentViewModel
-    //
-    private lateinit var adapterMediosDePagos: ItemMedioPago
-    //
-    private lateinit var _pagoSeleccionado:DTMedioPago
-    //
-    private var TotalDeVenta:Double = 1200.0
-    private var PagoDeVenta:Double = 0.0
-    private var Cambio:Double = 0.0
 
     //Credit Card
-/*    private val cardType = MutableLiveData<String>()
+    private val cardType = MutableLiveData<String>()
     private val result = MutableLiveData<String>()
 
-    private val amount = "40000"
+    private val amount = "00"
     private var mCardNo: String = ""
     private var mCardType = 0
     private var mPinType: Int? = null
-    private var mCertInfo: String = ""*/
+    private var mCertInfo: String = ""
 
-    //
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        MedioPViewModel = ViewModelProvider(this)[MedioPagoFragmentViewModel::class.java]
-        _binding = FragmentMedioPagoBinding.inflate(inflater, container, false)
+        // Inflate the layout for this fragment
+        _binding = FragmentPagoTarjetaBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //Selecciona pesos por defecto
-        //binding.radioPesos.isChecked = true
-        //Llamar al listar
-
-        //Abrir teclado forzosamente
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         //
-
-        binding.tvMedioPagoTotalVenta.text = TotalDeVenta.toString()
-        binding.etMontoParaMpagos.setText(TotalDeVenta.toString())
-        binding.etMontoParaMpagos.requestFocus()
-        binding.etMontoParaMpagos.selectAll()
+        val cardType: Int =
+            AidlConstants.CardType.MAGNETIC.value or AidlConstants.CardType.NFC.value or
+                    AidlConstants.CardType.IC.value
+        checkCard(cardType)
         //
-
-        MedioPViewModel.ListarMediosDePago()
-        MedioPViewModel.LMedioPago.observe(viewLifecycleOwner, Observer {
-            //Cuando termina de cargar
-            adapterMediosDePagos = ItemMedioPago(ArrayList<DTMedioPago>(it))
-            adapterMediosDePagos.setOnItemClickListener(object: ItemMedioPago.onItemClickListener{
-                override fun onItemClick(position: Int) {
-                    //AL TOCAR UN MEDIO DE PAGO
-                    for (i in adapterMediosDePagos.mediosDepago) {
-                        i.seleccionado = false
-                    }
-                    //Mostrar la seleccionada
-                    adapterMediosDePagos.mediosDepago[position].seleccionado = true
-                    adapterMediosDePagos.notifyDataSetChanged()
-                    //
-                    _pagoSeleccionado = adapterMediosDePagos.mediosDepago[position]
-                    //Toast.makeText(requireContext(),_pagoSeleccionado.Nombre,Toast.LENGTH_SHORT).show()
-                }
-            })
-            //Selecciono el primer medio de pago
-            adapterMediosDePagos.mediosDepago[0].seleccionado = true
-            _pagoSeleccionado = adapterMediosDePagos.mediosDepago[0]
-            //
-            binding.rvMediosDePago.layoutManager = LinearLayoutManager(activity)
-            binding.rvMediosDePago.adapter = adapterMediosDePagos
-        })
-        //Boton aceptar medio de pago
-        binding.flAceptarMedio.setOnClickListener {
-            if (_pagoSeleccionado != null)
-            {
-                if(_pagoSeleccionado.Tipo == "1")
-                {
-                    //EFECTIVO
-                    AgregarMedio()
-                }
-                else if (_pagoSeleccionado.Tipo == "3")
-                {
-                    val action = MedioPagoFragmentDirections.actionMedioPagoFragmentToPagoTarjetaFragment()
-                    view?.findNavController()?.navigate(action)
-                   /* val cardType: Int =
-                        AidlConstants.CardType.MAGNETIC.value or AidlConstants.CardType.NFC.value or
-                                AidlConstants.CardType.IC.value
-                    checkCard(cardType)*/
-                }
-            }
-        }
-        //Boton Finalizar la venta
-        binding.flFinalizarVenta.setOnClickListener {
-            //Toast.makeText(requireContext(),"Realizando venta",Toast.LENGTH_SHORT).show()
-
-            Snackbar.make(requireView(),"Realizando venta",
-                Snackbar.LENGTH_SHORT).setAction("Ok",{}).show()
-
-            if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.SUNMI.codigo)
-            {
-                Globales.ControladoraSunMi.ImprimirPaginaDePrueba(requireContext())
-            }
-            view?.findNavController()?.popBackStack()
-        }
-        //
-        binding.etMontoParaMpagos.setOnClickListener {
-            binding.etMontoParaMpagos.selectAll()
-        }
-        binding.etMontoParaMpagos.setOnKeyListener(object : View.OnKeyListener {
-            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                // If the event is a key-down event on the "enter" button
-                if (event.getAction() === KeyEvent.ACTION_DOWN &&
-                    keyCode == KeyEvent.KEYCODE_ENTER) {
-                    AgregarMedio()
-                    return true
-                }
-                return false
-            }
-        })
         return root
     }
 
-    private fun AgregarMedio()
-    {
-        try {
-            if (binding.etMontoParaMpagos.text.isNotEmpty())
-            {
-                PagoDeVenta = binding.etMontoParaMpagos.text.toString().toDouble()
-                if (PagoDeVenta < TotalDeVenta)
-                {
-                    Snackbar.make(requireView(),"El total del pago no coincide con el total de la venta",
-                        Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.red)).setAction("Ok",{}).show()
-                }
-                else
-                {
-                    //
-                    binding.flAceptarMedio.isVisible = false
-                    binding.flFinalizarVenta.isVisible = true
-                    binding.cardCambio.isVisible = true
-                    binding.cardPagos.isVisible = true
-                    binding.rvMediosDePago.isVisible = false
-                    binding.btnMultiPagos.isVisible = false
-                    //
-                    binding.tvMedioPagoSeleccionado.text = _pagoSeleccionado.Nombre
-                    //
-                    Cambio =PagoDeVenta - TotalDeVenta
-                    binding.tvMedioPagoCambio.text= Cambio.toString()
-                    if (PagoDeVenta >= TotalDeVenta)
-                    {
-                        binding.etMontoParaMpagos.isEnabled = false
-                    }
-                }
-                //
-            }
-            else
-            {
-                Snackbar.make(requireView(),"Debe ingresar un monto para el pago",
-                    Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.red)).setAction("Aceptar",{}).show()
-            }
-        }
-        catch (e:Exception)
-        {
-
-        }
-    }
-
     ///CreditCard
-    /*private fun checkCard(cardType: Int) {
+    private fun checkCard(cardType: Int) {
         try {
 
-            mEMVOptV2.abortTransactProcess()
-            mEMVOptV2.initEmvProcess()
+            Globales.mEMVOptV2.abortTransactProcess()
+            Globales.mEMVOptV2.initEmvProcess()
 
-            mReadCardOptV2.checkCard(cardType, mCheckCardCallback, 60)
+            Globales.mReadCardOptV2.checkCard(cardType, mCheckCardCallback, 60)
 
-            Toast.makeText(requireContext(),"PRESENTE LA TARJETA, PASE POR BANDA O INSERTE CHIP",Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(),"PRESENTE LA TARJETA, PASE POR BANDA O INSERTE CHIP",
+                Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -231,16 +83,16 @@ class MedioPagoFragment : DialogFragment() {
         @SuppressLint("SetTextI18n")
         override fun findICCard(atr: String) {
             super.findICCard(atr)
-               *//* cardType.value = "Type: IC"
-                result.value = "Result: $atr"
-                Log.e("dd--", "Type:IC")
-                Log.e("dd--", "ID: $atr")*//*
+            /* cardType.value = "Type: IC"
+             result.value = "Result: $atr"
+             Log.e("dd--", "Type:IC")
+             Log.e("dd--", "ID: $atr")*/
 
-                Toast.makeText(requireContext(),"LECTURA - $atr",Toast.LENGTH_LONG).show()
+            //Toast.makeText(activity!!,"LECTURA - $atr", Toast.LENGTH_LONG).show()
 
-
-                mCardType = AidlConstants.CardType.IC.value
-                transactProcess()
+            //binding.tvDatoTarjeta.setText("LECTURA - $atr")
+            mCardType = AidlConstants.CardType.IC.value
+            transactProcess()
         }
 
         @SuppressLint("SetTextI18n")
@@ -251,32 +103,45 @@ class MedioPagoFragment : DialogFragment() {
             val track2 = info.getString("TRACK2")
             val track3 = info.getString("TRACK3")
 
-               *//* cardType.value = "Type: Magnetic"
-                result.value =
-                    "Result:\n Track 1: $track1 \nTrack 2: $track2 \nTrack 3: $track3 \n"
-                Log.e("dd--", "Type:Magnetic")
-                Log.e("dd--", "ID: ${result.value}")*//*
+            /* cardType.value = "Type: Magnetic"
+             result.value =
+                 "Result:\n Track 1: $track1 \nTrack 2: $track2 \nTrack 3: $track3 \n"
+             Log.e("dd--", "Type:Magnetic")
+             Log.e("dd--", "ID: ${result.value}")*/
 
-                Toast.makeText(requireContext(),"LECTURA Magnetica - $track1 \\nTrack 2: $track2 \\nTrack 3: $track3 \\n",Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"LECTURA Magnetica - $track1 \\nTrack 2: $track2 \\nTrack 3: $track3 \\n",
+             //   Toast.LENGTH_LONG).show()
+
+            binding.tvDatoTarjeta.setText("LECTURA Magnetica - $track1 \n Track 2: $track2 \nTrack 3: $track3 \n")
 
 
-                mCardType = AidlConstants.CardType.MAGNETIC.value
+            mCardType = AidlConstants.CardType.MAGNETIC.value
 
         }
+
+        /*override fun findICCardEx(info: Bundle) {
+            super.findICCardEx(info)
+            binding.tvDatoTarjeta.text = "${info.getString("CARD")}"
+
+            mCardType = AidlConstants.CardType.IC.value
+            transactProcess()
+        }*/
 
         @SuppressLint("SetTextI18n")
         override fun findRFCard(uuid: String) {
             super.findRFCard(uuid)
 
-                *//*cardType.value = "Type: NFC"
-                result.value = "Result:\n UUID: $uuid"
-                Log.e("dd--", "Type:NFC")
-                Log.e("dd--", "ID: $uuid")*//*
+            /*cardType.value = "Type: NFC"
+            result.value = "Result:\n UUID: $uuid"
+            Log.e("dd--", "Type:NFC")
+            Log.e("dd--", "ID: $uuid")*/
 
-                Toast.makeText(requireContext(),"LECTURA NFC - $uuid",Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"LECTURA NFC - $uuid", Toast.LENGTH_LONG).show()
 
-                mCardType = AidlConstants.CardType.NFC.value
-                transactProcess()
+            binding.tvDatoTarjeta.text = "LECTURA NFC - $uuid"
+
+            mCardType = AidlConstants.CardType.NFC.value
+            transactProcess()
         }
 
         override fun onError(code: Int, message: String) {
@@ -293,7 +158,7 @@ class MedioPagoFragment : DialogFragment() {
             emvTransData.amount = amount //in cent (9F02)
             emvTransData.flowType = 1 //1 Standard Flow, 2 Simple Flow, 3 QPass
             emvTransData.cardType = mCardType
-            mEMVOptV2.transactProcess(emvTransData, mEMVCallback)
+            Globales.mEMVOptV2.transactProcess(emvTransData, mEMVCallback)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -313,7 +178,7 @@ class MedioPagoFragment : DialogFragment() {
                 Log.e("dd--", "EMVCandidate:$it")
             }
             //default take 1 priority
-            mEMVOptV2.importAppSelect(0)
+            Globales.mEMVOptV2.importAppSelect(0)
         }
 
         override fun onAppFinalSelect(p0: String?) {
@@ -323,14 +188,13 @@ class MedioPagoFragment : DialogFragment() {
 
 
             val tags = arrayOf("5F2A", "5F36", "9F33", "9F66")
-            val value = arrayOf("0458", "00", "E0F8C8", "B6C0C080")
-            mEMVOptV2.setTlvList(AidlConstants.EMV.TLVOpCode.OP_NORMAL, tags, value)
+            val value = arrayOf("0858", "00", "E0F8C8", "B6C0C080")
+            Globales.mEMVOptV2.setTlvList(AidlConstants.EMV.TLVOpCode.OP_NORMAL, tags, value)
 
 
             if (p0 != null && p0.isNotEmpty()){
                 val isVisa = p0.startsWith("A000000003")
-                val isMaster =
-                    (p0.startsWith("A000000004") || p0.startsWith("A000000005"))
+                val isMaster = (p0.startsWith("A000000004") || p0.startsWith("A000000005"))
 
                 if (isVisa){
                     // VISA(PayWave)
@@ -349,22 +213,22 @@ class MedioPagoFragment : DialogFragment() {
                         "00", "E8", "F45084800C", "0000000000", "F45084800C",
                         "000000000000", "999999999999", "999999999999", "00"
                     )
-                    mEMVOptV2.setTlvList(AidlConstants.EMV.TLVOpCode.OP_PAYPASS, tagsPayPass, valuesPayPass)
+                    Globales.mEMVOptV2.setTlvList(AidlConstants.EMV.TLVOpCode.OP_PAYPASS, tagsPayPass, valuesPayPass)
 
                     //Reader CVM Required Limit (Malaysia => RM250)
-                    mEMVOptV2.setTlv(AidlConstants.EMV.TLVOpCode.OP_PAYPASS,"DF8126","000000025000")
+                    Globales.mEMVOptV2.setTlv(AidlConstants.EMV.TLVOpCode.OP_PAYPASS,"DF8126","000000025000")
 
                 }
 
             }
-            mEMVOptV2.importAppFinalSelectStatus(0)
+            Globales.mEMVOptV2.importAppFinalSelectStatus(0)
         }
 
         override fun onConfirmCardNo(p0: String?) {
             super.onConfirmCardNo(p0)
             Log.e("dd--", "onConfirmCardNo cardNo:$p0")
             mCardNo = p0!!
-            mEMVOptV2.importCardNoStatus(0)
+            Globales.mEMVOptV2.importCardNoStatus(0)
         }
 
         override fun onRequestShowPinPad(p0: Int, p1: Int) {
@@ -379,7 +243,7 @@ class MedioPagoFragment : DialogFragment() {
             super.onCertVerify(p0, p1)
             Log.e("dd--", "onCertVerify certType:$p0 certInfo:$p1")
             mCertInfo = p1.toString()
-            mEMVOptV2.importCertStatus(p0)
+            Globales.mEMVOptV2.importCertStatus(p0)
         }
 
         override fun onOnlineProc() {
@@ -422,7 +286,7 @@ class MedioPagoFragment : DialogFragment() {
             pinPadConfig.minInput = 4
             pinPadConfig.keySystem = 0 // 0 - MkSk 1 - DuKpt
             pinPadConfig.algorithmType = 0 // 0 - 3DES 1 - SM4
-            mPinPadOptV2.initPinPad(pinPadConfig, mPinPadCallback)
+            Globales.mPinPadOptV2.initPinPad(pinPadConfig, mPinPadCallback)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -459,7 +323,7 @@ class MedioPagoFragment : DialogFragment() {
     private fun importPinInputStatus(inputResult: Int) {
         Log.e("dd--", "importPinInputStatus:$inputResult")
         try {
-            mEMVOptV2.importPinInputStatus(mPinType!!, inputResult)
+            Globales.mEMVOptV2.importPinInputStatus(mPinType!!, inputResult)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -496,12 +360,12 @@ class MedioPagoFragment : DialogFragment() {
             )
             val outData = ByteArray(2048)
             val map: MutableMap<String, TLV> = HashMap()
-            var len = mEMVOptV2.getTlvList(AidlConstants.EMV.TLVOpCode.OP_NORMAL, tagList, outData)
+            var len = Globales.mEMVOptV2.getTlvList(AidlConstants.EMV.TLVOpCode.OP_NORMAL, tagList, outData)
             if (len > 0) {
                 val hexStr = ByteUtil.bytes2HexStr(outData.copyOf(len))
                 map.putAll(TLVUtil.hexStrToTLVMap(hexStr))
             }
-            len = mEMVOptV2.getTlvList(AidlConstants.EMV.TLVOpCode.OP_PAYPASS, payPassTags, outData)
+            len = Globales.mEMVOptV2.getTlvList(AidlConstants.EMV.TLVOpCode.OP_PAYPASS, payPassTags, outData)
             if (len > 0) {
                 val hexStr = ByteUtil.bytes2HexStr(outData.copyOf(len))
                 map.putAll(TLVUtil.hexStrToTLVMap(hexStr))
@@ -533,7 +397,7 @@ class MedioPagoFragment : DialogFragment() {
             val tags = arrayOf("71", "72", "91", "8A", "89")
             val values = arrayOf("", "", "", "", "")
             val out = ByteArray(1024)
-            val len = mEMVOptV2.importOnlineProcStatus(status, tags, values, out)
+            val len = Globales.mEMVOptV2.importOnlineProcStatus(status, tags, values, out)
             if (len < 0) {
                 Log.e("dd--", "importOnlineProcessStatus error,code:$len")
             } else {
@@ -544,5 +408,6 @@ class MedioPagoFragment : DialogFragment() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }*/
+    }
+
 }

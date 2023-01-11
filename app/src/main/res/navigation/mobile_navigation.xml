@@ -184,7 +184,11 @@
         android:id="@+id/medioPagoFragment"
         android:name="com.devhyc.easypos.ui.mediopago.MedioPagoFragment"
         android:label="Medios de pago"
-        tools:layout="@layout/fragment_medio_pago" />
+        tools:layout="@layout/fragment_medio_pago" >
+        <action
+            android:id="@+id/action_medioPagoFragment_to_pagoTarjetaFragment"
+            app:destination="@id/pagoTarjetaFragment" />
+    </fragment>
     <fragment
         android:id="@+id/reporteDeCajaFragment"
         android:name="com.devhyc.easypos.ui.reportecaja.ReporteDeCajaFragment"
@@ -204,4 +208,9 @@
         android:name="com.devhyc.easypos.ui.masopciones.MasOpcionesFragment"
         android:label="Integradores"
         tools:layout="@layout/fragment_mas_opciones" />
+    <fragment
+        android:id="@+id/pagoTarjetaFragment"
+        android:name="com.devhyc.easypos.ui.pagoTarjeta.PagoTarjetaFragment"
+        android:label="Pago con tarjeta"
+        tools:layout="@layout/fragment_pago_tarjeta" />
 </navigation>
