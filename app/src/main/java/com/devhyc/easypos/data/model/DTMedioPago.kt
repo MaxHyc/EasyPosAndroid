@@ -7,6 +7,8 @@ data class DTMedioPago(@SerializedName("id") var Id:String,
                        @SerializedName("tipo") var Tipo:String,
                        @SerializedName("proveedor") var Proveedor:String,
                        @SerializedName("limiteCuotas") var LimiteCuotas:Int,
-                       @SerializedName("seleccionado") var seleccionado: Boolean)
+                       @SerializedName("seleccionado") var seleccionado: Boolean) {
+    constructor() : this("","","","",0,false)
+}
 
 

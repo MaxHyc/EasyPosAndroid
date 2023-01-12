@@ -1,14 +1,20 @@
 package com.devhyc.easypos.ui.pagoTarjeta
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentMedioPagoBinding
 import com.devhyc.easypos.databinding.FragmentPagoTarjetaBinding
@@ -16,6 +22,7 @@ import com.devhyc.easypos.integracion_sunmi.util.ByteUtil
 import com.devhyc.easypos.integracion_sunmi.util.TLV
 import com.devhyc.easypos.integracion_sunmi.util.TLVUtil
 import com.devhyc.easypos.utilidades.Globales
+import com.google.android.material.snackbar.Snackbar
 import com.snor.sunmicardreader.Callback.CheckCardCallback
 import com.snor.sunmicardreader.Callback.EMVCallback
 import com.snor.sunmicardreader.Callback.PinPadCallback
@@ -59,8 +66,14 @@ class PagoTarjetaFragment : Fragment() {
             AidlConstants.CardType.MAGNETIC.value or AidlConstants.CardType.NFC.value or
                     AidlConstants.CardType.IC.value
         checkCard(cardType)
-        //
+
         return root
+    }
+
+    override fun onResume() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken,0)
+        super.onResume()
     }
 
     ///CreditCard
@@ -72,10 +85,13 @@ class PagoTarjetaFragment : Fragment() {
 
             Globales.mReadCardOptV2.checkCard(cardType, mCheckCardCallback, 60)
 
-            Toast.makeText(requireContext(),"PRESENTE LA TARJETA, PASE POR BANDA O INSERTE CHIP",
-                Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"PRESENTE LA TARJETA, PASE POR BANDA O INSERTE CHIP",
+                //Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
-            e.printStackTrace()
+            //e.printStackTrace()
+            Snackbar.make(requireView(),"Error al iniciar hardware lector de tarjetas",
+                Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.red)).setAction("Ok") { findNavController().popBackStack() }
+                .show()
         }
     }
 
@@ -91,6 +107,7 @@ class PagoTarjetaFragment : Fragment() {
             //Toast.makeText(activity!!,"LECTURA - $atr", Toast.LENGTH_LONG).show()
 
             //binding.tvDatoTarjeta.setText("LECTURA - $atr")
+
             mCardType = AidlConstants.CardType.IC.value
             transactProcess()
         }
@@ -102,6 +119,11 @@ class PagoTarjetaFragment : Fragment() {
             val track1 = info.getString("TRACK1")
             val track2 = info.getString("TRACK2")
             val track3 = info.getString("TRACK3")
+
+            activity!!.runOnUiThread{
+                binding.animationWelcome.isVisible = false
+                binding.animationloading.isVisible = true
+            }
 
             /* cardType.value = "Type: Magnetic"
              result.value =
@@ -130,6 +152,10 @@ class PagoTarjetaFragment : Fragment() {
         @SuppressLint("SetTextI18n")
         override fun findRFCard(uuid: String) {
             super.findRFCard(uuid)
+            activity!!.runOnUiThread{
+                binding.animationWelcome.isVisible = false
+                binding.animationloading.isVisible = true
+            }
 
             /*cardType.value = "Type: NFC"
             result.value = "Result:\n UUID: $uuid"
@@ -138,7 +164,7 @@ class PagoTarjetaFragment : Fragment() {
 
             //Toast.makeText(requireContext(),"LECTURA NFC - $uuid", Toast.LENGTH_LONG).show()
 
-            binding.tvDatoTarjeta.text = "LECTURA NFC - $uuid"
+            //binding.tvDatoTarjeta.text = "LECTURA NFC - $uuid"
 
             mCardType = AidlConstants.CardType.NFC.value
             transactProcess()
@@ -152,8 +178,12 @@ class PagoTarjetaFragment : Fragment() {
     }
 
     private fun transactProcess() {
-        Log.e("dd--", "transactProcess")
         try {
+            requireActivity().runOnUiThread{
+                binding.animationWelcome.isVisible = false
+                binding.animationloading.isVisible = true
+                binding.tvDescripcionTarjeta.text = "Procesando datos de la tarjeta"
+            }
             val emvTransData = EMVTransDataV2()
             emvTransData.amount = amount //in cent (9F02)
             emvTransData.flowType = 1 //1 Standard Flow, 2 Simple Flow, 3 QPass
@@ -181,6 +211,7 @@ class PagoTarjetaFragment : Fragment() {
             Globales.mEMVOptV2.importAppSelect(0)
         }
 
+        @SuppressLint("SetTextI18n")
         override fun onAppFinalSelect(p0: String?) {
             super.onAppFinalSelect(p0)
 
@@ -198,11 +229,18 @@ class PagoTarjetaFragment : Fragment() {
 
                 if (isVisa){
                     // VISA(PayWave)
-                    Log.e("dd--", "detect VISA card")
+                    activity!!.runOnUiThread{
+                        //binding.tvDatoTarjeta.text = "Tarjeta VISA"
+                        binding.animationvisa.isVisible = true
+                    }
                 }else if(isMaster){
 
                     // MasterCard(PayPass)
-                    Log.e("dd--", "detect MasterCard card")
+                    activity!!.runOnUiThread {
+                        //binding.tvDatoTarjeta.text = "Tarjeta Master Card"
+                        binding.animationmaster.isVisible = true
+                    }
+
                     val tagsPayPass = arrayOf(
                         "DF8117", "DF8118", "DF8119", "DF811B", "DF811D",
                         "DF811E", "DF811F", "DF8120", "DF8121", "DF8122",
@@ -221,6 +259,24 @@ class PagoTarjetaFragment : Fragment() {
                 }
 
             }
+
+            /////////////////////////////////////////////////////////
+            Thread.sleep(3000)
+
+            activity!!.runOnUiThread{
+                binding.animationWelcome.isVisible = false
+                binding.animationloading.isVisible = false
+                binding.animationsuccess.isVisible = true
+                binding.tvDescripcionTarjeta.text = "Venta confirmada"
+            }
+
+            Thread.sleep(3000)
+
+            activity!!.runOnUiThread{
+                findNavController().popBackStack()
+            }
+            /////////////////////////////////////////////////////////
+
             Globales.mEMVOptV2.importAppFinalSelectStatus(0)
         }
 
@@ -267,6 +323,11 @@ class PagoTarjetaFragment : Fragment() {
             super.onTransResult(p0, p1)
             //Code = 0 (Success)
             Log.e("dd--", "onTransResult code:$p0 desc:$p1")
+            requireActivity().runOnUiThread{
+                binding.animationWelcome.isVisible = false
+                binding.animationloading.isVisible = true
+                binding.tvDescripcionTarjeta.text = "Código: $p0 \n $p1"
+            }
         }
     }
 
