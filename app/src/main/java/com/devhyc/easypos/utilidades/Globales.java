@@ -2,9 +2,14 @@ package com.devhyc.easypos.utilidades;
 
 import android.content.SharedPreferences;
 
+import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin;
+import com.devhyc.easypos.data.model.DTDoc;
 import com.devhyc.easypos.data.model.DTDocItem;
+import com.devhyc.easypos.data.model.DTDocParametros;
+import com.devhyc.easypos.data.model.DTDocTotales;
 import com.devhyc.easypos.data.model.DTLogin;
 import com.devhyc.easypos.data.model.DTMedioPago;
+import com.devhyc.easypos.data.model.DTMedioPagoAceptado;
 import com.devhyc.easypos.impresion.Impresion;
 import com.devhyc.easypos.impresion.ImpresionSunMi;
 import com.integration.easyposkotlin.data.model.DTCaja;
@@ -25,8 +30,16 @@ public class Globales {
     public static String DireccionServidor = "";
     public static String DireccionPlexo = "";
     public static DTLogin UsuarioLoggueado;
+    public static DTUserControlLogin UsuarioLoggueadoConfig;
     public static Boolean CerrarApp=false;
     public static Boolean EnPrincipal=false;
+    //DOCUMENTOS
+    public static DTDoc DocumentoEnProceso;
+    public static DTDocParametros ParametrosDocumento;
+    public static DTDocTotales TotalesDocumento;
+    public static String CodigoTipoDocSeleccionado="";
+    public static Boolean editando_documento;
+    public static int MonedaSeleccionada;
     //TERMINAL
     public static DTTerminalPos Terminal;
     //CAJA
@@ -51,11 +64,19 @@ public class Globales {
     public static PinPadOptV2 mPinPadOptV2 = null;
     public static SecurityOptV2 mSecurityOptV2 = null;
 
+    //TARJETAS
+    public static DTMedioPagoAceptado PagoTarjetaAprobado;
+
     //CashDRO
     public static String IpCashDro;
     public static String userCashdro;
     public static String passCashdro;
     public static String posIdCashdro;
+
+    public static String Deposito;
+    public static String UsuarioAnterior="";
+    public static String PassAnterior="";
+    public static Boolean SesionViva=false;
 
 
     public enum eTipoImpresora
@@ -78,4 +99,103 @@ public class Globales {
             return codigo;
         }
     }
+
+    public enum TMoneda
+    {
+        PESOS("PESOS",0), DOLARES("DOLARES",1);
+
+        private String nombre;
+        private int codigo;
+
+        private TMoneda (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
+
+    public enum TMedioPago
+    {
+        EFECTIVO("EFECTIVO",1),
+        CHEQUE("CHEQUE",2),
+        TARJETA("PUNTO",3),
+        TICKET("TICKET",4),
+        PUNTO("PUNTO",5),
+        GIFTCARD("GIFTCARD",6),
+        MERCADOP("MERCADO PAGO",7),
+        REDONDEO("REDONDEO",9),
+        ;
+
+        private String nombre;
+        private int codigo;
+
+        private TMedioPago (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
+
+    public enum TBusquedaGenerica
+    {
+        LISTAPRECIO("LISTAPRECIO",1),
+        FUNCIONARIO("FUNCIONARIO",2),
+        DEPOSITO("DEPOSITO",3),
+        FORMAPAGO("FORMAPAGO",4),
+        ;
+
+        private String nombre;
+        private int codigo;
+
+        private TBusquedaGenerica (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
+
+    public enum TTipoBusqueda
+    {
+        CODIGOBARRAS("CODIGOBARRAS",1),
+        CODIGOINTERNO("CODIGOINTERNO",0),
+        ;
+
+        private String nombre;
+        private int codigo;
+
+        private TTipoBusqueda (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
+
 }

@@ -6,85 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".ui.documentovista.DocumentoVistaFragment" >
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:src="@drawable/ic_baseline_print_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/imgVistaEmpresa"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center_horizontal"
-                    app:srcCompat="@drawable/easyposlogo"
-                    tools:src="@tools:sample/avatars" />
-
-                <TextView
-                    android:id="@+id/tvVistaDatosEmisor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="DATOS DEL EMISOR" />
-
-                <TextView
-                    android:id="@+id/tvVistaTipoNroFiscal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="e-Ticket / A10" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvVistaFecha"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="05/08/2022" />
-
-                    <TextView
-                        android:id="@+id/tvVistaHora"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="12:20" />
-                </LinearLayout>
-
-            </LinearLayout>
+            android:orientation="vertical" >
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardCliente"
+                android:id="@+id/cardCabezalVista"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="10dp">
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -93,215 +28,201 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvVistaClienteDatos"
+                        android:id="@+id/tvTipoCambioVista"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="CONSUMO FINAL"
-                        android:textColor="@color/gold"
-                        android:textStyle="bold" />
+                        android:text="TIPOCAMBIO Y MONEDA"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvFechasVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FECHA EMISION" />
+
+                    <TextView
+                        android:id="@+id/tvListaPrecioVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="LISTAPRECIO"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvFuncionarioVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FUNCIONARIO"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvDepositoVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="DEPOSITO"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvDatosClienteVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CLIENTE"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvObservaciones"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="OBSERVACIONES"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvFormaPagoVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FORMA DE PAGO"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvLugarDeEntregaVista"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="LUGAR DE ENTREGA Y FECHA"
+                        android:visibility="gone" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_margin="10dp" />
-
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardTotales"
+                android:id="@+id/cardTotalesVista"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
                 app:cardCornerRadius="10dp">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:id="@+id/linearTotalesVista"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
-                            android:id="@+id/textView19"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/textView51"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:text="Totales"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvIvaVista"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="IVA" />
+
+                        <TextView
+                            android:id="@+id/tvDtoVista"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="DTO" />
+
+                        <TextView
+                            android:id="@+id/tvSubtotalVista"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:text="SUBTOTAL" />
 
                         <TextView
-                            android:id="@+id/tvVistaSubTotal"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tvRedondeoVista"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="$0" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/textView25"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="DESCUENTOS" />
-
-                        <TextView
-                            android:id="@+id/tvVistaDescuentos"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="$0" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/textView26"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:text="REDONDEO" />
 
                         <TextView
-                            android:id="@+id/tvVistaRedondeo"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tvTotalVista"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="$0" />
+                            android:text="TOTAL"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:id="@+id/linearPagosVista"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/guideline5"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/textView29"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="TOTAL" />
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-                        <TextView
-                            android:id="@+id/tvVistaTotal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="$0" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/textView41"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="PAGOS"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvPagosVista"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="PAGOS" />
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
                     </LinearLayout>
-                </LinearLayout>
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardMediosPagos"
+                android:id="@+id/cardArticulosVista"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="10dp">
+                android:layout_margin="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView32"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="MEDIOS DE PAGOS"
-                        android:textColor="@color/gold"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvVistaTipoCambio"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="T/C: 42" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvArticulosDocVista"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:layout_margin="10dp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardAdenda"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="10dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView36"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="ADENDA"
-                        android:textColor="@color/gold"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvVistaTerminal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="TERMINAL:" />
-
-                        <TextView
-                            android:id="@+id/tvVistaTipoDoc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="TIPODOC:" />
-
-                        <TextView
-                            android:id="@+id/tvVistaNroDoc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="NRO:" />
-                    </LinearLayout>
-
+                        android:layout_height="match_parent" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/tvVistaFuncionario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="FUNCIONARIO: Nombre del usuario" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

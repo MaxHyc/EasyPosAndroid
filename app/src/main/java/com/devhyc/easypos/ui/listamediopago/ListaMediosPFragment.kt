@@ -15,7 +15,6 @@ import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.databinding.FragmentListaDeArticulosBinding
 import com.devhyc.easypos.databinding.FragmentListaMediosPBinding
 import com.devhyc.easypos.databinding.FragmentMedioPagoBinding
-import com.devhyc.easypos.ui.documento.DocFragmentDirections
 import com.devhyc.easypos.ui.mediopago.MedioPagoFragmentViewModel
 import com.devhyc.easypos.ui.mediopago.adapter.ItemMedioPago
 import dagger.hilt.android.AndroidEntryPoint

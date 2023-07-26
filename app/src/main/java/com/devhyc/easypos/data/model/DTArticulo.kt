@@ -27,6 +27,7 @@ data class DTArticulo(@SerializedName("id") var id:Int,
                       @SerializedName("precioFinal") var precioFinal:Double,
                       @SerializedName("monedaSigno") var monedaSigno:String,
                       @SerializedName("codigoBarras") var codigoBarras:String,
-                      @SerializedName("foto") var foto:List<Byte>) {
+                      @SerializedName("foto") var foto:List<Byte>,
+                      @SerializedName("usaSerie") var usaSerie:Boolean) {
 
 }

@@ -1,5 +1,6 @@
 package com.devhyc.easypos.data.model
 
+import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
@@ -12,6 +13,7 @@ class AppProvider  @Inject constructor()  {
     lateinit var cantidadArticulos: String
     //Rubros
     var login: Resultado<DTLogin>? = null
+    var loginControl: Resultado<DTUserControlLogin>? = null
     //
     //Articulos
     var listaarticulos:Resultado<ArrayList<DTArticulo>>? = null
@@ -23,4 +25,6 @@ class AppProvider  @Inject constructor()  {
     var cajaEstado: Resultado<DTCajaEstado>? = null
     //Terminal
     var terminal: Resultado<DTTerminalPos>? = null
+    //
+    var ParametrosTipoDoc: Resultado<DTDocParametros>? = null
 }

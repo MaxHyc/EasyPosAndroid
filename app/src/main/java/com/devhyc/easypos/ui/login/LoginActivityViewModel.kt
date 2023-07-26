@@ -3,33 +3,59 @@ package com.devhyc.easypos.ui.login
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devhyc.easypos.core.di.NetworkModule
 import com.devhyc.easypos.data.model.DTLogin
 import com.devhyc.easypos.data.model.DTLoginRequest
-import com.devhyc.easypos.data.model.Resultado
-import com.devhyc.easypos.domain.GetArticulosUseCase
-import com.devhyc.easypos.domain.GetCajaAbiertaUseCase
 import com.devhyc.easypos.domain.GetTerminalUseCase
+import com.devhyc.easypos.domain.LoginControlUseCase
 import com.devhyc.easypos.domain.LoginUseCase
 import com.devhyc.easypos.utilidades.Globales
-import com.integration.easyposkotlin.data.model.DTCaja
-import com.integration.easyposkotlin.data.model.DTTerminalPos
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase, val getTerminalUseCase: GetTerminalUseCase,val getCajaAbiertaUseCase: GetCajaAbiertaUseCase): ViewModel() {
-    val isLoading = MutableLiveData<Boolean>()
+class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase, val getTerminalUseCase: GetTerminalUseCase, val loginControlUseCase: LoginControlUseCase): ViewModel() {
+    val isLoadingTerminal = MutableLiveData<Boolean>()
+    val isLoadingAutomatico = MutableLiveData<Boolean>()
+    val isLoadingControlLogin =MutableLiveData<Boolean>()
+    val isLoadingInicioSesion = MutableLiveData<Boolean>()
     val LoginModel = MutableLiveData<DTLogin>()
     val iniciar = MutableLiveData<Boolean>()
     val mensaje = MutableLiveData<String>()
-    val cajaAbierta = MutableLiveData<DTCaja>()
+    val LoginAutomatico = MutableLiveData<DTLogin>()
+    val iniciarAutomatico = MutableLiveData<Boolean>()
+
+    fun iniciarSesionControlLogin(user: String,pass: String,automatico:Boolean)
+    {
+        viewModelScope.launch {
+            isLoadingControlLogin.postValue(true)
+            var userlogin = DTLoginRequest(user,pass)
+            val result = loginControlUseCase(userlogin)
+            if (result!!.ok)
+            {
+                Globales.UsuarioLoggueadoConfig = result.elemento!!
+                Globales.DireccionServidor = result.elemento!!.urlServicio
+                Globales.NroCaja = result.elemento!!.terminalCodigo
+                NetworkModule.provideRetrofit().newBuilder()
+                if (automatico)
+                    iniciarSessionAutomatico(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)
+                    else
+                    iniciarSesion(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)
+            }
+            else
+            {
+                mensaje.postValue(result.mensaje)
+            }
+            isLoadingControlLogin.postValue(false)
+        }
+    }
 
     fun iniciarSesion(user: String,pass:String)
     {
         viewModelScope.launch {
-            isLoading.postValue(true)
-            var userlogin:DTLoginRequest = DTLoginRequest(user,pass)
+            isLoadingInicioSesion.postValue(true)
+            var userlogin = DTLoginRequest(user,pass)
             val result = loginUseCase(userlogin)
             if (result!!.ok)
             {
@@ -40,14 +66,33 @@ class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase,
             {
                 mensaje.postValue(result.mensaje)
             }
-            isLoading.postValue(false)
+            isLoadingInicioSesion.postValue(false)
+        }
+    }
+
+    fun iniciarSessionAutomatico(user: String,pass:String)
+    {
+        viewModelScope.launch {
+            isLoadingAutomatico.postValue(true)
+            var userlogin = DTLoginRequest(user,pass)
+            val result = loginUseCase(userlogin)
+            if (result!!.ok)
+            {
+                LoginAutomatico.postValue(result.elemento!!)
+                iniciarAutomatico.postValue(true)
+            }
+            else
+            {
+                mensaje.postValue(result.mensaje)
+            }
+            isLoadingAutomatico.postValue(false)
         }
     }
 
     fun obtenerTerminal()
     {
         viewModelScope.launch {
-            isLoading.postValue(true)
+            isLoadingTerminal.postValue(true)
             val terminal = getTerminalUseCase(Globales.NroCaja)
             if(terminal !=null)
             {
@@ -64,29 +109,7 @@ class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase,
             {
                 mensaje.postValue("No existe la terminal ingresada")
             }
-            isLoading.postValue(false)
+            isLoadingTerminal.postValue(false)
         }
     }
-
-    fun obtenerCajaAbierta()
-    {
-        viewModelScope.launch {
-            isLoading.postValue(true)
-            val caja = getCajaAbiertaUseCase(Globales.NroCaja)
-            if(caja !=null)
-            {
-                if(caja.ok)
-                {
-                    Globales.CajaActual = caja.elemento
-                    iniciar.postValue(true)
-                }
-                else
-                {
-                    mensaje.postValue(caja.mensaje)
-                }
-            }
-            isLoading.postValue(false)
-        }
-    }
-
 }

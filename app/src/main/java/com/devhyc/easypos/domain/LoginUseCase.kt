@@ -7,5 +7,5 @@ import com.devhyc.easypos.data.model.Resultado
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(userlogin:DTLoginRequest): Resultado<DTLogin>? = repository.login(userlogin)
+    suspend operator fun invoke(userlogin: DTLoginRequest): Resultado<DTLogin>? = repository.login(userlogin)
 }

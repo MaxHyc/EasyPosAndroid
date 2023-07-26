@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.devhyc.easypos"
-        minSdk 25
+        minSdk 26
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -31,16 +31,23 @@ android {
             applicationIdSuffix ".testing"
             versionNameSuffix "-testing"
             buildConfigField 'boolean', 'VERSION_TESTING', "true"
-            buildConfigField 'String', 'DIRECCION_URL', "\"https://192.168.1.18:9083/apidesa/\""
-            buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://api.testing.com.uy\""
+            buildConfigField 'String', 'DIRECCION_HYC',"\"http://www.hyc.uy/controlappsapi/api/\""
+            buildConfigField 'String', 'DIRECCION_URL', "\"https://hyc.uy\""
+            buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://plexo.com\""
             resValue "string","app_name","POS TESTING"
         }
         produccionVersion {
-            applicationId 'com.devhyc.easypos'
+            applicationId 'com.devhyc.easymanagementmobile'
             buildConfigField 'boolean', 'VERSION_TESTING', "false"
-            buildConfigField 'String', 'DIRECCION_URL', "\"https://192.168.1.18:9083/apidesa/\""
-            buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://api.plexo.com.uy\""
+            buildConfigField 'String', 'DIRECCION_HYC',"\"http://www.hyc.uy/controlappsapi/api/\""
+            buildConfigField 'String', 'DIRECCION_URL', "\"https://hyc.uy\""
+            buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://plexo.com\""
             resValue "string","app_name","Easy POS"
+            /*
+            https://192.168.1.18/controlappsapi/api/
+            direccion hyc http://www.hyc.uy/controlappsapi/api/
+            direccion URL https://hyc.uy
+            */
         }
     }
 
@@ -80,11 +87,12 @@ dependencies {
     //DaggerHilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    //
     //Utilizar Eventos swift de RecyclersView
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
     //lottie
     implementation "com.airbnb.android:lottie:3.4.0"
+    //Shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //IMPRESORA DE SUNMI

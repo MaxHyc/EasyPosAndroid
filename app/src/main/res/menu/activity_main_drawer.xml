@@ -5,7 +5,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/docFragment"
+            android:id="@+id/documentoPrincipalFragment"
             android:icon="@drawable/ic_pdv"
             android:title="@string/menu_pdv" />
         <item
@@ -17,7 +17,7 @@
             android:icon="@drawable/ic_baseline_currency_exchange_24"
             android:title="@string/menu_caja" />
         <item
-            android:id="@+id/nav_documentosFragment"
+            android:id="@+id/listaDeDocumentosFragment"
             android:icon="@drawable/ic_baseline_receipt_long_24"
             android:title="@string/menu_documentos" />
        <item android:title="Opciones">

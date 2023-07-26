@@ -9,101 +9,183 @@ import androidx.fragment.app.Fragment
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.devhyc.easymanagementmobile.ui.articulos.adapter.ItemArticuloAdapter
 import com.devhyc.easypos.R
-import com.devhyc.easypos.data.model.DTRubro
+import com.devhyc.easypos.data.model.DTDocDetalle
+import com.devhyc.easypos.data.model.DTFamiliaHija
+import com.devhyc.easypos.data.model.DTFamiliaPadre
 import com.devhyc.easypos.databinding.FragmentListaDeArticulosBinding
-import com.devhyc.easypos.ui.articulos.adapter.ArticuloAdapter
-import com.devhyc.easypos.ui.articulos.adapter.RubroAdapter
+import com.devhyc.easypos.ui.addarticulos.AddArticuloFragment
+import com.devhyc.easypos.ui.articulos.adapter.customSpinnerAdapter
+import com.devhyc.easypos.ui.articulos.adapter.customSpinnerSubFamiliaAdapter
+import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.integration.easyposkotlin.data.model.DTArticulo
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class ListaDeArticulosFragment : Fragment() {
+class ListaDeArticulosFragment() : Fragment() {
 
     private var _binding: FragmentListaDeArticulosBinding? = null
     private val binding get() = _binding!!
+    //View Model
+    private lateinit var ListaDeArticulosViewModel: ListaDeArticulosViewModel
     //
-    private lateinit var articulosViewModels: ListaDeArticulosViewModel
-    private var originalArrayListRub: ArrayList<DTRubro> = ArrayList()
-    //private lateinit var adapterArt: ArticuloAdapter
-    private lateinit var adapterRub: RubroAdapter
     //
-    private var tempArrayList: ArrayList<DTRubro> = ArrayList()
+    private lateinit var adapterSubFamilia: customSpinnerSubFamiliaAdapter
+    private lateinit var adapterFamilia: customSpinnerAdapter
 
-    override fun onPause() {
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
-        super.onPause()
+    private lateinit var adapterArticulos: ItemArticuloAdapter
+    //private var arrayArticulosSeleccionados: ArrayList<DTDocDetalle> = ArrayList()
+
+    private var originalArrayList: ArrayList<DTArticulo> = ArrayList()
+    private var filtradoArrayList: ArrayList<DTArticulo> = ArrayList()
+    //
+    //private var listaArticulos = listaItems
+
+    private var TextoBusqueda:String=""
+    private var CodigoSeleccionado:String=""
+
+    private var clickEnBuscar:Boolean=false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ListaDeArticulosViewModel.ListaArticulos.value = ArrayList<DTArticulo>()
+    }
+
+    override fun onResume() {
+        CargarTodo()
+        super.onResume()
+    }
+
+    fun CargarTodo()
+    {
+        //Cargar Articulos
+        binding.viewLoading.isVisible = true
+        binding.rvArticulos.isVisible = false
+        ListaDeArticulosViewModel.CargarFamilias()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        articulosViewModels = ViewModelProvider(this).get(ListaDeArticulosViewModel::class.java)
         // Inflate the layout for this fragment
+        ListaDeArticulosViewModel = ViewModelProvider(this)[com.devhyc.easypos.ui.articulos.ListaDeArticulosViewModel::class.java]
         _binding = FragmentListaDeArticulosBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //Buscar rubros
-        articulosViewModels.ListarRubros()
-        //Listado de Rubros
-        articulosViewModels.rubrosModel.observe(requireActivity(), Observer {
-            originalArrayListRub = it as ArrayList<DTRubro>
-            adapterRub = RubroAdapter(it)
-            adapterRub.setOnItemClickListener(object: RubroAdapter.onItemClickListener
-            {
-                override fun onItemClick(position: Int) {
-
-                }
-            })
-        })
-        //Carga finalizada Rubros
-        articulosViewModels.cargacompletaRubros.observe(requireActivity(), Observer {
-            if (it)
-            {
-                ListarRubros()
+        //CARGAR ARTICULOS YA EN LISTA
+        //arrayArticulosSeleccionados.addAll(Globales.documento_Items)
+        //Eventos Observer articulo
+        ListaDeArticulosViewModel.ListaArticulos.observe(viewLifecycleOwner, Observer {
+            try {
+                originalArrayList = it as ArrayList<DTArticulo>
+                adapterArticulos = ItemArticuloAdapter(ArrayList<DTArticulo>(it))
+                adapterArticulos.setOnItemClickListener(object: ItemArticuloAdapter.OnItemClickListener{
+                    override fun onItemClick(position: Int) {
+                        MostarDialogoAddArt(adapterArticulos.articulos[position])
+                    }
+                })
+                binding.rvArticulos.layoutManager = LinearLayoutManager(activity)
+                binding.rvArticulos.adapter = adapterArticulos
+                Snackbar.make(binding.messArtLayout,"${adapterArticulos.itemCount} artículos listados.", Snackbar.LENGTH_SHORT).setAnimationMode(
+                    BaseTransientBottomBar.ANIMATION_MODE_SLIDE
+                ).show()
+                binding.tvCantidadArticulosListado.text="Cantidad: ${adapterArticulos.itemCount}"
                 binding.viewLoading.isVisible = false
                 binding.rvArticulos.isVisible = true
             }
-            else
+            catch (e:Exception)
             {
-                MaterialAlertDialogBuilder(requireContext())
-                    //.setIcon(R.drawable.bombilla)
-                    .setTitle("¡Atención!")
-                    .setMessage("No se pudieron listar los artículos, verifique su conexión a internet")
-                    .show()
+                Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
             }
+        })
+
+        //Eventos Observer
+        ListaDeArticulosViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            if (it)
+                binding.shimmerSeleccionArt.visibility = View.VISIBLE
+            else
+                binding.shimmerSeleccionArt.visibility = View.GONE
+        })
+
+        //
+        binding.editTextTextPersonName8.addTextChangedListener {
+            filtrarArticulo(it.toString())
+        }
+
+        //Evento Observer del listado de familia
+        ListaDeArticulosViewModel.ListaFamilias.observe(viewLifecycleOwner, Observer {
+            try {
+                //Cargar Adaptador FAMILIAS
+                adapterFamilia = customSpinnerAdapter(requireContext(),ArrayList<DTFamiliaPadre>(it))
+                binding.spFamilia.adapter = adapterFamilia
+                //Evento seleccionar familia
+                binding.spFamilia.onItemSelectedListener = object:
+                    AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                    }
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        //Seleccionado
+                        val familia: DTFamiliaPadre = adapterFamilia.getItem(position)
+                        CodigoSeleccionado = familia.codigo
+                        filtarCodigo(familia.codigo)
+                        if (familia != null) {
+                            if (familia.subfamilias != null)
+                            {
+                                adapterSubFamilia = customSpinnerSubFamiliaAdapter(requireContext(),ArrayList<DTFamiliaHija>(familia.subfamilias))
+                                binding.spSubFamilia.adapter = adapterSubFamilia
+                                //
+                            }
+                        }
+                    }
+                }
+                //Evento seleccionar subfamilia
+                binding.spSubFamilia.onItemSelectedListener= object :
+                    AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        val subfamilia: DTFamiliaHija = adapterSubFamilia.getItem(position)
+                        //filtar("",codigofam + subfamilia.codigoSubFamilia)
+                        CodigoSeleccionado = subfamilia.codigo
+                        filtarCodigo(subfamilia.codigo)
+                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                    }
+                }
+            }
+            catch (e:Exception)
+            {
+                Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+        ListaDeArticulosViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {
+            AlertView.showAlert("¡Atención!",it,requireActivity())
         })
         //Esto es para que se muestren los botones en el AppBar
         setHasOptionsMenu(true)
         return root;
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun ListarRubros()
-    {
-        binding.rvArticulos.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvArticulos.adapter = adapterRub
-        //Toast.makeText(requireContext(),"${adapterRub.itemCount} rubros listados.", Toast.LENGTH_SHORT).show()
-        binding.tvCantidadArt.text="Cantidad: ${adapterRub.itemCount}"
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterRub.itemCount}"
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         val inflater = requireActivity().menuInflater
-
         inflater.inflate(R.menu.menu_busqueda, menu)
-
+        //Cuadro de busqueda superior
         val manager = requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchItem = menu.findItem(R.id.tvbusqueda)
         val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
@@ -112,86 +194,115 @@ class ListaDeArticulosFragment : Fragment() {
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener
         {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                searchView.clearFocus()
-                searchView.setQuery("",false)
-                searchItem.collapseActionView()
-                //
-                //Toast.makeText(requireActivity(),"Esta buscando $query",Toast.LENGTH_SHORT).show()
-                if (query != null) {
-                    filtar(query)
-                }
-                return true
+               /* searchView.clearFocus()
+                 searchView.setQuery("",false)
+                 searchItem.collapseActionView()
+                 //Toast.makeText(requireActivity(),"Esta buscando $query",Toast.LENGTH_SHORT).show()
+                 if (query != null) {
+                     TextoBusqueda = query
+                     filtarCodigo(CodigoSeleccionado)
+                     //filtar(query)
+                 }
+                 return true*/
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    filtar(newText)
+                    TextoBusqueda = newText
+                    filtrarArticulo(TextoBusqueda)
                 }
-                //Toast.makeText(requireActivity(),"Buscando: $newText",Toast.LENGTH_SHORT).show()
                 return false
             }
         }
         )
         super.onCreateOptionsMenu(menu, inflater)
+        //
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId)
         {
-            R.id.btnRecargarItems ->
+          /*  R.id.btnRecargarItems ->
             {
                 CargarTodo()
-            }
+            }*/
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun CargarTodo()
-    {
-        //Cargar Articulos
-        binding.viewLoading.isVisible = true
-        binding.rvArticulos.isVisible = false
-        articulosViewModels.ListarRubros()
-    }
-
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
-    private fun filtar(filtroDeTexto: String) {
+    private fun filtarCodigo(codigo: String) {
         try {
-            tempArrayList.clear()
-            if(filtroDeTexto.isNotEmpty())
-            {
-                originalArrayListRub.forEach{
-                    //POR CODIGO
-                    if(it.codigo.lowercase(Locale.getDefault()).contains(filtroDeTexto))
-                    {
-                        tempArrayList.add(it)
-                    }
-                    //POR NOMBRE
-                    if(it.nombre.toString().lowercase(Locale.getDefault()).contains(filtroDeTexto))
-                    {
-                        tempArrayList.add(it)
-                    }
-                    //POR IMPUESTO TASA
-                    if(it.impuestoTasa.toString().lowercase(Locale.getDefault()).contains(filtroDeTexto))
-                    {
-                        tempArrayList.add(it)
-                    }
-                }
-                adapterRub.articulos = tempArrayList
-                adapterRub.notifyDataSetChanged()
-            }
-            else
-            {
-                tempArrayList.clear()
-                tempArrayList.addAll(originalArrayListRub)
-                adapterRub.notifyDataSetChanged()
-            }
-            binding.tvCantidadArt.text="Cantidad: ${adapterRub.itemCount}"
-            (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterRub.itemCount}"
+            ListaDeArticulosViewModel.CargarArticulos(100,
+                Globales.DocumentoEnProceso.valorizado!!.listaPrecioCodigo,4,codigo)
         }
         catch (e:Exception)
         {
 
+        }
+    }
+
+    private fun filtrarArticulo(texto:String)
+    {
+        try {
+            if (texto.isNotEmpty())
+            {
+                filtradoArrayList.clear()
+                originalArrayList.forEach {
+                    if(texto.isNotEmpty())
+                    {
+                        if(it.nombre.lowercase(Locale.getDefault()).contains(texto))
+                        {
+                            filtradoArrayList.add(it)
+                        }
+                        if(it.codigo.lowercase(Locale.getDefault()).contains(texto))
+                        {
+                            filtradoArrayList.add(it)
+                        }
+                    }
+                    else
+                    {
+                        filtradoArrayList.add(it)
+                    }
+                }
+                adapterArticulos.articulos = filtradoArrayList
+                adapterArticulos.notifyDataSetChanged()
+            }
+            else
+            {
+                filtradoArrayList.clear()
+                filtradoArrayList.addAll(originalArrayList)
+                adapterArticulos.articulos = filtradoArrayList
+                adapterArticulos.notifyDataSetChanged()
+            }
+            binding.tvCantidadArticulosListado.setText("Cantidad: " + adapterArticulos.itemCount)
+        }
+        catch (e:Exception)
+        {
+
+        }
+    }
+
+    fun MostarDialogoAddArt(articulo: DTArticulo)
+    {
+        try {
+            val dialogoAdd = AddArticuloFragment(articulo) { detalle -> onDetalleSelected(detalle!!)}
+            dialogoAdd.show(parentFragmentManager,"AddArtListPos")
+        }
+        catch (e:Exception)
+        {
+            Toast.makeText(requireContext(),e.message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun onDetalleSelected(art:DTDocDetalle)
+    {
+        if (art != null)
+        {
+            Snackbar.make(binding.messArtLayout,"${art.descripcion} agregado", Snackbar.LENGTH_SHORT)
+                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show()
         }
     }
 }

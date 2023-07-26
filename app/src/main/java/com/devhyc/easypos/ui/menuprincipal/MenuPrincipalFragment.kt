@@ -3,10 +3,8 @@ package com.devhyc.easypos.ui.menuprincipal
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -23,6 +21,11 @@ class MenuPrincipalFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var dialog: AlertDialog
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
+    }
 
     override fun onResume() {
         Globales.EnPrincipal = true
@@ -93,7 +96,7 @@ class MenuPrincipalFragment : Fragment() {
             view?.findNavController()?.navigate(action)
         }
         binding.buttonIrDocumentos.setOnClickListener {
-            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToNavDocumentosFragment()
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToListaDeDocumentosFragment()
             view?.findNavController()?.navigate(action)
         }
         binding.buttonIrMovimientosCaja.setOnClickListener {
@@ -101,7 +104,7 @@ class MenuPrincipalFragment : Fragment() {
             view?.findNavController()?.navigate(action)
         }
         binding.buttonIrPuntoDeVenta.setOnClickListener {
-            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToDocFragment()
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToDocumentoPrincipalFragment()
             view?.findNavController()?.navigate(action)
         }
         binding.btnIntegradores.setOnClickListener {
@@ -123,6 +126,8 @@ class MenuPrincipalFragment : Fragment() {
                     dialogInterface, i ->
                 run {
                     Globales.UsuarioLoggueado = null
+                    Globales.Deposito = null
+                    GuardarEstadoLogin("","",false)
                     startActivity(Intent(requireActivity(), LoginActivity::class.java))
                 }
             })
@@ -132,5 +137,17 @@ class MenuPrincipalFragment : Fragment() {
             .setCancelable(true)
             .setOnCancelListener { "Cancelar" }
             .show()
+    }
+
+    fun GuardarEstadoLogin(user:String,password:String,valorSesion:Boolean)
+    {
+        val editor = Globales.sharedPreferences.edit()
+        editor.putString("usuarioanterior",user)
+        editor.putString("passanterior",password)
+        editor.putBoolean("sesionviva",valorSesion)
+        editor.commit()
+        Globales.SesionViva = false
+        Globales.UsuarioAnterior = ""
+        Globales.PassAnterior = ""
     }
 }

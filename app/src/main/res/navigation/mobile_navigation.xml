@@ -38,15 +38,6 @@
             app:popUpTo="@id/nav_cajaFragment" />
     </fragment>
     <fragment
-        android:id="@+id/nav_documentosFragment"
-        android:name="com.devhyc.easypos.ui.documentos.DocumentosFragment"
-        android:label="@string/menu_documentos"
-        tools:layout="@layout/fragment_documentos" >
-        <action
-            android:id="@+id/action_nav_documentosFragment_to_documentoVistaFragment"
-            app:destination="@id/documentoVistaFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/ingresoRetiroFragment"
         android:name="com.devhyc.easypos.ui.ingresoretiro.IngresoRetiroFragment"
         android:label="fragment_ingreso_retiro"
@@ -67,51 +58,6 @@
             app:argType="integer" />
     </fragment>
     <fragment
-        android:id="@+id/docFragment"
-        android:name="com.devhyc.easypos.ui.documento.DocFragment"
-        android:label="@string/menu_pdv"
-        tools:layout="@layout/fragment_doc">
-        <action
-            android:id="@+id/docToItemDoc"
-            app:destination="@id/itemDocFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:launchSingleTop="true"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/docFragment" />
-        <action
-            android:id="@+id/docToCabezal"
-            app:destination="@id/cabezalFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:launchSingleTop="true"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/docFragment" />
-        <action
-            android:id="@+id/action_docFragment_to_observacionesFragment"
-            app:destination="@id/observacionesFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/docFragment" />
-        <action
-            android:id="@+id/action_docFragment_to_cobroFragment"
-            app:destination="@id/cobroFragment" />
-        <action
-            android:id="@+id/action_docFragment_to_medioPagoFragment"
-            app:destination="@id/medioPagoFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/observacionesFragment"
-        android:name="com.devhyc.easypos.ui.observaciones.ObservacionesFragment"
-        android:label="Observaciones"
-        tools:layout="@layout/fragment_observaciones"/>
-    <fragment
-        android:id="@+id/itemDocFragment"
-        android:name="com.devhyc.easypos.ui.itemDoc.ItemDocFragment"
-        android:label="Agregar Item"
-        tools:layout="@layout/fragment_item_doc"/>
-    <fragment
         android:id="@+id/cabezalFragment"
         android:name="com.devhyc.easypos.ui.cabezal.CabezalFragment"
         android:label="Cliente"
@@ -131,16 +77,6 @@
         android:name="com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragment"
         android:label="Menu Principal"
         tools:layout="@layout/fragment_menu_principal">
-        <action
-            android:id="@+id/action_menuPrincipalFragment_to_docFragment"
-            app:destination="@id/docFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/menuPrincipalFragment" />
-        <action
-            android:id="@+id/action_menuPrincipalFragment_to_nav_documentosFragment"
-            app:destination="@id/nav_documentosFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/menuPrincipalFragment" />
         <action
             android:id="@+id/action_menuPrincipalFragment_to_nav_cajaFragment"
             app:destination="@id/nav_cajaFragment"
@@ -166,6 +102,12 @@
             app:destination="@id/masOpcionesFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_listaDeDocumentosFragment"
+            app:destination="@id/listaDeDocumentosFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_documentoPrincipalFragment"
+            app:destination="@id/documentoPrincipalFragment" />
     </fragment>
     <fragment
         android:id="@+id/conexionImpresora"
@@ -187,7 +129,9 @@
         tools:layout="@layout/fragment_medio_pago" >
         <action
             android:id="@+id/action_medioPagoFragment_to_pagoTarjetaFragment"
-            app:destination="@id/pagoTarjetaFragment" />
+            app:destination="@id/pagoTarjetaFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/medioPagoFragment" />
     </fragment>
     <fragment
         android:id="@+id/reporteDeCajaFragment"
@@ -202,7 +146,17 @@
         android:id="@+id/documentoVistaFragment"
         android:name="com.devhyc.easypos.ui.documentovista.DocumentoVistaFragment"
         android:label="Ticket Vista"
-        tools:layout="@layout/fragment_documento_vista" />
+        tools:layout="@layout/fragment_documento_vista" >
+        <argument
+            android:name="terminal"
+            app:argType="string" />
+        <argument
+            android:name="tipodoc"
+            app:argType="string" />
+        <argument
+            android:name="nrodoc"
+            app:argType="long" />
+    </fragment>
     <fragment
         android:id="@+id/masOpcionesFragment"
         android:name="com.devhyc.easypos.ui.masopciones.MasOpcionesFragment"
@@ -213,4 +167,28 @@
         android:name="com.devhyc.easypos.ui.pagoTarjeta.PagoTarjetaFragment"
         android:label="Pago con tarjeta"
         tools:layout="@layout/fragment_pago_tarjeta" />
+    <fragment
+        android:id="@+id/listaDeDocumentosFragment"
+        android:name="com.devhyc.easypos.ui.listadodocumentos.ListaDeDocumentosFragment"
+        android:label="@string/menu_documentos"
+        tools:layout="@layout/fragment_lista_de_documentos">
+        <action
+            android:id="@+id/action_listaDeDocumentosFragment_to_documentoVistaFragment"
+            app:destination="@id/documentoVistaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/documentoPrincipalFragment"
+        android:name="com.devhyc.easypos.ui.documento.DocumentoPrincipalFragment"
+        android:label="fragment_documento_principal"
+        tools:layout="@layout/fragment_documento_principal" >
+        <action
+            android:id="@+id/action_documentoPrincipalFragment_to_cabezalFragment"
+            app:destination="@id/cabezalFragment" />
+        <action
+            android:id="@+id/action_documentoPrincipalFragment_to_cobroFragment"
+            app:destination="@id/cobroFragment" />
+        <action
+            android:id="@+id/action_documentoPrincipalFragment_to_listaDeArticulosFragment"
+            app:destination="@id/listaDeArticulosFragment" />
+    </fragment>
 </navigation>

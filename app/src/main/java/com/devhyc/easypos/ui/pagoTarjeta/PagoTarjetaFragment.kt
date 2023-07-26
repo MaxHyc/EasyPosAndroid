@@ -12,10 +12,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.devhyc.easypos.R
+import com.devhyc.easypos.data.model.DTMedioPagoAceptado
 import com.devhyc.easypos.databinding.FragmentMedioPagoBinding
 import com.devhyc.easypos.databinding.FragmentPagoTarjetaBinding
 import com.devhyc.easypos.integracion_sunmi.util.ByteUtil
@@ -82,11 +87,10 @@ class PagoTarjetaFragment : Fragment() {
 
             Globales.mEMVOptV2.abortTransactProcess()
             Globales.mEMVOptV2.initEmvProcess()
-
+            //60
             Globales.mReadCardOptV2.checkCard(cardType, mCheckCardCallback, 60)
 
-            //Toast.makeText(requireContext(),"PRESENTE LA TARJETA, PASE POR BANDA O INSERTE CHIP",
-                //Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"PRESENTE LA TARJETA, PASE POR BANDA O INSERTE CHIP", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             //e.printStackTrace()
             Snackbar.make(requireView(),"Error al iniciar hardware lector de tarjetas",
@@ -196,6 +200,8 @@ class PagoTarjetaFragment : Fragment() {
 
     private val mEMVCallback = object : EMVCallback(){
 
+
+
         override fun onWaitAppSelect(p0: MutableList<EMVCandidateV2>?, p1: Boolean) {
             super.onWaitAppSelect(p0, p1)
 
@@ -260,23 +266,6 @@ class PagoTarjetaFragment : Fragment() {
 
             }
 
-            /////////////////////////////////////////////////////////
-            Thread.sleep(3000)
-
-            activity!!.runOnUiThread{
-                binding.animationWelcome.isVisible = false
-                binding.animationloading.isVisible = false
-                binding.animationsuccess.isVisible = true
-                binding.tvDescripcionTarjeta.text = "Venta confirmada"
-            }
-
-            Thread.sleep(3000)
-
-            activity!!.runOnUiThread{
-                findNavController().popBackStack()
-            }
-            /////////////////////////////////////////////////////////
-
             Globales.mEMVOptV2.importAppFinalSelectStatus(0)
         }
 
@@ -323,10 +312,21 @@ class PagoTarjetaFragment : Fragment() {
             super.onTransResult(p0, p1)
             //Code = 0 (Success)
             Log.e("dd--", "onTransResult code:$p0 desc:$p1")
-            requireActivity().runOnUiThread{
-                binding.animationWelcome.isVisible = false
-                binding.animationloading.isVisible = true
-                binding.tvDescripcionTarjeta.text = "Código: $p0 \n $p1"
+            if (p0 == 0)
+            {
+                //Exito
+                /////////////////////////////////////////////////////////
+                FinalizarTransaccion()
+                /////////////////////////////////////////////////////////
+            }
+            else
+            {
+                requireActivity().runOnUiThread{
+                    binding.animationWelcome.isVisible = false
+                    binding.animationloading.isVisible = false
+                    binding.animationerror.isVisible = true
+                    binding.tvDescripcionTarjeta.text = "Código: $p0 \n $p1"
+                }
             }
         }
     }
@@ -361,6 +361,10 @@ class PagoTarjetaFragment : Fragment() {
             if (p1 != null) {
                 val hexStr = ByteUtil.bytes2HexStr(p1)
                 Log.e("dd--", "onConfirm pin block:$hexStr")
+                activity!!.runOnUiThread {
+                    Toast.makeText(activity, "onConfirm pin block:$hexStr", Toast.LENGTH_LONG)
+                        .show()
+                }
                 importPinInputStatus(0)
             }else{
                 importPinInputStatus(2)
@@ -370,12 +374,18 @@ class PagoTarjetaFragment : Fragment() {
         override fun onCancel() {
             super.onCancel()
             Log.e("dd--", "onCancel")
+            activity!!.runOnUiThread {
+                Toast.makeText(activity, "Cancelando transacción", Toast.LENGTH_LONG).show()
+            }
             importPinInputStatus(1)
         }
 
         override fun onError(p0: Int) {
             super.onError(p0)
             Log.e("dd--", "onError: ${AidlErrorCode.valueOf(p0).msg}")
+            activity!!.runOnUiThread{
+                Toast.makeText(activity,"Error: ${AidlErrorCode.valueOf(p0).msg}",Toast.LENGTH_LONG).show()
+            }
             importPinInputStatus(3)
         }
 
@@ -468,6 +478,38 @@ class PagoTarjetaFragment : Fragment() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun FinalizarTransaccion()
+    {
+        try
+        {
+            /////////////////////////////////////////////////////////
+            Thread.sleep(3000)
+
+            requireActivity().runOnUiThread{
+                binding.animationWelcome.isVisible = false
+                binding.animationloading.isVisible = false
+                binding.animationsuccess.isVisible = true
+                binding.tvDescripcionTarjeta.text = "Venta confirmada"
+            }
+
+            Thread.sleep(3000)
+
+            //TRANSACCION FINALIZADA
+            requireActivity().runOnUiThread{
+                var pagoaprobado = DTMedioPagoAceptado("tarjeta","3",0.0,0.0)
+                Globales.PagoTarjetaAprobado = pagoaprobado
+                var p:Boolean = true
+                setFragmentResult("tarjeta", bundleOf("tarjeta" to p))
+                view?.findNavController()?.navigateUp()
+            }
+            /////////////////////////////////////////////////////////
+        }
+        catch (e:Exception)
+        {
+
         }
     }
 

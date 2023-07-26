@@ -19,7 +19,7 @@
     <uses-permission android:name="com.sunmi.perm.CONTACTLESS_CARD" />
 
     <application
-        android:name="com.devhyc.easypos.EasyManagementMobile"
+        android:name="com.devhyc.easypos.EasyPos"
         android:allowBackup="true"
         android:icon="@drawable/pos2"
         android:label="@string/app_name"

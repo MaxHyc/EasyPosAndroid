@@ -53,7 +53,7 @@ class ItemMedioPago(var mediosDepago:ArrayList<DTMedioPago>): RecyclerView.Adapt
             try
             {
                 binding.tvNombreMedioPago.text = i.Nombre
-                binding.imgSeleccionado.isVisible = i.seleccionado
+                //binding.imgSeleccionado.isVisible = i.seleccionado
             }
             catch (e: Exception)
             {

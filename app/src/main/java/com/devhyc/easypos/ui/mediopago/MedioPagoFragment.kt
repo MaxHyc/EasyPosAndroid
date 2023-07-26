@@ -1,48 +1,31 @@
 package com.devhyc.easypos.ui.mediopago
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTMedioPago
+import com.devhyc.easypos.data.model.DTMedioPagoAceptado
 import com.devhyc.easypos.databinding.FragmentMedioPagoBinding
-import com.devhyc.easypos.integracion_sunmi.util.ByteUtil
-import com.devhyc.easypos.integracion_sunmi.util.TLV
-import com.devhyc.easypos.integracion_sunmi.util.TLVUtil
-import com.devhyc.easypos.ui.caja.CajaFragmentDirections
 import com.devhyc.easypos.ui.mediopago.adapter.ItemMedioPago
+import com.devhyc.easypos.ui.pagoTarjeta.adapter.ItemPagoAceptadoAdapter
 import com.devhyc.easypos.utilidades.Globales
-import com.devhyc.easypos.utilidades.Globales.*
+import com.devhyc.jamesmobile.ui.documento.adapter.ItemDocTouchHelper
 import com.google.android.material.snackbar.Snackbar
-import com.snor.sunmicardreader.Callback.CheckCardCallback
-import com.snor.sunmicardreader.Callback.EMVCallback
-import com.snor.sunmicardreader.Callback.PinPadCallback
-import com.sunmi.pay.hardware.aidl.AidlConstants
-import com.sunmi.pay.hardware.aidl.AidlErrorCode
-import com.sunmi.pay.hardware.aidlv2.bean.EMVCandidateV2
-import com.sunmi.pay.hardware.aidlv2.bean.EMVTransDataV2
-import com.sunmi.pay.hardware.aidlv2.bean.PinPadConfigV2
-import com.sunmi.pay.hardware.aidlv2.readcard.CheckCardCallbackV2
 import dagger.hilt.android.AndroidEntryPoint
-import hilt_aggregated_deps._com_devhyc_easypos_ui_mediopago_MedioPagoFragmentViewModel_HiltModules_BindsModule
-import sunmi.paylib.SunmiPayKernel
-import java.nio.charset.StandardCharsets
-import java.util.HashMap
-
 
 @AndroidEntryPoint
 class MedioPagoFragment : DialogFragment() {
@@ -52,8 +35,10 @@ class MedioPagoFragment : DialogFragment() {
     private lateinit var MedioPViewModel: MedioPagoFragmentViewModel
     //
     private lateinit var adapterMediosDePagos: ItemMedioPago
+    private lateinit var adapterPagosAceptados: ItemPagoAceptadoAdapter
     //
     private lateinit var _pagoSeleccionado:DTMedioPago
+    private lateinit var ListPagosAceptados:ArrayList<DTMedioPagoAceptado>
     //
     private var TotalDeVenta:Double = 1200.0
     private var PagoDeVenta:Double = 0.0
@@ -69,10 +54,22 @@ class MedioPagoFragment : DialogFragment() {
         //Selecciona pesos por defecto
         //binding.radioPesos.isChecked = true
         //Llamar al listar
+        ListPagosAceptados = ArrayList()
 
         //Abrir teclado forzosamente
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        //
+
+        adapterPagosAceptados = ItemPagoAceptadoAdapter(ListPagosAceptados)
+        adapterPagosAceptados.setOnItemClickListener(object: ItemPagoAceptadoAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int) {
+
+            }
+        })
+        binding.rvPagosAcumulados.layoutManager = LinearLayoutManager(activity)
+        binding.rvPagosAcumulados.adapter = adapterPagosAceptados
+
         //
 
         binding.tvMedioPagoTotalVenta.text = TotalDeVenta.toString()
@@ -105,16 +102,20 @@ class MedioPagoFragment : DialogFragment() {
             //
             binding.rvMediosDePago.layoutManager = LinearLayoutManager(activity)
             binding.rvMediosDePago.adapter = adapterMediosDePagos
+            //
+            binding.flAceptarMedio.isEnabled = true
         })
         //Boton aceptar medio de pago
         binding.flAceptarMedio.setOnClickListener {
             if (_pagoSeleccionado != null)
             {
+                //SI ES EFECTIVO
                 if(_pagoSeleccionado.Tipo == "1")
                 {
                     //EFECTIVO
                     AgregarMedio()
                 }
+                //SI ES TARJETA
                 else if (_pagoSeleccionado.Tipo == "3")
                 {
                     val action = MedioPagoFragmentDirections.actionMedioPagoFragmentToPagoTarjetaFragment()
@@ -125,10 +126,6 @@ class MedioPagoFragment : DialogFragment() {
                     checkCard(cardType)*/
                 }
             }
-        }
-        //Boton Cancelar medio de pago
-        binding.flCancelarMedio.setOnClickListener {
-            EliminarMedio()
         }
         //Boton Finalizar la venta
         binding.flFinalizarVenta.setOnClickListener {
@@ -158,6 +155,63 @@ class MedioPagoFragment : DialogFragment() {
                 return false
             }
         })
+        //Evento Swipe
+        val itemDocTouchHelper = object: ItemDocTouchHelper(requireContext())
+        {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                when(direction)
+                {
+                    ItemTouchHelper.LEFT ->{
+
+                        var pago=adapterPagosAceptados.items[viewHolder.adapterPosition]
+
+                        //SI ES EFECTIVO
+                        if (pago.Tipo == "1")
+                        {
+                            ListPagosAceptados.remove(adapterPagosAceptados.items[viewHolder.adapterPosition])
+                            Snackbar.make(requireView(),"Pago eliminado", Snackbar.LENGTH_SHORT)
+                                .setTextColor(resources.getColor(R.color.white))
+                                .setBackgroundTint(resources.getColor(R.color.red))
+                                .setAction("Cerrar",{})
+                                .show()
+                            adapterPagosAceptados.notifyDataSetChanged()
+                            EliminarMedio()
+                        }
+                        //SI ES TARJETA
+                        else if (pago.Tipo == "3")
+                        {
+                            Snackbar.make(requireView(),"No puede eliminar un pago con tarjeta", Snackbar.LENGTH_SHORT)
+                                .setTextColor(resources.getColor(R.color.white))
+                                .setBackgroundTint(resources.getColor(R.color.red))
+                                .setAction("Cerrar",{})
+                                .show()
+                            adapterPagosAceptados.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+        }
+        val touchHelper = ItemTouchHelper(itemDocTouchHelper)
+        touchHelper.attachToRecyclerView(binding.rvPagosAcumulados)
+        //
+        setFragmentResultListener("tarjeta") { key, bundle ->
+            val result = bundle.getBoolean("tarjeta")
+            //FINALIZA LA VENTA POR TARJETA
+            if (result) {
+                ListPagosAceptados.add(Globales.PagoTarjetaAprobado)
+                adapterPagosAceptados.notifyDataSetChanged()
+                //Ocultar lista
+                binding.rvMediosDePago.visibility = View.GONE
+                binding.rvPagosAcumulados.visibility = View.VISIBLE
+                //Ubicar boton Finalizar
+                binding.etMontoParaMpagos.isEnabled = false
+                binding.flFinalizarVenta.isVisible = true
+                binding.flAceptarMedio.visibility = View.GONE
+                //TOCO ACEPTAR AUTOMATICAMENTE
+                binding.flFinalizarVenta.performClick()
+            }
+        }
+        //
         return root
     }
 
@@ -174,14 +228,33 @@ class MedioPagoFragment : DialogFragment() {
                 }
                 else
                 {
+                    //Muestro el cambio
+                    Cambio =PagoDeVenta - TotalDeVenta
+                    if (Cambio > 0)
+                    {
+                        binding.tvMedioPagoCambio.text = Cambio.toString()
+                        binding.cardCambio.isVisible = true
+                    }
+                    if (PagoDeVenta >= TotalDeVenta)
+                    {
+                        binding.etMontoParaMpagos.isEnabled = false
+                    }
                     //
+                    ListPagosAceptados.add(DTMedioPagoAceptado(_pagoSeleccionado.Nombre,_pagoSeleccionado.Tipo,PagoDeVenta,Cambio))
+                    adapterPagosAceptados.notifyDataSetChanged()
+                    //
+                    binding.rvMediosDePago.isVisible = false
                     binding.flAceptarMedio.isVisible = false
+                    binding.rvPagosAcumulados.isVisible = true
+                    binding.flFinalizarVenta.isVisible = true
+                    //
+                   /* binding.flAceptarMedio.isVisible = false
                     binding.flFinalizarVenta.isVisible = true
                     binding.flCancelarMedio.isVisible = true
                     binding.cardCambio.isVisible = true
                     binding.cardPagos.isVisible = true
                     binding.rvMediosDePago.isVisible = false
-                    binding.btnMultiPagos.isVisible = false
+                    //binding.btnMultiPagos.isVisible = false
                     //
                     binding.tvMedioPagoSeleccionado.text = _pagoSeleccionado.Nombre
                     //
@@ -190,7 +263,7 @@ class MedioPagoFragment : DialogFragment() {
                     if (PagoDeVenta >= TotalDeVenta)
                     {
                         binding.etMontoParaMpagos.isEnabled = false
-                    }
+                    }*/
                 }
                 //
             }
@@ -209,16 +282,24 @@ class MedioPagoFragment : DialogFragment() {
     fun EliminarMedio()
     {
         try {
-            //_pagoSeleccionado = DTMedioPago()
             _pagoSeleccionado = adapterMediosDePagos.mediosDepago[0]
-            binding.flCancelarMedio.isVisible = false
             binding.flFinalizarVenta.isVisible = false
             binding.cardCambio.isVisible = false
-            binding.cardPagos.isVisible = false
             //
             binding.etMontoParaMpagos.isEnabled = true
             binding.flAceptarMedio.isVisible = true
-            binding.rvMediosDePago.isVisible = true
+            //
+            if (adapterPagosAceptados.items.isEmpty())
+            {
+                binding.rvMediosDePago.visibility = View.VISIBLE
+                binding.rvPagosAcumulados.visibility = View.GONE
+            }
+            else
+            {
+                binding.rvMediosDePago.visibility = View.GONE
+                binding.rvPagosAcumulados.visibility = View.VISIBLE
+            }
+
         }
         catch (e:Exception)
         {

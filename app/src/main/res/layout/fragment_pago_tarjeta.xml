@@ -97,13 +97,13 @@
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/animationmaster"
                         android:layout_width="100dp"
-                        android:layout_height="40dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_margin="10dp"
                         android:visibility="gone"
                         app:lottie_autoPlay="true"
                         app:lottie_loop="true"
-                        app:lottie_rawRes="@raw/mastercard"
+                        app:lottie_rawRes="@raw/mastercard3"
                         tools:ignore="MissingConstraints" />
 
                     <TextView

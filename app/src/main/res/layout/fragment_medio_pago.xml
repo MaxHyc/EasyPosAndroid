@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
-                android:text="9999"
+                android:text="0"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -91,28 +91,6 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardPagos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:visibility="gone"
-        app:cardBackgroundColor="@color/azulmarino"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardCambio">
-
-        <TextView
-            android:id="@+id/tvMedioPagoSeleccionado"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center_horizontal"
-            android:text="MEDIO DE PAGO SELECCIONADO"
-            android:textColor="@color/white" />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
         android:id="@+id/cardCambio"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -160,33 +138,36 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:clickable="true"
+        android:enabled="false"
         android:src="@drawable/ic_baseline_add_box_24"
         app:backgroundTint="@color/colorMercadoPago"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPagosAcumulados"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:background="@color/rosado"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/flAceptarMedio"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardCambio" />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMediosDePago"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnMultiPagos"
+        android:background="@color/gray"
+        app:layout_constraintBottom_toTopOf="@+id/flAceptarMedio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardPagos">
+        app:layout_constraintTop_toBottomOf="@+id/cardCambio">
 
     </androidx.recyclerview.widget.RecyclerView>
-
-    <Button
-        android:id="@+id/btnMultiPagos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="16dp"
-        android:text="Multi pagos"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/flFinalizarVenta"
@@ -198,17 +179,5 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/flAceptarMedio"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/flCancelarMedio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:src="@drawable/ic_close"
-        android:visibility="gone"
-        app:backgroundTint="@color/blackred"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

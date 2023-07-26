@@ -1,44 +1,35 @@
 package com.devhyc.easypos.ui.articulos
 
-import android.provider.Settings
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devhyc.easypos.data.model.DTRubro
-import com.devhyc.easypos.domain.GetArticulosFiltradoUseCase
-import com.devhyc.easypos.domain.GetArticulosRubrosUseCase
-import com.devhyc.easypos.domain.GetArticulosUseCase
-import com.devhyc.easypos.domain.GetTerminalUseCase
-import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.easypos.data.model.DTFamiliaPadre
+import com.devhyc.easypos.data.model.DTMedioPago
+import com.devhyc.easypos.domain.GetArticulosFiltradosUseCase
+import com.devhyc.easypos.domain.GetFamiliasUseCase
 import com.integration.easyposkotlin.data.model.DTArticulo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: GetArticulosUseCase,val getArticulosFiltradoUseCase: GetArticulosFiltradoUseCase, val getArticulosRubrosUseCase: GetArticulosRubrosUseCase) : ViewModel() {
-
-    val rubrosModel = MutableLiveData<List<DTRubro>>()
+class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetFamiliasUseCase, val getArticulosFiltradosUseCase: GetArticulosFiltradosUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
-    //val articulosModel = MutableLiveData<List<DTArticulo>>()
-    //val cargacompletaArticulos = MutableLiveData<Boolean>()
-    val cargacompletaRubros = MutableLiveData<Boolean>()
+    val ListaFamilias = MutableLiveData<List<DTFamiliaPadre>>()
+    val ListaArticulos = MutableLiveData<List<DTArticulo>>()
+    val mensajeDelServer = MutableLiveData<String>()
+    val mcargando = MutableLiveData<Boolean>()
 
-    fun ListarRubros() {
+    fun CargarFamilias() {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getArticulosRubrosUseCase()
+                val result = getFamiliasUseCase()
                 if (result != null)
                 {
                     if (result.ok)
                     {
-                        rubrosModel.postValue(result.elemento!!)
-                        cargacompletaRubros.postValue(true)
-                    }
-                    else
-                    {
-                        cargacompletaRubros.postValue(false)
+                        ListaFamilias.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)
@@ -50,21 +41,17 @@ class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: Get
         }
     }
 
-  /*  fun ListarArticulos() {
+    fun CargarArticulos(cantidad:Int,listaPecio:String,tipo:Int,valorBusqueda:String)
+    {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getArticulosUseCase(Globales.CantidadAListar,Globales.ListaDePrecioAListar)
+                val result = getArticulosFiltradosUseCase(cantidad, listaPecio,tipo,valorBusqueda)
                 if (result != null)
                 {
                     if (result.ok)
                     {
-                        articulosModel.postValue(result.elemento!!)
-                        cargacompletaArticulos.postValue(true)
-                    }
-                    else
-                    {
-                        cargacompletaArticulos.postValue(false)
+                        ListaArticulos.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)
@@ -75,30 +62,4 @@ class ListaDeArticulosViewModel @Inject constructor(val getArticulosUseCase: Get
             isLoading.postValue(false)
         }
     }
-
-    fun ListarArticulosFiltrado(tipoBusqueda:Int,filtro:String) {
-        try {
-            viewModelScope.launch {
-                isLoading.postValue(true)
-                val result = getArticulosFiltradoUseCase(Globales.CantidadAListar,Globales.ListaDePrecioAListar,tipoBusqueda,filtro)
-                if (result != null)
-                {
-                    if (result.ok)
-                    {
-                        articulosModel.postValue(result.elemento!!)
-                        cargacompletaArticulos.postValue(true)
-                    }
-                    else
-                    {
-                        cargacompletaArticulos.postValue(false)
-                    }
-                }
-                isLoading.postValue(false)
-            }
-        }
-        catch (e:Exception)
-        {
-            isLoading.postValue(false)
-        }
-    }*/
 }

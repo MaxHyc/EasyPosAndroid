@@ -19,6 +19,11 @@ public class AlertView
         mostrarAlerta(title, message, ctx,R.drawable.atencion);
     }
 
+    public static void showServerError(String title, String message, Context ctx)
+    {
+        mostrarAlerta(title, message, ctx, R.drawable.ic_borrar);
+    }
+
     public static void showOk(String title, String message, Context ctx)
     {
         mostrarAlerta(title,message, ctx, R.drawable.exito);

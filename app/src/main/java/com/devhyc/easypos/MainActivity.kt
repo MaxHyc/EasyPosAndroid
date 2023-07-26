@@ -1,14 +1,10 @@
 package com.devhyc.easypos
 
 import EmvUtil
-import com.sunmi.pay.hardware.aidlv2.emv.EMVOptV2
-import com.sunmi.pay.hardware.aidlv2.pinpad.PinPadOptV2
-import com.sunmi.pay.hardware.aidlv2.readcard.ReadCardOptV2
 import sunmi.paylib.SunmiPayKernel
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -24,6 +20,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.navigation.ui.*
 import com.devhyc.easypos.databinding.ActivityMainBinding
 import com.devhyc.easypos.ui.login.LoginActivity
@@ -39,8 +36,11 @@ class MainActivity : AppCompatActivity() {
     var REQUEST: Int = 200
     lateinit var navView: NavigationView
     lateinit var dialog: AlertDialog
-
     lateinit var nav_Menu:Menu
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+    }
 
     override fun onStart() {
         super.onStart()
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             EmvUtil().init()
         } catch (e: Exception)
         {
-            AlertView.showAlert("No se pudo inicier los lectores de tarjetas","No se pudo iniciar los lectores de tarjetas",this)
+            AlertView.showAlert("No se pudo iniciar los lectores de tarjetas","No se pudo iniciar los lectores de tarjetas",this)
         }
     }
 
@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.appBarMain.toolbar)
-
         //
+        VerificarPermisos()
         //Permisos de la App
         ActivityCompat.requestPermissions(
             this, arrayOf(
@@ -86,11 +86,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.menuPrincipalFragment,
-                R.id.docFragment,
-                R.id.listaDeArticulosFragment,
-                R.id.nav_cajaFragment,
-                R.id.nav_documentosFragment,
-                R.id.masOpcionesFragment
+                R.id.documentoPrincipalFragment,
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -104,7 +100,8 @@ class MainActivity : AppCompatActivity() {
         super.onPostResume()
         if (Globales.CerrarApp)
         {
-            finishAndRemoveTask()
+            Globales.CerrarApp = false
+            finishAffinity()
         }
         //Cargar datos del cabezal
         if (navView!=null)
@@ -132,7 +129,9 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Si", DialogInterface.OnClickListener {
                     dialogInterface, i ->
                 run {
+                    Globales.Deposito = null
                     Globales.UsuarioLoggueado = null
+                    GuardarEstadoLogin("","",false)
                     startActivity(Intent(this, LoginActivity::class.java))
                 }
             })
@@ -142,6 +141,18 @@ class MainActivity : AppCompatActivity() {
             .setCancelable(true)
             .setOnCancelListener { "Cancelar" }
             .show()
+    }
+
+    fun GuardarEstadoLogin(user:String,password:String,valorSesion:Boolean)
+    {
+        val editor = Globales.sharedPreferences.edit()
+        editor.putString("usuarioanterior",user)
+        editor.putString("passanterior",password)
+        editor.putBoolean("sesionviva",valorSesion)
+        editor.commit()
+        Globales.SesionViva = false
+        Globales.UsuarioAnterior = ""
+        Globales.PassAnterior = ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -168,6 +179,9 @@ class MainActivity : AppCompatActivity() {
             {
                 Globales.ControladoraSunMi.InstanciarSunMi(this)
             }
+            Globales.SesionViva = Globales.sharedPreferences.getBoolean("sesionviva",false)
+            Globales.UsuarioAnterior = Globales.sharedPreferences.getString("usuarioanterior","")
+            Globales.PassAnterior = Globales.sharedPreferences.getString("passanterior","")
         }
         catch (e: Exception)
         {
@@ -208,6 +222,59 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    fun VerificarPermisos()
+    {
+        //Ubicacion
+        var permisoCoarse = ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)
+        var permisoFine = ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)
+        //Bluetooth
+        var permisoBluetooth = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH)
+        var permisoBluetooth_Admin = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)
+        var permisoBluetooth_Scan = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_SCAN)
+        var permisoBluetooth_Connect = ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT)
+        var permisoBluetooth_Advertice= ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADVERTISE)
+        //
+        /* if (permisoBackground == PackageManager.PERMISSION_GRANTED)
+         //Toast.makeText(this,"Permiso Background Concedido",Toast.LENGTH_SHORT).show()
+         else
+             requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION), REQUEST)*/
+        //
+        if (permisoCoarse == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso Coarse Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST)
+        //
+        if (permisoFine == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso Fine Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST)
+        //
+        if (permisoBluetooth == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso Bluetooth Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH), REQUEST)
+        //
+        if (permisoBluetooth_Admin == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso BAdmin Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_ADMIN), REQUEST)
+        //
+        if (permisoBluetooth_Scan == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso Bscan Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), REQUEST)
+        //
+        if (permisoBluetooth_Connect == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso Bconnect Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT), REQUEST)
+        //
+        if (permisoBluetooth_Advertice == PackageManager.PERMISSION_GRANTED)
+        //Toast.makeText(this,"Permiso bAdvertice Concedido",Toast.LENGTH_SHORT).show()
+        else
+            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_ADVERTISE), REQUEST)
     }
 
     /*private var mReadCardOptV2: ReadCardOptV2 = Globales.mReadCardOptV2!!

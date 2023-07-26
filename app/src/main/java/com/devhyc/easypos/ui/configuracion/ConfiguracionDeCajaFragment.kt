@@ -40,8 +40,6 @@ class ConfiguracionDeCajaFragment : Fragment() {
     private fun CargarOpciones()
     {
         try {
-            binding.etNroCaja.setText(Globales.NroCaja)
-            binding.etDireccionServidor.setText(Globales.DireccionServidor)
             when(Globales.ImpresionSeleccionada)
             {
                 Globales.eTipoImpresora.BLUETOOTH.codigo -> {
@@ -62,8 +60,6 @@ class ConfiguracionDeCajaFragment : Fragment() {
     {
         try {
             val editor : SharedPreferences.Editor = Globales.sharedPreferences.edit()
-            editor.putString("nrocaja", binding.etNroCaja.text.toString())
-            editor.putString("direccionserver",binding.etDireccionServidor.text.toString())
             if (binding.radioBluetooth.isChecked)
             {
                 editor.putInt("tipo_impresora",Globales.eTipoImpresora.BLUETOOTH.codigo)
@@ -75,9 +71,6 @@ class ConfiguracionDeCajaFragment : Fragment() {
                 Globales.ImpresionSeleccionada = Globales.eTipoImpresora.SUNMI.codigo
             }
             editor.apply()
-            //
-            Globales.NroCaja = binding.etNroCaja.text.toString()
-            Globales.DireccionServidor = binding.etDireccionServidor.text.toString()
             //
             Snackbar.make(requireView(),"Configuraciones guardadas",Snackbar.LENGTH_SHORT).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show()
             view?.findNavController()?.navigateUp()

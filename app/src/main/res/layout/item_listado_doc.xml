@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvVistaClienteNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="CLIENTE NOMBRE"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvVistaNroDoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="NRODOC"
+                app:layout_constraintBottom_toBottomOf="@+id/tvVistaTipoDocCod"
+                app:layout_constraintStart_toEndOf="@+id/tvVistaTipoDocCod"
+                app:layout_constraintTop_toTopOf="@+id/tvVistaTipoDocCod" />
+
+            <TextView
+                android:id="@+id/tvVistaTipoDocCod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="TIPODOCCODIGO"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaClienteNombre" />
+
+            <TextView
+                android:id="@+id/tvVistaMonedaSignoDoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MONEDA"
+                app:layout_constraintBottom_toBottomOf="@+id/tvVistaTotalDoc"
+                app:layout_constraintEnd_toStartOf="@+id/tvVistaTotalDoc"
+                app:layout_constraintTop_toTopOf="@+id/tvVistaTotalDoc" />
+
+            <TextView
+                android:id="@+id/tvVistaTotalDoc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="TOTAL DOC"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvVistaTipoCFENombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="TIPOCFENOMBRE"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaTipoDocCod" />
+
+            <TextView
+                android:id="@+id/tvVistaSerieCFE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SERIECFE"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tvVistaTipoCFENombre"
+                app:layout_constraintStart_toEndOf="@+id/tvVistaTipoCFENombre"
+                app:layout_constraintTop_toTopOf="@+id/tvVistaTipoCFENombre" />
+
+            <TextView
+                android:id="@+id/tvVistaNroCFE"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NROCFE"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tvVistaSerieCFE"
+                app:layout_constraintStart_toEndOf="@+id/tvVistaSerieCFE"
+                app:layout_constraintTop_toTopOf="@+id/tvVistaSerieCFE" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
