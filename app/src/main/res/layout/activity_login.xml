@@ -51,6 +51,15 @@
                         app:lottie_rawRes="@raw/carritogris"
                         tools:ignore="MissingConstraints" />
 
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="Easy POS"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
                     <com.airbnb.lottie.LottieAnimationView
                         android:id="@+id/animationlogin"
                         android:layout_width="match_parent"

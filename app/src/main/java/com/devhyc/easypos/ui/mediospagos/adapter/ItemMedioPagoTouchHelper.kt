@@ -1,4 +1,4 @@
-package com.devhyc.easypos.ui.pagoTarjeta.adapter
+package com.devhyc.easypos.ui.mediospagos.adapter
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.devhyc.easypos.R
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
-abstract class ItemPagoAceptadoTouchHelper (context: Context) : ItemTouchHelper.SimpleCallback(0,
+abstract class ItemMedioPagoTouchHelper(context: Context) : ItemTouchHelper.SimpleCallback(0,
     ItemTouchHelper.LEFT) {
 
     var eliminarColor = ContextCompat.getColor(context, R.color.red)
-    var eliminarIcon = R.drawable.ic_baseline_delete_24
+    var eliminarIcono = R.drawable.ic_baseline_delete_24
     var ColorIconoFuente = ContextCompat.getColor(context, R.color.white)
 
     override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
@@ -30,11 +30,12 @@ abstract class ItemPagoAceptadoTouchHelper (context: Context) : ItemTouchHelper.
     ) {
         RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             //Izquierda
-            .addSwipeLeftActionIcon(eliminarIcon).setSwipeLeftActionIconTint(ColorIconoFuente)
+            .addSwipeLeftActionIcon(eliminarIcono).setSwipeLeftActionIconTint(ColorIconoFuente)
             .addSwipeLeftLabel("Eliminar").setSwipeLeftLabelColor(ColorIconoFuente)
             .addSwipeLeftBackgroundColor(eliminarColor)
             .create()
             .decorate()
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
+
 }

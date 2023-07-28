@@ -74,6 +74,7 @@
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_documentos.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_firma.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_ingreso_retiro.xml" value="0.2994791666666667" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_integracion_tarjeta.xml" value="0.20885416666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_item_doc.xml" value="0.23645833333333333" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_lista_de_articulos.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_lista_de_documentos.xml" value="0.33125" />
@@ -81,6 +82,7 @@
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_login.xml" value="0.18489583333333334" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_mas_opciones.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_medio_pago.xml" value="0.5" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_medios_de_pago.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_menu_principal.xml" value="0.544405997693195" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_observaciones.xml" value="0.2994791666666667" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_ok.xml" value="0.2994791666666667" />

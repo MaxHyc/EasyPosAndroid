@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +13,9 @@ import com.devhyc.easypos.BuildConfig
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentMenuPrincipalBinding
 import com.devhyc.easypos.ui.login.LoginActivity
+import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.google.android.material.navigation.NavigationView
 import java.util.*
 
 class MenuPrincipalFragment : Fragment() {
@@ -48,12 +51,61 @@ class MenuPrincipalFragment : Fragment() {
                 binding.tvInfoAbierto.text = "Caja abierta: ${Globales.Herramientas.convertirFechaHora(Globales.CajaActual.FechaHora.toString())} \n Nro: ${Globales.CajaActual.Nro} \n Usuario que inició: ${Globales.CajaActual.Usuario}"
             else
                 binding.tvInfoAbierto.text= ""
+            HabilitarModulos()
         }
         catch (e:Exception)
         {
 
         }
         super.onResume()
+    }
+
+    fun BorrarMenu(nav_Menu:Menu)
+    {
+        //Borrar todo el menu
+        /*nav_Menu.setGroupVisible(R.id.modulo_preventa,false)
+        nav_Menu.setGroupVisible(R.id.modulo_doc,false)
+        nav_Menu.setGroupVisible(R.id.modulo_activos,false)
+        nav_Menu.setGroupVisible(R.id.modulo_articulos,false)
+        nav_Menu.setGroupVisible(R.id.modulo_rma,false)
+        nav_Menu.setGroupVisible(R.id.modulo_servicios,false)
+        nav_Menu.setGroupVisible(R.id.modulo_print,false)*/
+    }
+
+    fun HabilitarModulos()
+    {
+        try {
+            val navigationView = activity!!.findViewById<View>(R.id.nav_view) as NavigationView
+            navigationView.menu
+            //BorrarMenu(navigationView.menu)
+            if (Globales.UsuarioLoggueadoConfig != null)
+            {
+                Globales.UsuarioLoggueadoConfig.modulos.forEach {
+                    when(it.nombre)
+                    {
+                       /* "PREVENTA" -> { navigationView.menu.setGroupVisible(R.id.modulo_preventa,it.activo) }
+                        "INVENTARIO" -> { }
+                        "DOCUMENTOS" -> { navigationView.menu.setGroupVisible(R.id.modulo_doc,it.activo) }
+                        "RMA" -> { navigationView.menu.setGroupVisible(R.id.modulo_rma,it.activo) }
+                        "SERVICIOS" -> { navigationView.menu.setGroupVisible(R.id.modulo_servicios,it.activo) }
+                        "ACTIVOS" -> { navigationView.menu.setGroupVisible(R.id.modulo_activos,it.activo) }*/
+                    }
+                }
+            }
+            //MOSTRAR TEXTO EN MENU
+            var headerview: View = navigationView.getHeaderView(0)
+            val nombreUsuario =headerview.findViewById<TextView>(R.id.tvUsuarioLogueado)
+            val matriculaVehiculo = headerview.findViewById<TextView>(R.id.tvnroCaja)
+            if (Globales.UsuarioLoggueado != null)
+            {
+                nombreUsuario.text= "${Globales.UsuarioLoggueado.nombre} ${Globales.UsuarioLoggueado.apellido}"
+                matriculaVehiculo.text= "${Globales.Terminal.Descripcion} (${Globales.Terminal.Codigo})"
+            }
+        }
+        catch (e:Exception)
+        {
+            AlertView.showError("¡Atención!",e.message,requireContext())
+        }
     }
 
     override fun onPause() {

@@ -103,21 +103,6 @@ class MainActivity : AppCompatActivity() {
             Globales.CerrarApp = false
             finishAffinity()
         }
-        //Cargar datos del cabezal
-        if (navView!=null)
-        {
-            var headerview: View = navView.getHeaderView(0)
-            val nombreUsuario =headerview.findViewById<TextView>(R.id.tvUsuarioLogueado)
-            val nrocaja = headerview.findViewById<TextView>(R.id.tvnroCaja)
-            if (Globales.UsuarioLoggueado!= null)
-            {
-                nombreUsuario.text= "${Globales.UsuarioLoggueado.nombre} ${Globales.UsuarioLoggueado.apellido}"
-            }
-            if (Globales.Terminal != null)
-            {
-                nrocaja.text = Globales.Terminal.Descripcion
-            }
-        }
     }
 
     fun DialogoCerrarSesion()

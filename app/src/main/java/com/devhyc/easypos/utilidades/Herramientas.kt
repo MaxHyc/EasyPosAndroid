@@ -1,8 +1,11 @@
 package com.devhyc.easypos.utilidades
 
+import android.annotation.SuppressLint
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.TimeZone
 import javax.inject.Inject
@@ -23,5 +26,11 @@ class Herramientas @Inject constructor() {
             ex.printStackTrace()
         }
         return targetDate
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun convertirYYYYMMDD(date:String): String {
+        val dateconverted = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
+        return dateconverted.toString()
     }
 }

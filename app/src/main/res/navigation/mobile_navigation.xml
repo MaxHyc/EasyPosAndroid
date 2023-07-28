@@ -114,26 +114,6 @@
         android:name="com.devhyc.easypos.ui.impresora.ConexionImpresora"
         android:label="@string/menu_impresora" />
     <fragment
-        android:id="@+id/cobroFragment"
-        android:name="com.devhyc.easypos.ui.cobro.CobroFragment"
-        android:label="Total de venta"
-        tools:layout="@layout/fragment_cobro">
-        <action
-            android:id="@+id/action_cobroFragment_to_medioPagoFragment"
-            app:destination="@id/medioPagoFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/medioPagoFragment"
-        android:name="com.devhyc.easypos.ui.mediopago.MedioPagoFragment"
-        android:label="Medios de pago"
-        tools:layout="@layout/fragment_medio_pago" >
-        <action
-            android:id="@+id/action_medioPagoFragment_to_pagoTarjetaFragment"
-            app:destination="@id/pagoTarjetaFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/medioPagoFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/reporteDeCajaFragment"
         android:name="com.devhyc.easypos.ui.reportecaja.ReporteDeCajaFragment"
         android:label="Reporte de caja"
@@ -163,11 +143,6 @@
         android:label="Integradores"
         tools:layout="@layout/fragment_mas_opciones" />
     <fragment
-        android:id="@+id/pagoTarjetaFragment"
-        android:name="com.devhyc.easypos.ui.pagoTarjeta.PagoTarjetaFragment"
-        android:label="Pago con tarjeta"
-        tools:layout="@layout/fragment_pago_tarjeta" />
-    <fragment
         android:id="@+id/listaDeDocumentosFragment"
         android:name="com.devhyc.easypos.ui.listadodocumentos.ListaDeDocumentosFragment"
         android:label="@string/menu_documentos"
@@ -185,10 +160,28 @@
             android:id="@+id/action_documentoPrincipalFragment_to_cabezalFragment"
             app:destination="@id/cabezalFragment" />
         <action
-            android:id="@+id/action_documentoPrincipalFragment_to_cobroFragment"
-            app:destination="@id/cobroFragment" />
-        <action
             android:id="@+id/action_documentoPrincipalFragment_to_listaDeArticulosFragment"
             app:destination="@id/listaDeArticulosFragment" />
+        <action
+            android:id="@+id/action_documentoPrincipalFragment_to_mediosDePagoFragment"
+            app:destination="@id/mediosDePagoFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/documentoPrincipalFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mediosDePagoFragment"
+        android:name="com.devhyc.easypos.ui.mediospagos.MediosDePagoFragment"
+        android:label="Medios de pago"
+        tools:layout="@layout/fragment_medios_de_pago">
+        <action
+            android:id="@+id/action_mediosDePagoFragment_to_integracionTarjetaFragment"
+            app:destination="@id/integracionTarjetaFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mediosDePagoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/integracionTarjetaFragment"
+        android:name="com.devhyc.easypos.ui.integraciontarjeta.IntegracionTarjetaFragment"
+        android:label="Pago con tarjeta"
+        tools:layout="@layout/fragment_integracion_tarjeta" />
 </navigation>

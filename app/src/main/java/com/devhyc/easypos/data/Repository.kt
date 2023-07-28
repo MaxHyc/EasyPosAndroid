@@ -400,6 +400,27 @@ class Repository @Inject constructor(
         }
     }
 
+    suspend fun postEmitirDocumento(documento:DTDoc): Resultado<DTDocTransaccion>
+    {
+        return try {
+            val response = api.postEmitirDocumento(documento)
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
 
-
+    suspend fun getConsultarTransaccion(numero:String): Resultado<DTDocTransaccion>
+    {
+        return try {
+            val response = api.getConsultarTransaccion(numero)
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
 }

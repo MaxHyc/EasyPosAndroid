@@ -10,13 +10,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTCajaNroDocumentos
-import com.devhyc.easypos.data.model.DTMedioPago
-import com.devhyc.easypos.databinding.FragmentCierreCajaBinding
 import com.devhyc.easypos.databinding.FragmentReporteDeCajaBinding
-import com.devhyc.easypos.ui.cierrecaja.CierreCajaFragmentViewModel
-import com.devhyc.easypos.ui.mediopago.adapter.ItemMedioPago
 import com.devhyc.easypos.ui.reportecaja.adapter.ItemNrosDocumentos
 import com.devhyc.easypos.utilidades.Globales
 import dagger.hilt.android.AndroidEntryPoint

@@ -617,4 +617,38 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
+    suspend fun postEmitirDocumento(documento:DTDoc): Resultado<DTDocTransaccion> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTDocTransaccion>> = api.postEmitirDocumento(documento)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getConsultarTransaccion(numero:String): Resultado<DTDocTransaccion> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTDocTransaccion>> = api.getConsultarTransaccion(numero)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
 }

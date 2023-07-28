@@ -87,9 +87,17 @@ interface ApiClient {
     @GET("articulos/familias")
     suspend fun getFamilias(): Response<Resultado<List<DTFamiliaPadre>>>
 
+    //GUARDAR DOCUMENTO COMO EMITIDO
+    @POST("Documentos/emitir")
+    suspend fun postEmitirDocumento(@Body documento: DTDoc): Response<Resultado<DTDocTransaccion>>
+
     //VALIDAR DOCUMENTO
     @POST("Documentos/validar")
     suspend fun postValidarDoc(@Body documento:DTDoc): Response<Resultado<String>>
+
+    //CONSULTAR TRANSACCION
+    @GET("Documentos/transaccion/{numero}")
+    suspend fun getConsultarTransaccion(@Path("numero") numero: String): Response<Resultado<DTDocTransaccion>>
 
     //FUNCIONARIOS
     @GET("Funcionarios/listar/{funcionarioperfil}")

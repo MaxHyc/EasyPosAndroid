@@ -241,6 +241,9 @@ class AddArticuloFragment(var art:DTArticulo?, var listener: (art:DTDocDetalle?)
                 binding.etSerieAdd.selectAll()
         })
         //
+        binding.etPrecioAdd.requestFocus()
+        binding.etPrecioAdd.selectAll()
+        //
         return root
     }
 

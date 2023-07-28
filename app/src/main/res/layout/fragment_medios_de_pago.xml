@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.mediospagos.MediosDePagoFragment" >
+
+    <Button
+        android:id="@+id/btnFinalizarVenta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Finalizar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardAddMedio"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/flAddMedioPago"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:clickable="true"
+                android:src="@drawable/ic_add"
+                app:layout_constraintBottom_toBottomOf="@+id/linearPagoTarjetaCheque"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <EditText
+                android:id="@+id/etMontoPago"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:ems="10"
+                android:hint="Monto"
+                android:inputType="number"
+                app:layout_constraintEnd_toStartOf="@+id/flAddMedioPago"
+                app:layout_constraintStart_toEndOf="@+id/spMonedas"
+                app:layout_constraintTop_toBottomOf="@+id/spMediosDePago" />
+
+            <Spinner
+                android:id="@+id/spMediosDePago"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                app:layout_constraintEnd_toStartOf="@+id/flAddMedioPago"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp">
+
+                    <TextView
+                        android:id="@+id/textView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TC:"
+                        android:textSize="8sp" />
+
+                    <EditText
+                        android:id="@+id/etTipoCambio"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="center_horizontal"
+                        android:hint="T/C"
+                        android:inputType="numberDecimal"
+                        android:textSize="8sp" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <Spinner
+                android:id="@+id/spMonedas"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/etMontoPago"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spMediosDePago" />
+
+            <LinearLayout
+                android:id="@+id/linearPagoTarjetaCheque"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/flAddMedioPago"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etMontoPago">
+
+                <EditText
+                    android:id="@+id/etFechaVtoPago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:focusable="false"
+                    android:hint="Fecha"
+                    android:inputType="textPersonName"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Spinner
+                    android:id="@+id/spBanco"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Spinner
+                    android:id="@+id/spTarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/etNumeroTarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Número"
+                    android:inputType="numberDecimal"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/etCuotas"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Cuotas"
+                        android:inputType="numberDecimal"
+                        android:maxLength="2"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <EditText
+                        android:id="@+id/etAutorizacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Autorización"
+                        android:inputType="numberDecimal"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMediosDePago"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardAddMedio" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnFinalizarVenta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:id="@+id/lblPago"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="0"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="@+id/guideline13"
+                app:layout_constraintTop_toBottomOf="@+id/lblTotal" />
+
+            <TextView
+                android:id="@+id/tvVistaPagosMoneda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="$"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline13"
+                app:layout_constraintStart_toStartOf="@+id/guideline12"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaTotalMoneda" />
+
+            <TextView
+                android:id="@+id/tvVistaPagos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="PAGOS"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaTotal" />
+
+            <TextView
+                android:id="@+id/tvVistaCambioMoneda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="$"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/guideline13"
+                app:layout_constraintStart_toStartOf="@+id/guideline12"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaSaldoMoneda" />
+
+            <TextView
+                android:id="@+id/tvVistaCambio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="CAMBIO"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/guideline12"
+                app:layout_constraintHorizontal_bias="0.603"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaSaldo" />
+
+            <TextView
+                android:id="@+id/lblCambio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="0"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline13"
+                app:layout_constraintTop_toBottomOf="@+id/lblSaldo" />
+
+            <TextView
+                android:id="@+id/tvVistaSaldo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="SALDO"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaPagos" />
+
+            <TextView
+                android:id="@+id/tvVistaSaldoMoneda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="$"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline13"
+                app:layout_constraintStart_toStartOf="@+id/guideline12"
+                app:layout_constraintTop_toBottomOf="@+id/tvVistaPagosMoneda" />
+
+            <TextView
+                android:id="@+id/lblSaldo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="0"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline13"
+                app:layout_constraintTop_toBottomOf="@+id/lblPago" />
+
+            <TextView
+                android:id="@+id/lblTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="0"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline13"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvVistaTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="TOTAL"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline12"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvVistaTotalMoneda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="$"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline13"
+                app:layout_constraintStart_toStartOf="@+id/guideline12"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="100dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.33"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="100dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.66"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
