@@ -64,6 +64,12 @@ class MediosDePagoFragment : Fragment() {
     lateinit var dialog: AlertDialog
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        //CUANDO SE CIERRA LA VENTANA, PONGO LOS PAGOS VACIOS
+        Globales.DocumentoEnProceso.valorizado!!.pagos = ArrayList()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,10 +80,7 @@ class MediosDePagoFragment : Fragment() {
         mediosViewModels.ListarMediosDePago()
         //
         //CARGAR CONFIGURACION DE CALENDARIOS
-        val c = Calendar.getInstance()
-        val day = c.get(Calendar.DAY_OF_MONTH)
-        val month = c.get(Calendar.MONTH)+1
-        val year = c.get(Calendar.YEAR)
+        fechaVencimiento = Globales.Herramientas.fechaActual()
         //CONFIGURACION DE BOTONES DE CALENDARIO
         binding.etFechaVtoPago.setOnClickListener {
             ShowDialogPickerFechaVto()
@@ -222,12 +225,6 @@ class MediosDePagoFragment : Fragment() {
         val touchHelper = ItemTouchHelper(itemFinalTouchHelper)
         touchHelper.attachToRecyclerView(binding.rvMediosDePago)
 
-        //
-        fechaVencimiento = if (month.toString().length < 2)
-            "$year-0$month-$day"
-        else
-            "$year-$month-$day"
-        //
         //SALIR DEL DOCUMENTO
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -380,12 +377,17 @@ class MediosDePagoFragment : Fragment() {
         var mesCorrecto = month + 1
         var m = mesCorrecto.toString()
         var mesfinal = m
+        var diafinal = day.toString()
         if (m.length == 1)
         {
             mesfinal = "0$m"
         }
-        fechaVencimiento = "$year-$mesfinal-$day"
-        binding.etFechaVtoPago.setText("$day/$mesfinal/$year")
+        if (day.toString().length ==1)
+        {
+            diafinal = "0$diafinal"
+        }
+        fechaVencimiento = "$year-$mesfinal-$diafinal"
+        binding.etFechaVtoPago.setText("$diafinal/$mesfinal/$year")
     }
 
     private fun DialogoSalir()

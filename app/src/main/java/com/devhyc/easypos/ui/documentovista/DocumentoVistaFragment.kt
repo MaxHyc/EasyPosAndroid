@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class DocumentoVistaFragment : Fragment() {
 
-    private var oDocumento: DTDoc = DTDoc()
+    private var oDocumento:DTDoc = DTDoc()
     private lateinit var DocumentoVistaViewModel: DocumentoVistaFragmentViewModel
 
     private var _binding: FragmentDocumentoVistaBinding? = null
@@ -47,18 +47,18 @@ class DocumentoVistaFragment : Fragment() {
         if (arguments !=null)
         {
             val bundle:Bundle = arguments as Bundle
-            var terminal:String = bundle.getString("terminal","")
-            var tipo:String = bundle.getString("tipoDoc","")
-            var nro:Long = bundle.getLong("nroDoc",0)
+            val terminal:String = bundle.getString("terminal","")
+            val tipo:String = bundle.getString("tipodoc","")
+            val nro:Long = bundle.getLong("nrodoc",0)
             (activity as? AppCompatActivity)?.supportActionBar?.title = "Documento: " + tipo.toString()
             (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Nro $nro"
             //CargarDocumento
             DocumentoVistaViewModel.ObtenerDocumentoEmitido(terminal,tipo,nro.toString())
         }
         //EVENTOS
-        DocumentoVistaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+        /*DocumentoVistaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
 
-        })
+        })*/
         DocumentoVistaViewModel.MensajeServer.observe(viewLifecycleOwner, Observer {
             AlertView.showServerError("¡Atención!",it,requireContext())
         })
@@ -73,7 +73,7 @@ class DocumentoVistaFragment : Fragment() {
                 binding.tvDtoVista.text = "DTO: ${it.totalDtos}"
                 binding.tvSubtotalVista.text = "SUBTOTAL: ${it.subtotal}"
                 binding.tvRedondeoVista.text = "REDONDEO: ${it.redondeo}"
-                binding.tvTotalVista.text = "TOTAL: ${it.total}"
+                binding.tvTotalVista.text = "TOTAL: $monedaSignoSelect ${it.total}"
             }
             else
             {
@@ -109,16 +109,16 @@ class DocumentoVistaFragment : Fragment() {
                         monedaSignoSelect = "$"
                     }
                     "2" -> {
-                       monedaSignoSelect = "U$" + "S"
+                        monedaSignoSelect = "U$" + "S"
                     }
                     "" -> {
-                       monedaSignoSelect = ""
+                        monedaSignoSelect = ""
                     }
                 }
                 if (oDocumento.valorizado!!.tipoCambio != 0.0 && oDocumento.valorizado!!.monedaCodigo.isNotEmpty())
                 {
-                    binding.tvTipoCambioVista.text = "Tipo de cambio: ${oDocumento.valorizado!!.tipoCambio} \n\r Moneda: ${monedaSignoSelect}"
-                    binding.tvDepositoVista.visibility = View.VISIBLE
+                    binding.tvTipoCambioVista.text = "Tipo de cambio: ${oDocumento.valorizado!!.tipoCambio}\nMoneda: ${monedaSignoSelect}"
+                    binding.tvTipoCambioVista.visibility = View.VISIBLE
                 }
                 if (oDocumento.valorizado!!.listaPrecioCodigo != "")
                 {
@@ -128,6 +128,7 @@ class DocumentoVistaFragment : Fragment() {
                 //PAGOS
                 if (oDocumento.valorizado!!.pagos.isNotEmpty())
                 {
+                    //SI TIENE PAGOS ASOCIADOS
                     var pagosdoc:String=""
                     oDocumento.valorizado!!.pagos.forEach {
                         pagosdoc += it.medioPagoCodigo.toString()
@@ -135,8 +136,15 @@ class DocumentoVistaFragment : Fragment() {
                     binding.tvPagosVista.text = pagosdoc
                     binding.tvPagosVista.visibility = View.VISIBLE
                 }
+                else
+                {
+                    //SI NO TIENE PAGOS ASOCIADOS
+                    binding.linearPagosVista.visibility = View.GONE
+                }
                 binding.tvFormaPagoVista.text = "Forma de pago días: ${oDocumento.valorizado!!.formaPagoDias}"
                 binding.tvFormaPagoVista.visibility = View.VISIBLE
+                //CALCULAR DOCUMENTO
+                DocumentoVistaViewModel.CalcularDoc(oDocumento)
             }
             else
             {
@@ -148,7 +156,8 @@ class DocumentoVistaFragment : Fragment() {
                 //SI TIENE RECEPTOR
                 if(oDocumento.receptor!!.receptorRut != "")
                 {
-                    binding.tvDatosClienteVista.text = "Cliente: ${oDocumento.receptor!!.receptorRazon} \n\r  ${oDocumento.receptor!!.clienteCodigo} \n\r"
+                    binding.tvTituloCabezal.visibility = View.GONE
+                    binding.tvDatosClienteVista.text = "Cliente: ${oDocumento.receptor!!.receptorRazon} (${oDocumento.receptor!!.clienteCodigo})"
                     binding.tvDatosClienteVista.visibility = View.VISIBLE
                 }
             }
@@ -206,7 +215,7 @@ class DocumentoVistaFragment : Fragment() {
         {
             R.id.tvReImprimir ->
             {
-                Snackbar.make(requireView(),"Acción no disponible acualmente", Snackbar.LENGTH_SHORT)
+                Snackbar.make(requireView(),"Acción no disponible actualmente", Snackbar.LENGTH_SHORT)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .setBackgroundTint(resources.getColor(R.color.rosado))
                     .show()

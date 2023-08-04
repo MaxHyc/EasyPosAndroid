@@ -72,7 +72,7 @@ class DocumentoPrincipalFragment : Fragment() {
             if (DocumentoEnProceso.receptor != null)
             {
                 binding.tvClienteNombre.visibility = View.VISIBLE
-                binding.tvClienteNombre.text = DocumentoEnProceso.receptor!!.receptorRut
+                binding.tvClienteNombre.text = DocumentoEnProceso.receptor!!.receptorRazon + "\n" + DocumentoEnProceso.receptor!!.receptorRut
             }
             else
             {

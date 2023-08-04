@@ -54,6 +54,7 @@ class CabezalFragment : Fragment() {
                 Globales.DocumentoEnProceso.receptor!!.receptorRut = binding.etRut.text.toString()
                 Globales.DocumentoEnProceso.receptor!!.receptorDireccion = binding.etDireccion.text.toString()
                 Globales.DocumentoEnProceso.receptor!!.receptorTel = binding.etTel.text.toString()
+                Globales.DocumentoEnProceso.cabezal!!.observaciones = binding.etObsservaciones.text.toString()
                 Snackbar.make(requireView(),"Cabezal guardado", Snackbar.LENGTH_SHORT)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .setBackgroundTint(resources.getColor(R.color.green))
@@ -73,13 +74,14 @@ class CabezalFragment : Fragment() {
             {
                 if(Globales.DocumentoEnProceso.receptor != null)
                 {
-                    binding.etMail.setText(Globales.DocumentoEnProceso.receptor!!.receptorMail)
-                    binding.etCiudad.setText(Globales.DocumentoEnProceso.receptor!!.receptorCiudad)
-                    binding.etPais.setText(Globales.DocumentoEnProceso.receptor!!.receptorPais)
                     binding.etRazon.setText(Globales.DocumentoEnProceso.receptor!!.receptorRazon)
                     binding.etRut.setText(Globales.DocumentoEnProceso.receptor!!.receptorRut)
                     binding.etDireccion.setText(Globales.DocumentoEnProceso.receptor!!.receptorDireccion)
+                    binding.etCiudad.setText(Globales.DocumentoEnProceso.receptor!!.receptorCiudad)
+                    binding.etPais.setText(Globales.DocumentoEnProceso.receptor!!.receptorPais)
+                    binding.etMail.setText(Globales.DocumentoEnProceso.receptor!!.receptorMail)
                     binding.etTel.setText(Globales.DocumentoEnProceso.receptor!!.receptorTel)
+                    binding.etObsservaciones.setText(Globales.DocumentoEnProceso.cabezal!!.observaciones)
                 }
             }
         }

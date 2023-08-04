@@ -44,12 +44,13 @@ class ListaDeDocumentosFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        //fechaDesde = ""
-        //fechaHasta = ""
+    override fun onResume() {
+        super.onResume()
+        if (adapterDocumentos != null)
+        {
+            (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterDocumentos.itemCount}"
+        }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,15 +93,7 @@ class ListaDeDocumentosFragment : Fragment() {
             }
         }
         //
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root: View = binding.root
-        setHasOptionsMenu(true)
-        ListadoDocViewModel.ListadoDocs.observe(viewLifecycleOwner, Observer {
+        ListadoDocViewModel.ListadoDocs.observe(this, Observer {
             try {
                 originalArrayDoc = it as ArrayList<DTDocLista>
                 adapterDocumentos = ListaDeDocAdapter(ArrayList<DTDocLista>(it))
@@ -147,9 +140,17 @@ class ListaDeDocumentosFragment : Fragment() {
                 Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
             }
         })
-        ListadoDocViewModel.MensajeServer.observe(viewLifecycleOwner, Observer {
+        ListadoDocViewModel.MensajeServer.observe(this, Observer {
             AlertView.showServerError("¡Atención!",it,requireContext())
         })
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val root: View = binding.root
+        setHasOptionsMenu(true)
         ListadoDocViewModel.isLoading.observe(viewLifecycleOwner, Observer {
             if (it)
             {

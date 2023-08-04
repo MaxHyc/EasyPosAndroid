@@ -8,9 +8,10 @@
 
     <TextView
         android:id="@+id/tvClienteNombre"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:gravity="center_horizontal"
         android:text="NOMBRE DEL CLIENTE"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintEnd_toEndOf="@+id/cardView"
