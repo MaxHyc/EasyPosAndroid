@@ -52,9 +52,9 @@ class ReporteDeCajaFragment : Fragment() {
             //
             binding.linearHoraCierre.isVisible = it.Cabezal.EsCierre
             //
-            binding.tvCajaFechaHoraActual.text = Globales.Herramientas.convertirFechaHora(it.Cabezal.FechaHoraActual)
-            binding.tvCajaHoraApertura.text = Globales.Herramientas.convertirFechaHora(it.Cabezal.FechaHora)
-            binding.tvCajaHoraCierre.text = Globales.Herramientas.convertirFechaHora(it.Cabezal.FechaHoraCierre)
+            binding.tvCajaFechaHoraActual.text = Globales.Herramientas.TransformarFecha(it.Cabezal.FechaHoraActual,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)
+            binding.tvCajaHoraApertura.text = Globales.Herramientas.TransformarFecha(it.Cabezal.FechaHora,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)
+            binding.tvCajaHoraCierre.text = Globales.Herramientas.TransformarFecha(it.Cabezal.FechaHoraCierre,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)
             binding.tvCajaNro.text = it.Cabezal.NroCaja.toString()
             binding.tvCajaUsuarioLogueado.text = it.Cabezal.UsuarioLogueado
             binding.tvCajaUsuario.text = it.Cabezal.UsuarioCaja

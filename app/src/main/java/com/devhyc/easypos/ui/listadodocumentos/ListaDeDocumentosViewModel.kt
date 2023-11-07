@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhyc.easypos.data.model.DTDocLista
 import com.devhyc.easypos.data.model.DTParamDocLista
+import com.devhyc.easypos.data.model.Resultado
 import com.devhyc.easypos.domain.PostListarDocumentosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -13,25 +14,17 @@ import javax.inject.Inject
 @HiltViewModel
 class ListaDeDocumentosViewModel @Inject constructor(val postListarDocumentosUseCase: PostListarDocumentosUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
-    val ListadoDocs = MutableLiveData<List<DTDocLista>>()
-    val MensajeServer = MutableLiveData<String>()
+    val ListadoDocs = MutableLiveData<Resultado<List<DTDocLista>>>()
 
-    fun ListarDocumentos(parametros: DTParamDocLista)
+    fun ListarDocumentos(parametros:DTParamDocLista)
     {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-               val result = postListarDocumentosUseCase(parametros)
+                val result = postListarDocumentosUseCase(parametros)
                 if (result != null)
                 {
-                    if (result.ok)
-                    {
-                        ListadoDocs.postValue(result.elemento!!)
-                    }
-                    else
-                    {
-                        MensajeServer.postValue(result.mensaje)
-                    }
+                    ListadoDocs.postValue(result)
                 }
                 isLoading.postValue(false)
             }

@@ -87,7 +87,7 @@ class DocumentoVistaFragment : Fragment() {
     {
         try {
             //DATOS DEL CABEZAL
-            binding.tvFechasVista.text = "Fecha: " + Globales.Herramientas.convertirFechaHora(oDocumento.cabezal!!.fecha.toString())
+            binding.tvFechasVista.text = "Fecha: " + Globales.Herramientas.TransformarFecha(oDocumento.cabezal!!.fecha.toString(),Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)
             if (oDocumento.cabezal!!.observaciones != "")
             {
                 binding.tvObservaciones.text = "Observaciones: ${oDocumento.cabezal!!.observaciones}"
@@ -95,7 +95,7 @@ class DocumentoVistaFragment : Fragment() {
             }
             if (oDocumento.complemento!!.lugarEntrega.isNotEmpty() && oDocumento.complemento!!.fechaEntrega!!.isNotEmpty())
             {
-                binding.tvLugarDeEntregaVista.text = "Lugar de entrega: ${oDocumento.complemento!!.lugarEntrega} \n\r Fecha de entrega: " + Globales.Herramientas.convertirFechaHora(oDocumento.complemento!!.fechaEntrega.toString())
+                binding.tvLugarDeEntregaVista.text = "Lugar de entrega: ${oDocumento.complemento!!.lugarEntrega} \n\r Fecha de entrega: " + Globales.Herramientas.TransformarFecha(oDocumento.complemento!!.fechaEntrega.toString(),Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)
                 binding.tvLugarDeEntregaVista.visibility = View.VISIBLE
             }
             //VALIDO VAROLIZADO

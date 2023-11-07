@@ -80,7 +80,7 @@ class MediosDePagoFragment : Fragment() {
         mediosViewModels.ListarMediosDePago()
         //
         //CARGAR CONFIGURACION DE CALENDARIOS
-        fechaVencimiento = Globales.Herramientas.fechaActual()
+        fechaVencimiento = Globales.Herramientas.ObtenerFechaActual().toString()
         //CONFIGURACION DE BOTONES DE CALENDARIO
         binding.etFechaVtoPago.setOnClickListener {
             ShowDialogPickerFechaVto()

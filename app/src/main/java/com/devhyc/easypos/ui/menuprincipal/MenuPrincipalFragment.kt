@@ -48,7 +48,7 @@ class MenuPrincipalFragment : Fragment() {
                     binding.tvCajaActual.text = "Caja: ${Globales.NroCaja}"
             }
             if (Globales.CajaActual != null)
-                binding.tvInfoAbierto.text = "Caja abierta: ${Globales.Herramientas.convertirFechaHora(Globales.CajaActual.FechaHora.toString())} \n Nro: ${Globales.CajaActual.Nro} \n Usuario que inició: ${Globales.CajaActual.Usuario}"
+                binding.tvInfoAbierto.text = "Caja abierta: ${Globales.Herramientas.TransformarFecha(Globales.CajaActual.FechaHora,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)} \n Nro: ${Globales.CajaActual.Nro} \n Usuario que inició: ${Globales.CajaActual.Usuario}"
             else
                 binding.tvInfoAbierto.text= ""
             HabilitarModulos()

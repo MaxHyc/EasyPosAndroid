@@ -57,91 +57,67 @@ class ListaDeDocumentosFragment : Fragment() {
         ListadoDocViewModel = ViewModelProvider(this)[ListaDeDocumentosViewModel::class.java]
         _binding = FragmentListaDeDocumentosBinding.inflate(this.layoutInflater)
         //
-        //CARGAR CONFIGURACION DE CALENDARIOS
-        val c = Calendar.getInstance()
-        val day = c.get(Calendar.DAY_OF_MONTH)
-        val month = c.get(Calendar.MONTH)+1
-        val year = c.get(Calendar.YEAR)
         binding.etListaDocFechaDesde.setOnClickListener { ShowDialogPickerFechaDesde() }
         binding.etListaDocFechaHasta.setOnClickListener { ShowDialogPickerFechaHasta() }
-        binding.etListaDocFechaDesde.setText("$day/$month/$year")
-        binding.etListaDocFechaHasta.setText("$day/$month/$year")
-        if (month.toString().length == 1)
-        {
-            if (day.toString().length == 1)
-            {
-                fechaDesde = "$year-0$month-0$day"
-                fechaHasta = "$year-0$month-0$day"
-            }
-            else
-            {
-                fechaDesde = "$year-0$month-$day"
-                fechaHasta = "$year-0$month-$day"
-            }
-        }
-        else
-        {
-            if (day.toString().length == 1)
-            {
-                fechaDesde = "$year-0$month-0$day"
-                fechaHasta = "$year-0$month-0$day"
-            }
-            else
-            {
-                fechaDesde = "$year-$month-$day"
-                fechaHasta = "$year-$month-$day"
-            }
-        }
-        //
+
+        binding.etListaDocFechaDesde.setText(Globales.Herramientas.ObtenerFechaActual().FechaDD_MM_YYYY)
+        binding.etListaDocFechaHasta.setText(Globales.Herramientas.ObtenerFechaActual().FechaDD_MM_YYYY)
+
+        fechaDesde = Globales.Herramientas.ObtenerFechaActual().FechayyyygMMgdd
+        fechaHasta = Globales.Herramientas.ObtenerFechaActual().FechayyyygMMgdd
+
+        ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
         ListadoDocViewModel.ListadoDocs.observe(this, Observer {
             try {
-                originalArrayDoc = it as ArrayList<DTDocLista>
-                adapterDocumentos = ListaDeDocAdapter(ArrayList<DTDocLista>(it))
-                adapterDocumentos.setOnItemClickListener(object: ListaDeDocAdapter.OnItemClickListener{
-                    override fun onItemClick(position: Int) {
-                        //LLAMAR PARA VER EL DOCUMENTO
-                        /*if (binding.chkPendientes.isChecked)
-                        {
-                            //ES UN DOCUMENTO PENDIENTE
-                            runBlocking {
-                                *//*val res = ListadoDocViewModel.getDocumentoPendienteUseCase(adapterDocumentos.documentos[position].TerminalCodigo,adapterDocumentos.documentos[position].TipoDocCodigo,adapterDocumentos.documentos[position].NroDoc.toString())
-                                if (res!!.ok)
-                                {
-                                    Globales.DocumentoEnProceso = res.elemento
-                                    Globales.CodigoTipoDocSeleccionado = adapterDocumentos.documentos[position].TipoDocCodigo
-                                    //val action = ListaDeDocumentosFragmentDirections.actionListaDeDocumentosFragmentToDocumentoPrincipalFragment(true)
-                                    //view?.findNavController()?.navigate(action)
-                                }
-                                else
-                                {
-                                    AlertView.showServerError("¡Atención!",res.mensaje,requireContext())
-                                }*//*
+                if (it.ok)
+                {
+
+                    originalArrayDoc = it.elemento!! as ArrayList<DTDocLista>
+                    adapterDocumentos = ListaDeDocAdapter(ArrayList<DTDocLista>(it.elemento!!))
+                    adapterDocumentos.setOnItemClickListener(object: ListaDeDocAdapter.OnItemClickListener{
+                        override fun onItemClick(position: Int) {
+                            //LLAMAR PARA VER EL DOCUMENTO
+                            if (binding.chkPendientes.isChecked)
+                            {
+                                //ES UN DOCUMENTO PENDIENTE
+                                /*runBlocking {
+                                    val res = ListadoDocViewModel.getDocumentoPendienteUseCase(adapterDocumentos.documentos[position].TerminalCodigo,adapterDocumentos.documentos[position].TipoDocCodigo,adapterDocumentos.documentos[position].NroDoc.toString())
+                                    if (res!!.ok)
+                                    {
+                                        Globales.DocumentoEnProceso = res.elemento
+                                        Globales.CodigoTipoDocSeleccionado = adapterDocumentos.documentos[position].TipoDocCodigo
+                                        val action = ListaDeDocumentosFragmentDirections.actionListaDeDocumentosFragmentToDocumentoPrincipalFragment(true)
+                                        view?.findNavController()?.navigate(action)
+                                    }
+                                    else
+                                    {
+                                        AlertView.showServerError("¡Atención!",res.mensaje,requireContext())
+                                    }
+                                }*/
+                            }
+                            else
+                            {
+                                //ES UN DOCUMENTO EMITIDO
+                                val action = ListaDeDocumentosFragmentDirections.actionListaDeDocumentosFragmentToDocumentoVistaFragment(adapterDocumentos.documentos[position].TerminalCodigo,adapterDocumentos.documentos[position].TipoDocCodigo,adapterDocumentos.documentos[position].NroDoc)
+                                view?.findNavController()?.navigate(action)
                             }
                         }
-                        else
-                        {
-                            //ES UN DOCUMENTO EMITIDO
-                            //val action = ListaDeDocumentosFragmentDirections.actionListaDeDocumentosFragmentToDocumentoVistaFragment(adapterDocumentos.documentos[position].TerminalCodigo,adapterDocumentos.documentos[position].TipoDocCodigo,adapterDocumentos.documentos[position].NroDoc)
-                            //view?.findNavController()?.navigate(action)
-                        }*/
-                        val action = ListaDeDocumentosFragmentDirections.actionListaDeDocumentosFragmentToDocumentoVistaFragment(adapterDocumentos.documentos[position].TerminalCodigo,adapterDocumentos.documentos[position].TipoDocCodigo,adapterDocumentos.documentos[position].NroDoc)
-                        view?.findNavController()?.navigate(action)
-                    }
-                })
-                binding.rvListaDocs.layoutManager = LinearLayoutManager(activity)
-                binding.rvListaDocs.adapter = adapterDocumentos
-                binding.tvCantidadDocs.text= "Cantidad: ${adapterDocumentos.itemCount}"
-                (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterDocumentos.itemCount}"
-                binding.viewLoading.isVisible = false
-                binding.rvListaDocs.isVisible = true
+                    })
+                    binding.rvListaDocs.layoutManager = LinearLayoutManager(activity)
+                    binding.rvListaDocs.adapter = adapterDocumentos
+                    binding.tvCantidadDocs.text= "Cantidad: ${adapterDocumentos.itemCount}"
+                    (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterDocumentos.itemCount}"
+                    binding.rvListaDocs.isVisible = true
+                }
+                else
+                {
+                    AlertView.showServerError("¡Atención!",it.mensaje,requireContext())
+                }
             }
             catch (e:Exception)
             {
                 Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
             }
-        })
-        ListadoDocViewModel.MensajeServer.observe(this, Observer {
-            AlertView.showServerError("¡Atención!",it,requireContext())
         })
     }
 
@@ -152,16 +128,7 @@ class ListaDeDocumentosFragment : Fragment() {
         val root: View = binding.root
         setHasOptionsMenu(true)
         ListadoDocViewModel.isLoading.observe(viewLifecycleOwner, Observer {
-            if (it)
-            {
-                binding.shimmerCargandoDocs.visibility = View.VISIBLE
-                binding.rvListaDocs.visibility = View.GONE
-            }
-            else
-            {
-                binding.shimmerCargandoDocs.visibility = View.GONE
-                binding.rvListaDocs.visibility = View.VISIBLE
-            }
+            binding.shimmerCargandoDocs.isVisible = it
         })
         binding.chkPendientes.setOnCheckedChangeListener { buttonView, isChecked ->
             ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
@@ -169,8 +136,6 @@ class ListaDeDocumentosFragment : Fragment() {
         binding.chkAnulados.setOnCheckedChangeListener { buttonView, isChecked ->
             ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
         }
-        //
-        ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
         //
         return root
     }

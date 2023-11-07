@@ -423,4 +423,17 @@ class Repository @Inject constructor(
             Resultado(false,e.message.toString(),null)
         }
     }
+
+    suspend fun getDocumentosPorTerminalYCaja(nroTerminal: String,nroCaja: String): Resultado<List<DTCajaDocumento>>
+    {
+        return try {
+            val response = api.getDocumentosPorTerminalYCaja(nroTerminal, nroCaja)
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
 }

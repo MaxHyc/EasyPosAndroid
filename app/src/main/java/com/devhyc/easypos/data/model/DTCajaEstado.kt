@@ -1,6 +1,7 @@
 package com.devhyc.easypos.data.model
 
 import com.google.gson.annotations.SerializedName
+import java.time.format.DateTimeFormatter
 
 data class DTCajaEstado (@SerializedName("nombre") var Nombre:String,
                          @SerializedName("cabezal") var Cabezal:DTCajaCabezal)
@@ -42,5 +43,9 @@ data class DtCajaPago (@SerializedName("numero") var Numero:Int,
 data class DTCajaDocumento (@SerializedName("terminalCodigo") var TerminalCodigo: String,
                             @SerializedName("tipoDocCodigo") var TipoDocCodigo: String,
                             @SerializedName("nroDoc") var NroDoc: Long,
-                            @SerializedName("pagos") var Pagos: List<DtCajaPago>
+                            @SerializedName("fecha") var Fecha: String,
+                            @SerializedName("hora") var Hora: String,
+                            @SerializedName("monedaSigno") var MonedaSigno: String,
+                            @SerializedName("totalDocumento") var TotalDocumento: Double
+                            //@SerializedName("pagos") var Pagos: List<DtCajaPago>
                             )

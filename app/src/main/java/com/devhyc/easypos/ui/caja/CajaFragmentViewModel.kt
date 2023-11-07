@@ -23,7 +23,8 @@ class CajaFragmentViewModel @Inject constructor(val getCajaAbiertaUseCase: GetCa
             try
             {
                 isLoading.postValue(true)
-                val result = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
+                //val result = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
+                val result = getCajaAbiertaUseCase("1")
                 if (result!!.ok)
                 {
                     iniciar.postValue(true)

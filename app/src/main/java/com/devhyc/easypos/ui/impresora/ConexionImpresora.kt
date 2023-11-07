@@ -20,12 +20,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTImpresora
 import com.devhyc.easypos.databinding.FragmentConexionImpresoraBinding
-import com.devhyc.easypos.impresion.ImpresionSunMi
 import com.devhyc.easypos.ui.impresora.adapter.ItemImpresoraAdapter
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales

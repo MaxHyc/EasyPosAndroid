@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class Globales {
+    //Fecha
+    public static String FechaJson = "yyyy-MM-dd'T'HH:mm:ss";
+    public static String Fecha_dd_MM_yyyy_HH_mm_ss= "dd/MM/yyyy HH:mm:ss";
+    //
     public static SharedPreferences sharedPreferences;
     public static String DireccionServidor = "";
     public static String DireccionPlexo = "";

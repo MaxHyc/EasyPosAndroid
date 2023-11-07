@@ -651,4 +651,20 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
+    suspend fun getDocumentosPorTerminalYCaja(nroTerminal: String, nroCaja: String): Resultado<List<DTCajaDocumento>> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<List<DTCajaDocumento>>> = api.getDocumentosPorTerminalYCaja(nroTerminal, nroCaja)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
 }

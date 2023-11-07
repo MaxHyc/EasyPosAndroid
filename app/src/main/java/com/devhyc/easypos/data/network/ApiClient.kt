@@ -32,6 +32,9 @@ interface ApiClient {
     //ESTADO DE CAJA
     @GET("Cajas/estado/{terminal_codigo}/{caja_nro}/{usuario_login}")
     suspend fun getCajaEstado(@Path("terminal_codigo") nroTerminal: String?, @Path("caja_nro") nroCaja: String?, @Path("usuario_login") usuario: String?): Response<Resultado<DTCajaEstado>>
+    //DOCUMENTOS POR TERMINAL Y CAJA
+    @GET("Cajas/documentos/{terminal}/{nrocaja}")
+    suspend fun getDocumentosPorTerminalYCaja(@Path("terminal") nroTerminal: String?, @Path("nrocaja") nroCaja:String?): Response<Resultado<List<DTCajaDocumento>>>
 
     //TERMINAL
     @GET("Cajas/terminal/{nroterminal}")
