@@ -10,6 +10,7 @@ import com.devhyc.easypos.data.model.DTDocTotales;
 import com.devhyc.easypos.data.model.DTLogin;
 import com.devhyc.easypos.data.model.DTMedioPago;
 import com.devhyc.easypos.data.model.DTMedioPagoAceptado;
+import com.devhyc.easypos.fiserv.FiservITD;
 import com.devhyc.easypos.impresion.Impresion;
 import com.devhyc.easypos.impresion.ImpresionSunMi;
 import com.integration.easyposkotlin.data.model.DTCaja;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class Globales {
+    //Fiserv
+    public static FiservITD fiserv = new FiservITD();
     //Fecha
     public static String FechaJson = "yyyy-MM-dd'T'HH:mm:ss";
     public static String Fecha_dd_MM_yyyy_HH_mm_ss= "dd/MM/yyyy HH:mm:ss";

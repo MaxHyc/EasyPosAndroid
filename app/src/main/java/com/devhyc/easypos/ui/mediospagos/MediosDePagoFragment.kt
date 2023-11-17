@@ -1,7 +1,6 @@
 package com.devhyc.easypos.ui.mediospagos
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,24 +19,30 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.*
+import com.devhyc.easypos.fiserv.model.TransactionResult
 import com.devhyc.easypos.databinding.FragmentMediosDePagoBinding
-import com.devhyc.easypos.ui.documento.DocumentoPrincipalFragmentDirections
 import com.devhyc.easypos.ui.mediospagos.adapter.*
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.DatePickerFragment
 import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.ingenico.fiservitdapi.transaction.Transaction
+import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
+import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.multibindings.ElementsIntoSet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
-import java.util.*
+import java.math.BigDecimal
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class MediosDePagoFragment : Fragment() {
 
+    //
+    //
     private var _binding: FragmentMediosDePagoBinding? = null
     private val binding get() = _binding!!
     //ViewModel

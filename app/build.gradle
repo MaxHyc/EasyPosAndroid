@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.devhyc.easypos"
-        minSdk 26
+        minSdk 29
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -103,4 +103,8 @@ dependencies {
     implementation files('libs/core-3.3.0.jar')
     //IMPRESION ESC/POS
     //implementation 'com.github.dantsu:escpos-thermalprinter-android:3.3.0'
+    //FISERV
+    implementation fileTree(dir: 'libs', include: ["*.jar", "*.aar"])
+    implementation 'com.google.code.gson:gson:2.8.9'
+    //
 }
