@@ -24,8 +24,8 @@ interface ApiClient {
     @GET("Cajas/abierta/{nroterminal}")
     suspend fun getCajaAbierta(@Path("nroterminal") nroterminal: String?): Response<Resultado<DTCaja>>
     //INICIAR CAJA
-    @PUT("Cajas")
-    suspend fun putIniciarCaja(@Body IngresoCaja: DTIngresoCaja): Response<Resultado<DTCaja>>
+    @POST("Cajas/iniciar")
+    suspend fun postIniciarCaja(@Body IngresoCaja: DTIngresoCaja): Response<Resultado<DTCaja>>
     //CERRAR CAJA
     @POST("Cajas/{terminal_codigo}")
     suspend fun postCerrarCaja(@Path("terminal_codigo") nroterminal: String?,@Body totalesDeclarados: DTTotalesDeclarados): Response<Resultado<DTCaja>>
@@ -35,6 +35,16 @@ interface ApiClient {
     //DOCUMENTOS POR TERMINAL Y CAJA
     @GET("Cajas/documentos/{terminal}/{nrocaja}")
     suspend fun getDocumentosPorTerminalYCaja(@Path("terminal") nroTerminal: String?, @Path("nrocaja") nroCaja:String?): Response<Resultado<List<DTCajaDocumento>>>
+
+    @GET("Impresion/cajainicio/{terminal}/{nrocaja}")
+    suspend fun getImpresionInicioCaja(@Path("terminal") nroTerminal: String?, @Path("nrocaja") nroCaja: String?): Response<Resultado<DTImpresion>>
+
+    @GET("Impresion/cajacierre/{terminal}/{nrocaja}/{usuario}")
+    suspend fun getImpresionCierreCaja(@Path("terminal") nroTerminal: String?, @Path("nrocaja") nroCaja: String?, @Path("usuario") usuarioLogueado:String): Response<Resultado<DTImpresion>>
+
+    //IMPRESION
+    @GET("impresion/documentoipos/{terminal}/{tipodoc}/{nrodoc}")
+    suspend fun getImpresion(@Path("terminal") nroTerminal: String?,@Path("tipodoc") tipoDoc: String?,@Path("nrodoc") nroDoc:Long): Response<Resultado<DTImpresion>>
 
     //TERMINAL
     @GET("Cajas/terminal/{nroterminal}")
@@ -69,7 +79,7 @@ interface ApiClient {
 
     //DOCUMENTOS
 
-    @GET("documentos/nuevo/{usuario}/{terminal}/{tipoDoc}")
+    @GET("documentos/posnuevo/{usuario}/{terminal}/{tipoDoc}")
     suspend fun getNuevoDocumento(@Path("usuario") usuario:String,@Path("terminal") terminal:String, @Path("tipoDoc") tipoDoc:String): Response<Resultado<DTDocNuevo>>
 
     @POST("documentos/calcular")
@@ -99,7 +109,8 @@ interface ApiClient {
     suspend fun postValidarDoc(@Body documento:DTDoc): Response<Resultado<String>>
 
     //CONSULTAR TRANSACCION
-    @GET("Documentos/transaccion/{numero}")
+    //Numero,EsCPCL,iPos
+    @GET("Documentos/transaccion/{numero}/false/true")
     suspend fun getConsultarTransaccion(@Path("numero") numero: String): Response<Resultado<DTDocTransaccion>>
 
     //FUNCIONARIOS

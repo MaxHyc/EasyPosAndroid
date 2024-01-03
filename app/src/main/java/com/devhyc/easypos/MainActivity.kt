@@ -1,6 +1,5 @@
 package com.devhyc.easypos
 
-import EmvUtil
 import sunmi.paylib.SunmiPayKernel
 
 import android.Manifest
@@ -38,6 +37,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var dialog: AlertDialog
     lateinit var nav_Menu:Menu
 
+    override fun onDestroy() {
+        //DESREGISTRAR IMPRESORA FISERV
+        DesregistrarServicioPDAFiserv()
+        super.onDestroy()
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
     }
@@ -45,8 +50,8 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         try {
-            IniciarSDK()
-            EmvUtil().init()
+           /* IniciarSDK()
+            EmvUtil().init()*/
         } catch (e: Exception)
         {
             AlertView.showAlert("No se pudo iniciar los lectores de tarjetas","No se pudo iniciar los lectores de tarjetas",this)
@@ -94,6 +99,8 @@ class MainActivity : AppCompatActivity() {
         //
         CargarSharedPreferences()
         startActivity(Intent(this, LoginActivity::class.java))
+        //FISERV INSTANCE
+        Globales.fiserv.InstanciarDeviceService(this)
     }
 
     override fun onPostResume() {
@@ -160,10 +167,10 @@ class MainActivity : AppCompatActivity() {
             Globales.DireccionPlexo = BuildConfig.DIRECCION_PLEXO
             Globales.ImpresionSeleccionada = Globales.sharedPreferences.getInt(getString(R.string._tipo_impresora),0)
             Globales.DireccionMac = Globales.sharedPreferences.getString(getString(R.string._mac),"")
-            if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.SUNMI.codigo)
+           /* if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
             {
-                Globales.ControladoraSunMi.InstanciarSunMi(this)
-            }
+                Globales.ControladoraFiservPrint.InstanciarImpresora(this)
+            }*/
             Globales.SesionViva = Globales.sharedPreferences.getBoolean("sesionviva",false)
             Globales.UsuarioAnterior = Globales.sharedPreferences.getString("usuarioanterior","")
             Globales.PassAnterior = Globales.sharedPreferences.getString("passanterior","")
@@ -185,7 +192,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //INTEGRACION SUNMI CREDIT CARD
+  /*  //INTEGRACION SUNMI CREDIT CARD
 
     private fun IniciarSDK()
     {
@@ -207,7 +214,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-    }
+    }*/
 
     fun VerificarPermisos()
     {
@@ -262,8 +269,14 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_ADVERTISE), REQUEST)
     }
 
-    /*private var mReadCardOptV2: ReadCardOptV2 = Globales.mReadCardOptV2!!
-    private var mEMVOptV2: EMVOptV2 = Globales.mEMVOptV2!!
-    private var mPinPadOptV2: PinPadOptV2 = Globales.mPinPadOptV2!!*/
-
+    fun DesregistrarServicioPDAFiserv()
+    {
+        if(Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
+        {
+            if (Globales.fiserv.deviceService != null)
+            {
+                Globales.fiserv.RegistrarDeviceService(this,false)
+            }
+        }
+    }
 }

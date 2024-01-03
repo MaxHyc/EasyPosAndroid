@@ -2,6 +2,7 @@ package com.devhyc.easypos.data
 
 import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.devhyc.easypos.data.model.*
+import com.devhyc.easypos.data.model.Squareup.Country
 import com.devhyc.easypos.data.network.ApiService
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -38,6 +39,19 @@ class Repository @Inject constructor(
          }
     }
 
+    suspend fun getPaises(): Resultado<List<Country>>
+    {
+        return try {
+            val response = api.getPaises()
+            appProvider.listadoPaises = response
+            return Resultado(true,"",response)
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(), emptyList())
+        }
+    }
+
     //////CAJAS
 
     suspend fun getCajaAbierta(nroTerminal:String): Resultado<DTCaja> {
@@ -54,9 +68,9 @@ class Repository @Inject constructor(
 
     //INICIAR CAJA
 
-    suspend fun putIniciarCaja(IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
+    suspend fun postIniciarCaja(IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
         return try {
-            val response = api.putIniciarCaja(IngresoCaja)
+            val response = api.postIniciarCaja(IngresoCaja)
             appProvider.cajaabierta = response
             return response
         }
@@ -95,6 +109,35 @@ class Repository @Inject constructor(
         }
     }
 
+    //IMPRIMIR INICIO CAJA
+
+    suspend fun getImpresionInicioCaja(nroTerminal: String,nroCaja:String): Resultado<DTImpresion>
+    {
+        return try {
+            val response = api.getImpresionInicioCaja(nroTerminal, nroCaja)
+            //appProvider.cajaEstado = response
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
+    //IMPRIMIR CIERRE CAJA
+
+    suspend fun getImpresionCierreCaja(nroTerminal: String,nroCaja:String,usuario: String): Resultado<DTImpresion>
+    {
+        return try {
+            val response = api.getImpresionCierreCaja(nroTerminal, nroCaja,usuario)
+            //appProvider.cajaEstado = response
+            return response
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
 
     ////////////
 
@@ -433,6 +476,24 @@ class Repository @Inject constructor(
         catch (e:Exception)
         {
             Resultado(false,e.message.toString(),null)
+        }
+    }
+
+    suspend fun getListadoClientes(): Resultado<ArrayList<DTCliente>>
+    {
+        return try {
+            return api.getListadoClientes()
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun getImpresion(nroTerminal: String,tipoDoc: String,nroDoc: Long): Resultado<DTImpresion>
+    {
+        return try {
+            return api.getImpresion(nroTerminal, tipoDoc, nroDoc)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
         }
     }
 

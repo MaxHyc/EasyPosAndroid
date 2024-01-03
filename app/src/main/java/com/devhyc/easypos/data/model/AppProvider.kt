@@ -1,6 +1,7 @@
 package com.devhyc.easypos.data.model
 
 import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
+import com.devhyc.easypos.data.model.Squareup.Country
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
@@ -27,4 +28,6 @@ class AppProvider  @Inject constructor()  {
     var terminal: Resultado<DTTerminalPos>? = null
     //
     var ParametrosTipoDoc: Resultado<DTDocParametros>? = null
+    //
+    var listadoPaises: List<Country>? = emptyList()
 }

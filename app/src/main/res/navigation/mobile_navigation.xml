@@ -83,11 +83,6 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/menuPrincipalFragment" />
         <action
-            android:id="@+id/action_menuPrincipalFragment_to_listaDeArticulosFragment"
-            app:destination="@id/listaDeArticulosFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/menuPrincipalFragment" />
-        <action
             android:id="@+id/action_menuPrincipalFragment_to_configuracionDeCajaFragment"
             app:destination="@id/configuracionDeCajaFragment"
             app:launchSingleTop="true"
@@ -107,7 +102,12 @@
             app:destination="@id/listaDeDocumentosFragment" />
         <action
             android:id="@+id/action_menuPrincipalFragment_to_documentoPrincipalFragment"
-            app:destination="@id/documentoPrincipalFragment" />
+            app:destination="@id/documentoPrincipalFragment"
+            app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_menuMantenimientoFragment"
+            app:destination="@id/menuMantenimientoFragment"
+            app:popUpTo="@id/menuPrincipalFragment" />
     </fragment>
     <fragment
         android:id="@+id/conexionImpresora"
@@ -184,4 +184,23 @@
         android:name="com.devhyc.easypos.ui.integraciontarjeta.IntegracionTarjetaFragment"
         android:label="Pago con tarjeta"
         tools:layout="@layout/fragment_integracion_tarjeta" />
+    <fragment
+        android:id="@+id/menuMantenimientoFragment"
+        android:name="com.devhyc.easypos.ui.menumantenimiento.MenuMantenimientoFragment"
+        android:label="Mantenimiento"
+        tools:layout="@layout/fragment_menu_mantenimiento" >
+        <action
+            android:id="@+id/action_menuMantenimientoFragment_to_listaDeArticulosFragment"
+            app:destination="@id/listaDeArticulosFragment"
+            app:popUpTo="@id/menuMantenimientoFragment" />
+        <action
+            android:id="@+id/action_menuMantenimientoFragment_to_listaClientesFragment"
+            app:destination="@id/listaClientesFragment"
+            app:popUpTo="@id/menuMantenimientoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listaClientesFragment"
+        android:name="com.devhyc.easypos.ui.clientes.listado.ListaClientesFragment"
+        android:label="Lista de clientes"
+        tools:layout="@layout/fragment_lista_clientes" />
 </navigation>

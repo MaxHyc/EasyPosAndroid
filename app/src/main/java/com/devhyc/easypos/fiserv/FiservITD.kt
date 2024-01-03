@@ -1,7 +1,17 @@
 package com.devhyc.easypos.fiserv
 
+import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Binder
+import android.os.IBinder
+import android.view.Gravity
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.devhyc.easypos.utilidades.AlertView
+import com.devhyc.easypos.utilidades.Globales
 import com.ingenico.fiservitdapi.transaction.ITransactionDoneListener
 import com.ingenico.fiservitdapi.transaction.Transaction
 import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
@@ -10,18 +20,80 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import com.usdk.apiservice.aidl.UDeviceService
+import com.usdk.apiservice.aidl.printer.UPrinter
 
 class FiservITD: ITransactionDoneListener {
 
-    private var libFiserv: Transaction? = null
+    private var transFiserv: Transaction? = null
+    var deviceService:UDeviceService? = null
+    private lateinit var service:Intent
+    //IMPRESORA
+    var printer: UPrinter? = null
+
+    fun InstanciarDeviceService(cnt: Context)
+    {
+        try
+        {
+            service = Intent("com.usdk.apiservice")
+            service.setPackage("com.usdk.apiservice")
+            cnt.bindService(service,object : ServiceConnection {
+                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    deviceService = UDeviceService.Stub.asInterface(service)
+                    RegistrarDeviceService(cnt,true)
+                    //UTILIZO EL DEVICE SERVICES PARA INSTANCIAR LA IMPRESORA
+                    var p = deviceService!!.printer
+                    if (p.isBinderAlive)
+                    {
+                        printer = UPrinter.Stub.asInterface(Globales.fiserv.deviceService!!.printer)
+                        Toast.makeText(cnt,"Impresora conectada",Toast.LENGTH_SHORT).show()
+                    }
+                    else
+                    {
+                        Toast.makeText(cnt,"No se pudo conectar la impresora",Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onServiceDisconnected(name: ComponentName?) {
+                    deviceService = null
+                    RegistrarDeviceService(cnt,false)
+                }
+
+            },Context.BIND_AUTO_CREATE)
+        }
+        catch (e:Exception)
+        {
+            AlertView.showAlert("¡Error al instanciar conexión DeviceService!","${e.message}",cnt)
+        }
+    }
+
+    fun RegistrarDeviceService(cnt:Context,registrar:Boolean)
+    {
+        try {
+            if (registrar)
+            {
+                deviceService!!.register(null, Binder())
+                Toast.makeText(cnt,"Registrando uso del dispositivo",Toast.LENGTH_SHORT).show()
+            }
+            else
+            {
+                deviceService!!.unregister(null)
+                Toast.makeText(cnt,"Desregistrando uso del dispositivo",Toast.LENGTH_SHORT).show()
+            }
+        }
+        catch (e:Exception)
+        {
+            AlertView.showAlert("¡Error al registrar DeviceService!","${e.message}",cnt)
+        }
+    }
+
 
     fun ConectarServicioITD(cnt:Context)
     {
         try
         {
-            libFiserv = cnt.let { Transaction(cnt) }
-            libFiserv?.connectService()
-            Thread.sleep(2000)
+            transFiserv = Transaction(cnt)
+            transFiserv?.connectService()
+            ComprobarConexion(cnt)
         }
         catch (e:Exception)
         {
@@ -29,10 +101,10 @@ class FiservITD: ITransactionDoneListener {
         }
     }
 
-    fun DesconectarServicioITD(cnt: Context)
+    fun DesconectarServicioITD(cnt:Context)
     {
         try {
-            libFiserv?.disconnectService()
+            transFiserv?.disconnectService()
         }
         catch (e:Exception)
         {
@@ -40,15 +112,14 @@ class FiservITD: ITransactionDoneListener {
         }
     }
 
-    fun ProcesarTransaccionITD(cnt: Context)
+    fun ComprobarConexion(cnt:Context)
     {
         try {
             var intentos:Int=0
-            while(!libFiserv!!.connected)
+            while(!transFiserv!!.connected)
             {
-                if (intentos < 10)
+                if (intentos < 30)
                 {
-                    libFiserv?.connectService()
                     intentos++
                     Thread.sleep(1000)
                 }
@@ -58,9 +129,9 @@ class FiservITD: ITransactionDoneListener {
                     break
                 }
             }
-            if (libFiserv!!.connected)
+            if (transFiserv!!.connected)
             {
-                libFiserv?.start(TransactionInputData(TransactionTypes.SALE, BigDecimal(10),null,858,null))
+                transFiserv?.start(TransactionInputData(TransactionTypes.SALE, BigDecimal(10),null,858,null))
             }
         }
         catch (e:Exception)

@@ -36,7 +36,6 @@
                 android:layout_margin="10dp"
                 android:gravity="fill"
                 android:text="MEDIO DE PAGO"
-                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tvMontoMedioPago"

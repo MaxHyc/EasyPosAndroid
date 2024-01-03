@@ -1,17 +1,23 @@
 package com.devhyc.easypos.ui.caja
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentCajaBinding
+import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +41,7 @@ class CajaFragment : Fragment() {
         binding.btnIngresoDinero.setOnClickListener {
             val action = CajaFragmentDirections.actionIngresoR(0)
             view?.findNavController()?.navigate(action)
+            //AbrirFragmentInicioCaja()
         }
         binding.btnRetiroDinero.setOnClickListener {
             val action = CajaFragmentDirections.actionIngresoR(1)
@@ -50,7 +57,8 @@ class CajaFragment : Fragment() {
         }
         binding.btnInicioCaja.setOnClickListener {
             val action = CajaFragmentDirections.actionIngresoR(2)
-            view?.findNavController()?.navigate(action)
+            //view?.findNavController()?.navigate(action)
+            AbrirFragmentInicioCaja()
         }
         //
         cajaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
@@ -63,19 +71,19 @@ class CajaFragment : Fragment() {
             ncaja = it.Nro.toString()
         })
         cajaViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {
-            AlertView.showAlert("¡Atención!",it,requireActivity())
+            AlertView.showError("¡Atención!",it,requireActivity())
         })
         //
-        cajaViewModel.iniciar.observe(viewLifecycleOwner, Observer {
+        cajaViewModel.existeCaja.observe(viewLifecycleOwner, Observer {
             if (!it)
             {
                 //Caja Cerrada
+                (activity as? AppCompatActivity)?.supportActionBar?.title = "Caja no iniciada"
                 binding.btnInicioCaja.visibility = View.VISIBLE
                 binding.btnIngresoDinero.visibility= View.GONE
                 binding.btnRetiroDinero.visibility= View.GONE
                 binding.btnReporteX.visibility= View.GONE
                 binding.btnCierreCaja.visibility= View.GONE
-                (activity as? AppCompatActivity)?.supportActionBar?.title = "Caja no iniciada"
                 binding.animationOpen.isVisible = false
                 binding.animationClose.isVisible = true
             }
@@ -105,6 +113,38 @@ class CajaFragment : Fragment() {
         else
         {
             //No hay caja abierta
+
+        }
+    }
+
+    fun AbrirFragmentInicioCaja()
+    {
+        try
+        {
+            val inflater = layoutInflater
+            val view = inflater.inflate(R.layout.fragment_ingreso_retiro, null)
+            //
+            var etMontoIngreso = view.findViewById<EditText>(R.id.etMontoIR)
+            //
+            lateinit var dialog: AlertDialog
+            dialog= AlertDialog.Builder(requireContext())
+                .setIcon(R.drawable.atencion)
+                .setTitle("Ingrese monto de inicio de caja")
+                .setView(view)
+                .setPositiveButton("Aceptar") { dialogInterface, i ->
+                    run {
+                       //
+                        cajaViewModel.IniciarCaja(etMontoIngreso.text.toString())
+                    }
+                }
+                .setNegativeButton("Cancelar") { dialogInterface, i ->
+                    dialog.dismiss()
+                }
+                .setCancelable(false)
+                .show()
+        }
+        catch (e:Exception)
+        {
 
         }
     }

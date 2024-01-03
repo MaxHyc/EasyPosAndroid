@@ -45,8 +45,8 @@ class ConfiguracionDeCajaFragment : Fragment() {
                 Globales.eTipoImpresora.BLUETOOTH.codigo -> {
                     binding.radioBluetooth.isChecked = true
                 }
-                Globales.eTipoImpresora.SUNMI.codigo -> {
-                    binding.radioSunmi.isChecked = true
+                Globales.eTipoImpresora.FISERV.codigo -> {
+                    binding.radioFiservPrint.isChecked = true
                 }
             }
         }
@@ -67,8 +67,8 @@ class ConfiguracionDeCajaFragment : Fragment() {
             }
             else
             {
-                editor.putInt("tipo_impresora",Globales.eTipoImpresora.SUNMI.codigo)
-                Globales.ImpresionSeleccionada = Globales.eTipoImpresora.SUNMI.codigo
+                editor.putInt("tipo_impresora",Globales.eTipoImpresora.FISERV.codigo)
+                Globales.ImpresionSeleccionada = Globales.eTipoImpresora.FISERV.codigo
             }
             editor.apply()
             //

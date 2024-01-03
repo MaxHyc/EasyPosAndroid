@@ -212,6 +212,7 @@
         android:layout_margin="10dp"
         android:clickable="true"
         android:src="@drawable/ic_baseline_price_check_24"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

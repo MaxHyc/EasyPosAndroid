@@ -50,10 +50,10 @@ class ListaDeDocAdapter (var documentos:ArrayList<DTDocLista>): RecyclerView.Ada
         {
             try
             {
-                binding.tvVistaNroDoc.text = "Nro Doc: ${i.NroDoc.toString()}"
+                binding.tvVistaNroDoc.text = "${i.NroDoc.toString()}"
                 binding.tvVistaMonedaSignoDoc.text = i.MonedaSigno
                 binding.tvVistaTotalDoc.text = i.Total.toString()
-                binding.tvVistaTipoDocCod.text = "Tipo Doc: ${i.TipoDocCodigo}"
+                binding.tvVistaTipoDocCod.text = "${i.TipoDocCodigo}"
                 //
                 if (i.SerieCfe.isNotEmpty())
                 {

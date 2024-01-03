@@ -8,14 +8,18 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.devhyc.easypos.BuildConfig
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentMenuPrincipalBinding
+import com.devhyc.easypos.ui.documento.DocumentoPrincipalViewModel
 import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class MenuPrincipalFragment : Fragment() {
@@ -52,6 +56,7 @@ class MenuPrincipalFragment : Fragment() {
             else
                 binding.tvInfoAbierto.text= ""
             HabilitarModulos()
+            //
         }
         catch (e:Exception)
         {
@@ -139,8 +144,11 @@ class MenuPrincipalFragment : Fragment() {
             val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToConexionImpresora()
             view?.findNavController()?.navigate(action)
         }
-        binding.buttonIRarticulos.setOnClickListener {
-            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToListaDeArticulosFragment()
+        binding.buttonIRmantenimiento.setOnClickListener {
+            //IR A MANTEMIENTO
+            //val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToListaDeArticulosFragment()
+            //view?.findNavController()?.navigate(action)
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToMenuMantenimientoFragment()
             view?.findNavController()?.navigate(action)
         }
         binding.buttonIrConfiguracion.setOnClickListener {

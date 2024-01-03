@@ -38,10 +38,10 @@
                         android:text="Impresión Bluetooth" />
 
                     <RadioButton
-                        android:id="@+id/radioSunmi"
+                        android:id="@+id/radioFiservPrint"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Impresion SunMi" />
+                        android:text="Impresion Fiserv" />
                 </RadioGroup>
 
             </LinearLayout>

@@ -57,8 +57,11 @@ class DocumentoVistaFragment : Fragment() {
         }
         //EVENTOS
         /*DocumentoVistaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
-
+            requireView().
         })*/
+        DocumentoVistaViewModel.Impresion.observe(viewLifecycleOwner, Observer {
+            Globales.ControladoraFiservPrint.Print(it,requireContext())
+        })
         DocumentoVistaViewModel.MensajeServer.observe(viewLifecycleOwner, Observer {
             AlertView.showServerError("¡Atención!",it,requireContext())
         })
@@ -215,10 +218,11 @@ class DocumentoVistaFragment : Fragment() {
         {
             R.id.tvReImprimir ->
             {
-                Snackbar.make(requireView(),"Acción no disponible actualmente", Snackbar.LENGTH_SHORT)
+                DocumentoVistaViewModel.ObtenerImpresion(oDocumento.cabezal!!.terminal,oDocumento.cabezal!!.tipoDocCodigo,oDocumento.cabezal!!.nroDoc)
+                /*Snackbar.make(requireView(),"Acción no disponible actualmente", Snackbar.LENGTH_SHORT)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .setBackgroundTint(resources.getColor(R.color.rosado))
-                    .show()
+                    .show()*/
             }
         }
         return super.onOptionsItemSelected(item)

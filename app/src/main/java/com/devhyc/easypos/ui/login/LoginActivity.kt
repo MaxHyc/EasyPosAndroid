@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.devhyc.easypos.databinding.ActivityLoginBinding
-import com.devhyc.easypos.fiserv.FiservITD
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.devhyc.easypos.utilidades.Globales.fiserv
@@ -48,10 +47,9 @@ class LoginActivity : AppCompatActivity() {
         })
         //Boton iniciar sesion
         binding.btnIniciarSesion.setOnClickListener {
-            //binding.animationlogin.isVisible = true
-            //IniciarSesion(binding.etUsuario.text.toString(),binding.etPass.text.toString(),false)
-            fiserv.ConectarServicioITD(this)
-            fiserv.ProcesarTransaccionITD(this)
+            binding.animationlogin.isVisible = true
+            IniciarSesion(binding.etUsuario.text.toString(),binding.etPass.text.toString(),false)
+            //fiserv.ConectarServicioITD(this)
         }
         //LOADINGS
         loginViewModel.isLoadingTerminal.observe(this, Observer {
@@ -60,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
                 binding.etUsuario.visibility = View.GONE
                 binding.etPass.visibility = View.GONE
                 binding.btnIniciarSesion.visibility = View.GONE
+                binding.btnSalir.visibility = View.GONE
                 binding.tvinfoLoginHyc.visibility = View.VISIBLE
                 binding.tvinfoLoginHyc.setText("OBTENIENDO PARAMETROS DE TERMINAL")
             }
@@ -70,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
                 binding.etUsuario.visibility = View.GONE
                 binding.etPass.visibility = View.GONE
                 binding.btnIniciarSesion.visibility = View.GONE
+                binding.btnSalir.visibility = View.GONE
                 binding.tvinfoLoginHyc.visibility = View.VISIBLE
                 binding.tvinfoLoginHyc.setText("CONECTANDO CON SERVIDORES DE HYC")
             }
@@ -80,6 +80,7 @@ class LoginActivity : AppCompatActivity() {
                 binding.etUsuario.visibility = View.GONE
                 binding.etPass.visibility = View.GONE
                 binding.btnIniciarSesion.visibility = View.GONE
+                binding.btnSalir.visibility = View.GONE
                 binding.tvinfoLoginHyc.visibility = View.VISIBLE
                 binding.tvinfoLoginHyc.setText("COMPROBANDO CREDENCIALES AUTOMATICAMENTE")
             }
@@ -90,6 +91,7 @@ class LoginActivity : AppCompatActivity() {
                 binding.etUsuario.visibility = View.GONE
                 binding.etPass.visibility = View.GONE
                 binding.btnIniciarSesion.visibility = View.GONE
+                binding.btnSalir.visibility = View.GONE
                 binding.tvinfoLoginHyc.visibility = View.VISIBLE
                 binding.tvinfoLoginHyc.setText("COMPROBANDO CREDENCIALES LOCALES")
             }
@@ -124,6 +126,10 @@ class LoginActivity : AppCompatActivity() {
                 MostrarControles()
             }
         })
+        binding.btnSalir.setOnClickListener {
+            Globales.CerrarApp = true
+            finishAffinity()
+        }
         binding.tvVersionDeLaApp.text = "Version " + this.packageManager.getPackageInfo(this.packageName, 0).versionName
     }
 
@@ -153,6 +159,7 @@ class LoginActivity : AppCompatActivity() {
             binding.etUsuario.visibility = View.VISIBLE
             binding.etPass.visibility = View.VISIBLE
             binding.btnIniciarSesion.visibility = View.VISIBLE
+            binding.btnSalir.visibility = View.VISIBLE
             binding.tvinfoLoginHyc.visibility = View.GONE
             binding.progressCargandoLogin.isVisible = false
             binding.animationlogin.isVisible = false
@@ -173,5 +180,12 @@ class LoginActivity : AppCompatActivity() {
         Globales.SesionViva = valorSesion
         Globales.UsuarioAnterior = user
         Globales.PassAnterior = password
+    }
+
+    override fun onBackPressed() {
+        /*if (!Globales.EnPrincipal)
+        {
+            super.onBackPressed()
+        }*/
     }
 }

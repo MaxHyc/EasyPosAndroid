@@ -64,6 +64,11 @@ class DocumentoPrincipalFragment : Fragment() {
         (requireActivity() as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         //CARGO LOS ITEMS
         try {
+            if (Globales.isEmitido)
+            {
+                ReiniciarVariables()
+                Globales.isEmitido = false
+            }
             if (DocumentoEnProceso.detalle != null)
             {
                 runBlocking { CalcularDocumentoApi() }
@@ -177,14 +182,37 @@ class DocumentoPrincipalFragment : Fragment() {
         val touchHelper = ItemTouchHelper(itemFinalTouchHelper)
         touchHelper.attachToRecyclerView(binding.rvItemsDoc)
         //
+        //OBTENER LA CAJA ABIERTA
+        DocPrincipalViewModel.ObtenerCajaAbierta()
+        DocPrincipalViewModel.caja.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it == null)
+            {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setIcon(R.drawable.atencion)
+                    .setTitle("¡Atención!")
+                    .setMessage("Debe iniciar una caja para empezar a facturar.\nVaya a 'Movimientos de Caja' e inicie una caja.")
+                    .setPositiveButton("Entendido", DialogInterface.OnClickListener {
+                            dialogInterface, i ->
+                        run {
+                            view?.findNavController()?.navigateUp()
+                        }
+                    })
+                    .setCancelable(false)
+                    .show()
+            }
+            else
+            {
+                (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "N° Caja: ${it.Nro}"
+            }
+        })
         return root
     }
 
     fun MostrarInfoDocEnNavBarr()
     {
         try {
-            (activity as? AppCompatActivity)?.supportActionBar?.title = Globales.ParametrosDocumento.Descripcion
-            (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "N° ${DocumentoEnProceso.cabezal!!.nroDoc}"
+            (activity as? AppCompatActivity)?.supportActionBar?.title = "${ParametrosDocumento.Descripcion} N° ${DocumentoEnProceso.cabezal!!.nroDoc}"
+            //(activity as? AppCompatActivity)?.supportActionBar?.subtitle = "N° ${DocumentoEnProceso.cabezal!!.nroDoc}"
         }
         catch (e:Exception)
         {
@@ -230,6 +258,11 @@ class DocumentoPrincipalFragment : Fragment() {
                 {
                     AlertView.showAlert("¡Atención!","El documento está configurado como no valorizado. Cámbielo para poder usarlo",requireContext())
                 }
+                //
+                //CARGO CODIGO DE SUCURSAL
+                DocumentoEnProceso.complemento!!.codigoSucursal = Globales.Terminal.SucursalDoc
+                //CARGO EL FUNCIONARIO
+                DocumentoEnProceso.complemento!!.funcionarioId = Globales.UsuarioLoggueado.funcionarioId
             }
         }
         catch (e:Exception)

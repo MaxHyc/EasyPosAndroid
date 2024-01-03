@@ -4,6 +4,7 @@ import android.content.Context
 import com.devhyc.easypos.BuildConfig
 import com.devhyc.easypos.data.network.ApiClient
 import com.devhyc.easypos.data.network.ApiControlLogin
+import com.devhyc.easypos.data.network.ApiPaises
 import com.devhyc.easypos.utilidades.Globales
 import dagger.Module
 import dagger.Provides
@@ -67,6 +68,21 @@ object NetworkModule {
 
     @Singleton
     @Provides
+    @Named("Paises")
+    fun provideRetrofitCountries(): Retrofit {
+        val httpClient = OkHttpClient.Builder()
+            .connectTimeout(2, TimeUnit.MINUTES)
+            .writeTimeout(2, TimeUnit.MINUTES)
+            .readTimeout(2, TimeUnit.MINUTES)
+        return Retrofit.Builder()
+            .baseUrl("https://restcountries.com/v2/")
+            .addConverterFactory(GsonConverterFactory.create())
+            //.client(getUnsafeOkHttpClientControl())
+            .build()
+    }
+
+    @Singleton
+    @Provides
     fun provideApiClient(@Named("Client") retrofit: Retrofit): ApiClient {
         return retrofit.create(ApiClient::class.java)
     }
@@ -75,6 +91,12 @@ object NetworkModule {
     @Provides
     fun provideApiControlLogin(@Named("Login") retrofit: Retrofit): ApiControlLogin {
         return retrofit.create(ApiControlLogin::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideApiPaises(@Named("Paises") retrofit: Retrofit): ApiPaises {
+        return retrofit.create(ApiPaises::class.java)
     }
 
 

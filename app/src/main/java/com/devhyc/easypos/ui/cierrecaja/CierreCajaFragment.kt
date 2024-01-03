@@ -1,20 +1,20 @@
 package com.devhyc.easypos.ui.cierrecaja
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTTotalesDeclarados
 import com.devhyc.easypos.databinding.FragmentCierreCajaBinding
 import com.devhyc.easypos.ui.caja.CajaFragmentViewModel
 import com.devhyc.easypos.utilidades.AlertView
+import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,6 +35,7 @@ class CierreCajaFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         cierreViewModel = ViewModelProvider(this)[CierreCajaFragmentViewModel::class.java]
         _binding = FragmentCierreCajaBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -44,14 +45,19 @@ class CierreCajaFragment : Fragment() {
             tipo = bundle.getInt("Tipo",0)
         }
         //
-        binding.flCerrarCaja.setOnClickListener {
-            RealizarCierre()
-        }
         cierreViewModel.isLoading.observe(viewLifecycleOwner, Observer {
             binding.progressBar4.isVisible = it
         })
         cierreViewModel.caja.observe(viewLifecycleOwner, Observer {
             //SI CERRO LA CAJA ENTRA ACA
+            cierreViewModel.ImpresionCierre(it)
+        })
+        cierreViewModel.impresionCierre.observe(viewLifecycleOwner, Observer {
+            Globales.ControladoraFiservPrint.Print(it,requireContext())
+            findNavController().popBackStack()
+        })
+        cierreViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {
+            AlertView.showError("Error",it,requireContext())
         })
         //
         return root
@@ -75,5 +81,24 @@ class CierreCajaFragment : Fragment() {
         {
             AlertView.showError(getString(R.string.Error),e.message,requireContext())
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.menu_reporte,menu)
+        menu.findItem(R.id.btn_menu_ImprimirReporte).isVisible = false
+        menu.findItem(R.id.btn_menu_RealizarCierre).isVisible = true
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId)
+        {
+            R.id.btn_menu_RealizarCierre ->
+            {
+                RealizarCierre()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

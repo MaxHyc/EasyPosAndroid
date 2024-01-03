@@ -36,7 +36,8 @@ class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase,
             {
                 Globales.UsuarioLoggueadoConfig = result.elemento!!
                 Globales.DireccionServidor = result.elemento!!.urlServicio
-                Globales.NroCaja = result.elemento!!.terminalCodigo
+                //Globales.NroCaja = result.elemento!!.terminalCodigo
+                Globales.NroCaja = "1"
                 NetworkModule.provideRetrofit().newBuilder()
                 if (automatico)
                     iniciarSessionAutomatico(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)

@@ -1,6 +1,7 @@
 package com.devhyc.easypos.ui.mediospagos
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -42,6 +43,7 @@ import kotlin.collections.ArrayList
 class MediosDePagoFragment : Fragment() {
 
     //
+    private var transFiserv: Transaction? = null
     //
     private var _binding: FragmentMediosDePagoBinding? = null
     private val binding get() = _binding!!
@@ -79,13 +81,13 @@ class MediosDePagoFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mediosViewModels = ViewModelProvider(this).get(MediosDePagoViewModel::class.java)
+        mediosViewModels = ViewModelProvider(this)[MediosDePagoViewModel::class.java]
         _binding = FragmentMediosDePagoBinding.inflate(inflater, container, false)
         val root: View = binding.root
         mediosViewModels.ListarMediosDePago()
         //
         //CARGAR CONFIGURACION DE CALENDARIOS
-        fechaVencimiento = Globales.Herramientas.ObtenerFechaActual().toString()
+        fechaVencimiento = Globales.Herramientas.ObtenerFechaActual().FechayyyygMMgdd
         //CONFIGURACION DE BOTONES DE CALENDARIO
         binding.etFechaVtoPago.setOnClickListener {
             ShowDialogPickerFechaVto()
@@ -249,7 +251,7 @@ class MediosDePagoFragment : Fragment() {
 
             }
             //
-           var pago = DTDocPago()
+            var pago = DTDocPago()
             pago.importe= binding.etMontoPago.text.toString().toDouble()
             pago.tipoCambio = binding.etTipoCambio.text.toString().toDouble()
             pago.medioPagoCodigo = adapterMediosDePagos.getItem(_medioPagoSelect).Id.toInt()
@@ -261,19 +263,20 @@ class MediosDePagoFragment : Fragment() {
                     pago.numero = binding.etNumeroTarjeta.text.toString()
                 }
                 Globales.TMedioPago.TARJETA.codigo.toString() -> {
+                   /* transFiserv = activity.let { Transaction(requireActivity()) }
+                    transFiserv!!.connectService()
+                    ComprobarConexion()*/
                     pago.tarjetaCodigo = adapterFinancieras.getItem(_financieraSelect).Codigo
                     pago.numero = binding.etNumeroTarjeta.text.toString()
                     pago.cuotas = binding.etCuotas.text.toString().toInt()
                     pago.autorizacion = binding.etAutorizacion.text.toString()
-                    //
-                    val action = MediosDePagoFragmentDirections.actionMediosDePagoFragmentToIntegracionTarjetaFragment()
-                    view?.findNavController()?.navigate(action)
                 }
             }
             pago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
             if (fechaVencimiento.isNotEmpty())
             {
-                pago.fechaVto = Globales.Herramientas.convertirYYYYMMDD(Globales.Herramientas.convertirYYYYMMDD(fechaVencimiento))
+                //pago.fechaVto = Globales.Herramientas.convertirYYYYMMDD(Globales.Herramientas.convertirYYYYMMDD(fechaVencimiento))
+                pago.fechaVto = fechaVencimiento
             }
             adapterPagosRealizados.mediosDepago.add(pago)
             adapterPagosRealizados.notifyDataSetChanged()
@@ -458,20 +461,29 @@ class MediosDePagoFragment : Fragment() {
                     {
                         if (trans.elemento!!.errorCodigo == 0)
                         {
-                            Snackbar.make(requireView(),"${trans.elemento!!.errorMensaje}", Snackbar.LENGTH_SHORT)
+                            Snackbar.make(requireView(), trans.elemento!!.errorMensaje, Snackbar.LENGTH_SHORT)
                                 .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                                 .setBackgroundTint(resources.getColor(R.color.green))
                                 .show()
+                            //IMPRIMIR DOCUMENTO
+                            when (Globales.ImpresionSeleccionada)
+                            {
+                                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(trans.elemento!!.Impresion.impresionTicket,requireContext())
+                            }
+                            Globales.isEmitido = true
+                            findNavController().popBackStack()
                             //ReiniciarVariables()
                         }
                         else if(trans.elemento!!.errorCodigo != 0)
                         {
-                            AlertView.showAlert("¡Error al obtener transacción!","${trans.elemento!!.errorMensaje}",requireContext())
+                            AlertView.showAlert("¡Error al obtener transacción!",
+                                trans.elemento!!.errorMensaje,requireContext())
                         }
                     }
                     else
                     {
-                        AlertView.showAlert("¡Error al obtener transacción!","${trans.mensaje}",requireContext())
+                        AlertView.showAlert("¡Error al obtener transacción!",
+                            trans.mensaje,requireContext())
                     }
                 }
             }

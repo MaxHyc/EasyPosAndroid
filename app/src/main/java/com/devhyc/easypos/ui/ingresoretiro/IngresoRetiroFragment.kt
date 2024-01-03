@@ -52,9 +52,11 @@ class IngresoRetiroFragment : Fragment() {
             }
         }
         //
-        ingresosViewModel.mensaje.observe(viewLifecycleOwner, Observer {
+        binding.flIngresoOk.visibility = View.VISIBLE
+        //
+       /* ingresosViewModel.mensaje.observe(viewLifecycleOwner, Observer {
             AlertView.showAlert("¡Atención!",it,requireActivity())
-        })
+        })*/
         binding.flIngresoOk.setOnClickListener {
             if(binding.etMontoIR.text.toString() == "")
             {
@@ -66,12 +68,12 @@ class IngresoRetiroFragment : Fragment() {
                     0 ->
                     {
                         //INGRESO DE DINERO
-                        ingresosViewModel.Ingreso(binding.etMontoIR.text.toString())
+                        //ingresosViewModel.Ingreso(binding.etMontoIR.text.toString())
                     }
                     1 ->
                     {
                         //RETIRO DE CAJA
-                        ingresosViewModel.Retiro(binding.etMontoIR.text.toString())
+                        //ingresosViewModel.Retiro(binding.etMontoIR.text.toString())
                     }
                     2 ->
                     {
@@ -82,18 +84,18 @@ class IngresoRetiroFragment : Fragment() {
                         }
                         else
                         {
-                            ingresosViewModel.IniciarCaja(binding.etMontoIR.text.toString())
+                            //ingresosViewModel.IniciarCaja(binding.etMontoIR.text.toString())
                         }
                     }
                 }
             }
         }
         //INICIO DE CAJA
-        ingresosViewModel.inicioCaja.observe(viewLifecycleOwner, Observer {
+       /* ingresosViewModel.inicioCaja.observe(viewLifecycleOwner, Observer {
             Snackbar.make(requireView(),"Imprimiendo inicio de caja", Snackbar.LENGTH_LONG).setAnimationMode(
                 BaseTransientBottomBar.ANIMATION_MODE_SLIDE
             ).show()
-            Globales.ControladoraDeImpresion.Print("it.activo.codigoCpcl.toString()",requireContext(),1)
+            //Globales.ControladoraDeImpresion.Print("",requireContext())
             view?.findNavController()?.navigateUp()
         })
         //INGRESO DE CAJA
@@ -101,7 +103,7 @@ class IngresoRetiroFragment : Fragment() {
             Snackbar.make(requireView(),"Imprimiendo ingreso de caja", Snackbar.LENGTH_LONG).setAnimationMode(
                 BaseTransientBottomBar.ANIMATION_MODE_SLIDE
             ).show()
-            Globales.ControladoraDeImpresion.Print("it.activo.codigoCpcl.toString()",requireContext(),1)
+            //Globales.ControladoraDeImpresion.Print("",requireContext())
             view?.findNavController()?.navigateUp()
         })
         //RETIRO DE CAJA
@@ -109,9 +111,9 @@ class IngresoRetiroFragment : Fragment() {
             Snackbar.make(requireView(),"Imprimiendo retiro de caja", Snackbar.LENGTH_LONG).setAnimationMode(
                 BaseTransientBottomBar.ANIMATION_MODE_SLIDE
             ).show()
-            Globales.ControladoraDeImpresion.Print("it.activo.codigoCpcl.toString()",requireContext(),1)
+            //Globales.ControladoraDeImpresion.Print("it.activo.codigoCpcl.toString()",requireContext())
             view?.findNavController()?.navigateUp()
-        })
+        })*/
         //
         ingresosViewModel.isLoading.observe(viewLifecycleOwner, Observer {
             binding.progressBar2.isVisible = it

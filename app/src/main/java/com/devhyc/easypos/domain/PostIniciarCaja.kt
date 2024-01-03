@@ -7,6 +7,6 @@ import com.devhyc.easypos.data.model.Resultado
 import com.integration.easyposkotlin.data.model.DTCaja
 import javax.inject.Inject
 
-class PutIniciarCaja @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(IngresoCaja: DTIngresoCaja): Resultado<DTCaja>? = repository.putIniciarCaja(IngresoCaja)
+class PostIniciarCaja @Inject constructor(private val repository: Repository) {
+    suspend operator fun invoke(IngresoCaja: DTIngresoCaja): Resultado<DTCaja>? = repository.postIniciarCaja(IngresoCaja)
 }

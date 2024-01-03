@@ -12,7 +12,7 @@ import com.devhyc.easypos.data.model.DTMedioPago;
 import com.devhyc.easypos.data.model.DTMedioPagoAceptado;
 import com.devhyc.easypos.fiserv.FiservITD;
 import com.devhyc.easypos.impresion.Impresion;
-import com.devhyc.easypos.impresion.ImpresionSunMi;
+import com.devhyc.easypos.impresion.ImpresionFiserv;
 import com.integration.easyposkotlin.data.model.DTCaja;
 import com.integration.easyposkotlin.data.model.DTTerminalPos;
 import com.sunmi.pay.hardware.aidlv2.emv.EMVOptV2;
@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class Globales {
+    //
+    public static Boolean isEmitido=false;
+    //
+    public static String CiudadPorDefecto = "Uruguay";
     //Fiserv
     public static FiservITD fiserv = new FiservITD();
     //Fecha
@@ -59,7 +63,8 @@ public class Globales {
     public static ArrayList<DTMedioPago> MediosPagoDocumento = new ArrayList<>();
     //INSTANCIAS DE IMPRESION///////
     public static Impresion ControladoraDeImpresion=new Impresion();
-    public static ImpresionSunMi ControladoraSunMi=new ImpresionSunMi();
+    public static ImpresionFiserv ControladoraFiservPrint = new ImpresionFiserv();
+
     //DATOS DE IMPRESORA////////////
     public static Integer ImpresionSeleccionada=0;
     public static String DireccionMac;
@@ -88,12 +93,33 @@ public class Globales {
 
     public enum eTipoImpresora
     {
-        BLUETOOTH("BLUETOOTH",0), SUNMI("SUNMI",1);
+        BLUETOOTH("BLUETOOTH",0), FISERV("FISERV",1);
 
         private String nombre;
         private int codigo;
 
         private eTipoImpresora (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
+
+    public enum eAlineacionImpresion
+    {
+        LEFT("LEFT",1), RIGHT("RIGHT",2), CENTER("CENTER",0);
+
+        private String nombre;
+        private int codigo;
+
+        private eAlineacionImpresion (String nombre, int codigo){
             this.nombre = nombre;
             this.codigo = codigo;
         }

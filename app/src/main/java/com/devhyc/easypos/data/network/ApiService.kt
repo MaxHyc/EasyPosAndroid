@@ -2,6 +2,7 @@ package com.devhyc.easypos.data.network
 
 import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.devhyc.easypos.data.model.*
+import com.devhyc.easypos.data.model.Squareup.Country
 import com.google.gson.Gson
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -11,7 +12,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
-class ApiService @Inject constructor(private val api:ApiClient,private val apiLogin:ApiControlLogin) {
+class ApiService @Inject constructor(private val api:ApiClient,private val apiLogin:ApiControlLogin, private val apiPaises: ApiPaises) {
 
     suspend fun login(userlogin:DTLoginRequest): Resultado<DTLogin> {
         return withContext(Dispatchers.IO)
@@ -48,6 +49,17 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
+    // OBTENER PAISES
+
+    suspend fun getPaises(): List<Country>
+    {
+        return try {
+            apiPaises.getAllContries()
+        } catch (e:Exception) {
+            emptyList()
+        }
+    }
+
     /////////CAJAS
 
     suspend fun getCajaAbierta(nroTerminal:String): Resultado<DTCaja> {
@@ -69,10 +81,10 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
 
     //INICIAR CAJA
 
-    suspend fun putIniciarCaja(IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
+    suspend fun postIniciarCaja(IngresoCaja: DTIngresoCaja): Resultado<DTCaja> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<DTCaja>> = api.putIniciarCaja(IngresoCaja)
+            val response: Response<Resultado<DTCaja>> = api.postIniciarCaja(IngresoCaja)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -109,6 +121,43 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<DTCajaEstado>> = api.getCajaEstado(nroTerminal,nroCaja, usuario)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+    ///IMPRIMIR INICIO CAJA
+
+    suspend fun getImpresionInicioCaja(nroTerminal:String, nroCaja:String): Resultado<DTImpresion> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTImpresion>> = api.getImpresionInicioCaja(nroTerminal,nroCaja)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    ///IMPRIMIR CIERRE DE CAJA
+
+    suspend fun getImpresionCierreCaja(nroTerminal:String, nroCaja:String,usuario:String): Resultado<DTImpresion> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTImpresion>> = api.getImpresionCierreCaja(nroTerminal,nroCaja,usuario)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -655,6 +704,23 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<List<DTCajaDocumento>>> = api.getDocumentosPorTerminalYCaja(nroTerminal, nroCaja)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getImpresion(nroTerminal: String,tipoDoc: String,nroDoc: Long): Resultado<DTImpresion> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTImpresion>> = api.getImpresion(nroTerminal, tipoDoc,nroDoc)
             if (response.isSuccessful)
             {
                 response.body()!!
