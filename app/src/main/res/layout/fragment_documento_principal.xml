@@ -18,12 +18,25 @@
         app:layout_constraintStart_toStartOf="@+id/cardView" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flAddRubro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:src="@drawable/rrr"
+        app:backgroundTint="@color/colorGeocom"
+        app:layout_constraintBottom_toTopOf="@+id/flAddArtDoc"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/flAddArtDoc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:clickable="true"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/aaaa"
+        android:tint="#BD1919"
+        app:backgroundTint="@color/blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

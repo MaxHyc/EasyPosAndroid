@@ -1,13 +1,18 @@
 package com.devhyc.easypos.ui.addarticulos
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.text.TextWatcher
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.annotation.MainThread
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionScene
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -40,8 +45,12 @@ class AddArticuloFragment(var art:DTArticulo?, var listener: (art:DTDocDetalle?)
         dialog!!.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.etPrecioAdd.post {
+            binding.etPrecioAdd.requestFocus()
+            Globales.Herramientas.showKeyboard(binding.etPrecioAdd,requireContext())
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -241,8 +250,8 @@ class AddArticuloFragment(var art:DTArticulo?, var listener: (art:DTDocDetalle?)
                 binding.etSerieAdd.selectAll()
         })
         //
-        binding.etPrecioAdd.requestFocus()
         binding.etPrecioAdd.selectAll()
+        binding.etPrecioAdd.requestFocus()
         //
         return root
     }

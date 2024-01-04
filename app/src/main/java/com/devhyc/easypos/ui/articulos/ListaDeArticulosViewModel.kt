@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhyc.easypos.data.model.DTFamiliaPadre
 import com.devhyc.easypos.data.model.DTMedioPago
+import com.devhyc.easypos.data.model.DTRubro
 import com.devhyc.easypos.domain.GetArticulosFiltradosUseCase
+import com.devhyc.easypos.domain.GetArticulosRubrosUseCase
 import com.devhyc.easypos.domain.GetFamiliasUseCase
 import com.integration.easyposkotlin.data.model.DTArticulo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,12 +15,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetFamiliasUseCase, val getArticulosFiltradosUseCase: GetArticulosFiltradosUseCase) : ViewModel() {
+class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetFamiliasUseCase, val getArticulosFiltradosUseCase: GetArticulosFiltradosUseCase,val getArticulosRubrosUseCase: GetArticulosRubrosUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val ListaFamilias = MutableLiveData<List<DTFamiliaPadre>>()
     val ListaArticulos = MutableLiveData<List<DTArticulo>>()
     val mensajeDelServer = MutableLiveData<String>()
-    val mcargando = MutableLiveData<Boolean>()
+    val ListaRubros = MutableLiveData<ArrayList<DTRubro>>()
 
     fun CargarFamilias() {
         try {
@@ -52,6 +54,27 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
                     if (result.ok)
                     {
                         ListaArticulos.postValue(result.elemento!!)
+                    }
+                }
+                isLoading.postValue(false)
+            }
+        }
+        catch (e:Exception)
+        {
+            isLoading.postValue(false)
+        }
+    }
+
+    fun CargarRubros() {
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                val result = getArticulosRubrosUseCase()
+                if (result != null)
+                {
+                    if (result.ok)
+                    {
+                        ListaRubros.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)

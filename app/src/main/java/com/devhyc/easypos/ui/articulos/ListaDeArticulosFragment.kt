@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
@@ -20,8 +21,10 @@ import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTDocDetalle
 import com.devhyc.easypos.data.model.DTFamiliaHija
 import com.devhyc.easypos.data.model.DTFamiliaPadre
+import com.devhyc.easypos.data.model.DTRubro
 import com.devhyc.easypos.databinding.FragmentListaDeArticulosBinding
 import com.devhyc.easypos.ui.addarticulos.AddArticuloFragment
+import com.devhyc.easypos.ui.articulos.adapter.ItemRubroAdapter
 import com.devhyc.easypos.ui.articulos.adapter.customSpinnerAdapter
 import com.devhyc.easypos.ui.articulos.adapter.customSpinnerSubFamiliaAdapter
 import com.devhyc.easypos.utilidades.AlertView
@@ -41,22 +44,23 @@ class ListaDeArticulosFragment() : Fragment() {
     //View Model
     private lateinit var ListaDeArticulosViewModel: ListaDeArticulosViewModel
     //
-    //
     private lateinit var adapterSubFamilia: customSpinnerSubFamiliaAdapter
     private lateinit var adapterFamilia: customSpinnerAdapter
-
+    //ARTICULOS
     private lateinit var adapterArticulos: ItemArticuloAdapter
-    //private var arrayArticulosSeleccionados: ArrayList<DTDocDetalle> = ArrayList()
-
     private var originalArrayList: ArrayList<DTArticulo> = ArrayList()
     private var filtradoArrayList: ArrayList<DTArticulo> = ArrayList()
-    //
-    //private var listaArticulos = listaItems
 
+    //RUBROS
+    private lateinit var adapterRubros: ItemRubroAdapter
+    private  var originalRubroArrayList: ArrayList<DTRubro> = ArrayList()
+    private var filtradoRubroArrayList: ArrayList<DTRubro> = ArrayList()
+
+    //
     private var TextoBusqueda:String=""
     private var CodigoSeleccionado:String=""
-
-    private var clickEnBuscar:Boolean=false
+    //
+    private var EsRubro:Boolean=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +68,14 @@ class ListaDeArticulosFragment() : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        ListaDeArticulosViewModel.ListaArticulos.value = ArrayList<DTArticulo>()
+        if (EsRubro)
+        {
+            ListaDeArticulosViewModel.CargarRubros()
+        }
+            else
+        {
+            ListaDeArticulosViewModel.ListaArticulos.value = ArrayList<DTArticulo>()
+        }
     }
 
     override fun onResume() {
@@ -74,10 +85,26 @@ class ListaDeArticulosFragment() : Fragment() {
 
     fun CargarTodo()
     {
-        //Cargar Articulos
-        binding.viewLoading.isVisible = true
-        binding.rvArticulos.isVisible = false
-        ListaDeArticulosViewModel.CargarFamilias()
+        if (EsRubro)
+        {
+            //CargarRubros
+            (activity as? AppCompatActivity)?.supportActionBar?.title = "Lista de rubros"
+            binding.rvArticulos.visibility = View.GONE
+            binding.rvRubros.visibility = View.VISIBLE
+            binding.viewLoading.isVisible = true
+            binding.rvArticulos.isVisible = false
+            ListaDeArticulosViewModel.CargarRubros()
+        }
+        else
+        {
+            //Cargar Articulos
+            (activity as? AppCompatActivity)?.supportActionBar?.title = "Lista de artículos"
+            binding.rvArticulos.visibility = View.VISIBLE
+            binding.rvRubros.visibility = View.GONE
+            binding.viewLoading.isVisible = true
+            binding.rvArticulos.isVisible = false
+            ListaDeArticulosViewModel.CargarFamilias()
+        }
     }
 
     override fun onCreateView(
@@ -88,8 +115,43 @@ class ListaDeArticulosFragment() : Fragment() {
         ListaDeArticulosViewModel = ViewModelProvider(this)[com.devhyc.easypos.ui.articulos.ListaDeArticulosViewModel::class.java]
         _binding = FragmentListaDeArticulosBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        //CARGAR ARTICULOS YA EN LISTA
-        //arrayArticulosSeleccionados.addAll(Globales.documento_Items)
+        //
+        if (arguments !=null) {
+            val bundle: Bundle = arguments as Bundle
+            EsRubro = bundle.getBoolean("rubros", false)
+        }
+        //EVENTOS OBSERVER DE RUBROS
+        ListaDeArticulosViewModel.ListaRubros.observe(viewLifecycleOwner, Observer {
+            try {
+                originalRubroArrayList = it as ArrayList<DTRubro>
+                adapterRubros = ItemRubroAdapter(ArrayList<DTRubro>(it))
+                adapterRubros.setOnItemClickListener(object: ItemRubroAdapter.OnItemClickListener{
+                    override fun onItemClick(position: Int) {
+                        //CARGAR DOC DETALLE
+                        var item = DTArticulo()
+                        item.id = adapterRubros.rubros[position].id.toInt()
+                        item.nombre = adapterRubros.rubros[position].nombre
+                        item.codigo = adapterRubros.rubros[position].codigo
+                        item.impuesto = adapterRubros.rubros[position].impuestoCodigo.toInt()
+                        item.impuestoValor = adapterRubros.rubros[position].impuestoTasa.toInt()
+                        item.esRubro = 1
+                        MostarDialogoAddArt(item)
+                    }
+                })
+                binding.rvRubros.layoutManager = LinearLayoutManager(activity)
+                binding.rvRubros.adapter = adapterRubros
+                Snackbar.make(binding.messArtLayout,"${adapterRubros.itemCount} rubros listados.", Snackbar.LENGTH_SHORT).setAnimationMode(
+                    BaseTransientBottomBar.ANIMATION_MODE_SLIDE
+                ).show()
+                binding.tvCantidadArticulosListado.text="Cantidad: ${adapterRubros.itemCount}"
+                binding.viewLoading.isVisible = false
+                binding.rvRubros.isVisible = true
+            }
+            catch (e:Exception)
+            {
+                Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
         //Eventos Observer articulo
         ListaDeArticulosViewModel.ListaArticulos.observe(viewLifecycleOwner, Observer {
             try {
@@ -125,7 +187,14 @@ class ListaDeArticulosFragment() : Fragment() {
 
         //
         binding.editTextTextPersonName8.addTextChangedListener {
-            filtrarArticulo(it.toString())
+            if (EsRubro)
+            {
+                filtrarRubro(it.toString())
+            }
+            else
+            {
+                filtrarArticulo(it.toString())
+            }
         }
 
         //Evento Observer del listado de familia
@@ -194,23 +263,20 @@ class ListaDeArticulosFragment() : Fragment() {
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener
         {
             override fun onQueryTextSubmit(query: String?): Boolean {
-               /* searchView.clearFocus()
-                 searchView.setQuery("",false)
-                 searchItem.collapseActionView()
-                 //Toast.makeText(requireActivity(),"Esta buscando $query",Toast.LENGTH_SHORT).show()
-                 if (query != null) {
-                     TextoBusqueda = query
-                     filtarCodigo(CodigoSeleccionado)
-                     //filtar(query)
-                 }
-                 return true*/
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
                     TextoBusqueda = newText
-                    filtrarArticulo(TextoBusqueda)
+                    if (EsRubro)
+                    {
+                        filtrarRubro(TextoBusqueda)
+                    }
+                    else
+                    {
+                        filtrarArticulo(TextoBusqueda)
+                    }
                 }
                 return false
             }
@@ -234,8 +300,15 @@ class ListaDeArticulosFragment() : Fragment() {
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     private fun filtarCodigo(codigo: String) {
         try {
-            ListaDeArticulosViewModel.CargarArticulos(100,
-                Globales.DocumentoEnProceso.valorizado!!.listaPrecioCodigo,4,codigo)
+            if (!EsRubro)
+            {
+                ListaDeArticulosViewModel.CargarArticulos(100,
+                    Globales.DocumentoEnProceso.valorizado!!.listaPrecioCodigo,4,codigo)
+            }
+            else
+            {
+                ListaDeArticulosViewModel.CargarRubros()
+            }
         }
         catch (e:Exception)
         {
@@ -277,6 +350,47 @@ class ListaDeArticulosFragment() : Fragment() {
                 adapterArticulos.notifyDataSetChanged()
             }
             binding.tvCantidadArticulosListado.setText("Cantidad: " + adapterArticulos.itemCount)
+        }
+        catch (e:Exception)
+        {
+
+        }
+    }
+
+    private fun filtrarRubro(texto:String)
+    {
+        try {
+            if (texto.isNotEmpty())
+            {
+                filtradoRubroArrayList.clear()
+                originalRubroArrayList.forEach {
+                    if(texto.isNotEmpty())
+                    {
+                        if(it.nombre.lowercase(Locale.getDefault()).contains(texto))
+                        {
+                            filtradoRubroArrayList.add(it)
+                        }
+                        if(it.codigo.lowercase(Locale.getDefault()).contains(texto))
+                        {
+                            filtradoRubroArrayList.add(it)
+                        }
+                    }
+                    else
+                    {
+                        filtradoRubroArrayList.add(it)
+                    }
+                }
+                adapterRubros.rubros = filtradoRubroArrayList
+                adapterRubros.notifyDataSetChanged()
+            }
+            else
+            {
+                filtradoRubroArrayList.clear()
+                filtradoRubroArrayList.addAll(originalRubroArrayList)
+                adapterRubros.rubros = filtradoRubroArrayList
+                adapterRubros.notifyDataSetChanged()
+            }
+            binding.tvCantidadArticulosListado.setText("Cantidad: " + adapterRubros.itemCount)
         }
         catch (e:Exception)
         {

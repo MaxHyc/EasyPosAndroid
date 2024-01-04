@@ -144,6 +144,10 @@ class DocumentoPrincipalFragment : Fragment() {
             val action = DocumentoPrincipalFragmentDirections.actionDocumentoPrincipalFragmentToListaDeArticulosFragment()
             view?.findNavController()?.navigate(action)
         }
+        binding.flAddRubro.setOnClickListener {
+            val action = DocumentoPrincipalFragmentDirections.actionDocumentoPrincipalFragmentToListaDeArticulosFragment(true)
+            view?.findNavController()?.navigate(action)
+        }
         //
         adapterItems = ItemDocAdapter(ArrayList<DTDocDetalle>())
         adapterItems.setOnItemClickListener(object: ItemDocAdapter.OnItemClickListener {

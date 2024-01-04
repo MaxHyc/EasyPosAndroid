@@ -1,6 +1,10 @@
 package com.devhyc.easypos.utilidades
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.devhyc.easypos.data.model.DTFecha
 import java.text.DateFormat
 import java.text.ParseException
@@ -85,5 +89,13 @@ class Herramientas @Inject constructor() {
             throw Exception(e.message)
         }
         return ""
+    }
+
+    fun showKeyboard(view: View?,cnt:Context) {
+        view?.let {
+            val imm =
+                cnt.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(it, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 }

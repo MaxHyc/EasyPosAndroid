@@ -66,7 +66,12 @@
         android:id="@+id/listaDeArticulosFragment"
         android:name="com.devhyc.easypos.ui.articulos.ListaDeArticulosFragment"
         android:label="@string/menu_listaArticulo"
-        tools:layout="@layout/fragment_lista_de_articulos" />
+        tools:layout="@layout/fragment_lista_de_articulos" >
+        <argument
+            android:name="rubros"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
     <fragment
         android:id="@+id/configuracionDeCajaFragment"
         android:name="com.devhyc.easypos.ui.configuracion.ConfiguracionDeCajaFragment"

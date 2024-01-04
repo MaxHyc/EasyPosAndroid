@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddArticuloFragmentViewModel @Inject constructor(val getArticuloPorBarrasUseCase: GetArticuloPorBarrasUseCase, val getArticuloPorCodigoUseCase: GetArticuloPorCodigoUseCase, val getArticuloPorSerieUseCase: GetArticuloPorSerieUseCase, val getArticulosRubrosUseCase: GetArticulosRubrosUseCase) : ViewModel() {
+class AddArticuloFragmentViewModel @Inject constructor(val getArticuloPorBarrasUseCase: GetArticuloPorBarrasUseCase, val getArticuloPorCodigoUseCase: GetArticuloPorCodigoUseCase, val getArticuloPorSerieUseCase: GetArticuloPorSerieUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val articuloEncontrado = MutableLiveData<DTArticulo>()
     val listaSerieEncontradas = MutableLiveData<ArrayList<DTArticulo>>()
@@ -87,32 +87,6 @@ class AddArticuloFragmentViewModel @Inject constructor(val getArticuloPorBarrasU
                     {
                         mostrarMensaje.postValue(result.mensaje)
                         enfocarCodigo.postValue(false)
-                    }
-                }
-                isLoading.postValue(false)
-            }
-        }
-        catch (e:Exception)
-        {
-            isLoading.postValue(false)
-        }
-    }
-
-   fun ListarRubros() {
-        try {
-            viewModelScope.launch {
-                isLoading.postValue(true)
-                val result = getArticulosRubrosUseCase()
-                if (result != null)
-                {
-                    if (result.ok)
-                    {
-                        //rubrosModel.postValue(result.elemento!!)
-                        //cargacompletaRubros.postValue(true)
-                    }
-                    else
-                    {
-                        //cargacompletaRubros.postValue(false)
                     }
                 }
                 isLoading.postValue(false)
