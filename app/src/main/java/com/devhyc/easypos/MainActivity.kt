@@ -1,9 +1,8 @@
 package com.devhyc.easypos
 
-import sunmi.paylib.SunmiPayKernel
-
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -15,16 +14,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import dagger.hilt.android.AndroidEntryPoint
 import android.content.Intent
-import android.view.View
-import android.widget.TextView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.ui.*
 import com.devhyc.easypos.databinding.ActivityMainBinding
+import com.devhyc.easypos.fiserv.device.DeviceApi
+import com.devhyc.easypos.fiserv.device.DeviceService
+import com.devhyc.easypos.fiserv.device.IDeviceService
+import com.devhyc.easypos.fiserv.presenter.TransactionLauncherPresenter
+import com.devhyc.easypos.fiserv.presenter.TransactionPresenter
+import com.devhyc.easypos.fiserv.service.TransactionServiceImpl
 import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.ingenico.fiservitdapi.transaction.Transaction
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -39,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         //DESREGISTRAR IMPRESORA FISERV
-        DesregistrarServicioPDAFiserv()
+        //DesregistrarServicioPDAFiserv()
         super.onDestroy()
     }
 
@@ -167,9 +173,9 @@ class MainActivity : AppCompatActivity() {
             Globales.DireccionPlexo = BuildConfig.DIRECCION_PLEXO
             Globales.ImpresionSeleccionada = Globales.sharedPreferences.getInt(getString(R.string._tipo_impresora),0)
             Globales.DireccionMac = Globales.sharedPreferences.getString(getString(R.string._mac),"")
-           /* if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
+            /*if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
             {
-                Globales.ControladoraFiservPrint.InstanciarImpresora(this)
+                //Globales.ControladoraFiservPrint.InstanciarImpresora(this)
             }*/
             Globales.SesionViva = Globales.sharedPreferences.getBoolean("sesionviva",false)
             Globales.UsuarioAnterior = Globales.sharedPreferences.getString("usuarioanterior","")
@@ -191,30 +197,6 @@ class MainActivity : AppCompatActivity() {
             DialogoCerrarSesion()
         }
     }
-
-  /*  //INTEGRACION SUNMI CREDIT CARD
-
-    private fun IniciarSDK()
-    {
-        var mSMPayKernel: SunmiPayKernel? = null
-        mSMPayKernel = SunmiPayKernel.getInstance()
-        mSMPayKernel!!.initPaySDK(this,object : SunmiPayKernel.ConnectCallback {
-            override fun onDisconnectPaySDK() {
-                Toast.makeText(applicationContext,"Se ha desconectado el hardware lector de tarjetas", Toast.LENGTH_SHORT).show()
-            }
-            override fun onConnectPaySDK() {
-                try {
-                    Globales.mReadCardOptV2 = mSMPayKernel!!.mReadCardOptV2
-                    Globales.mEMVOptV2 = mSMPayKernel!!.mEMVOptV2
-                    Globales.mPinPadOptV2 = mSMPayKernel!!.mPinPadOptV2
-                    Globales.mBasicOptV2 = mSMPayKernel!!.mBasicOptV2
-                    Globales.mSecurityOptV2 = mSMPayKernel!!.mSecurityOptV2
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        })
-    }*/
 
     fun VerificarPermisos()
     {
@@ -269,7 +251,7 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_ADVERTISE), REQUEST)
     }
 
-    fun DesregistrarServicioPDAFiserv()
+    /*fun DesregistrarServicioPDAFiserv()
     {
         if(Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
         {
@@ -278,5 +260,5 @@ class MainActivity : AppCompatActivity() {
                 Globales.fiserv.RegistrarDeviceService(this,false)
             }
         }
-    }
+    }*/
 }

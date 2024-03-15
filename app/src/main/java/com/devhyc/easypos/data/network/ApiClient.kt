@@ -5,6 +5,9 @@ import com.devhyc.easypos.data.model.DTLogin
 import com.devhyc.easypos.data.model.DTLoginRequest
 import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.data.model.Resultado
+import com.devhyc.easypos.fiserv.model.ITDConfiguracion
+import com.devhyc.easypos.fiserv.model.ITDRespuesta
+import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTTerminalPos
@@ -171,5 +174,21 @@ interface ApiClient {
     //LISTAR LISTA DE PRECIOS
     @GET("ListasPrecios/listar/{tipodoc}")
     suspend fun getListarListaDePrecios(@Path("tipodoc") tipoDoc: String): Response<Resultado<ArrayList<DTGenerico>>>
+
+    //FISERVITD
+    @GET("itd/configuracion/{nroTerminal}")
+    suspend fun getConfiguracionTerminalITD(@Path("nroTerminal") nroTerminal: String): Response<Resultado<ITDConfiguracion>>
+
+    @GET("itd/test/true/{nroTerminal}")
+    suspend fun getTestDeConexionITD(@Path("nroTerminal") nroTerminal: String): Response<Resultado<Boolean>>
+
+    @POST("itd")
+    suspend fun postCrearTransaccionITD(@Body transaccion: ITDTransaccionNueva?): Response<Resultado<ITDRespuesta>>
+
+    @GET("itd/{idTransaccion}")
+    suspend fun getConsultarTransaccionITD(@Path("idTransaccion") nroTransaccion:String): Response<Resultado<ITDRespuesta>>
+
+    @GET("itd/cancelar/{nroTerminal}/{nroTransaccion}")
+    suspend fun getCancelarTransaccionITD(@Path("nroTerminal") nroTerminal: String?, @Path("nroTransaccion") nroTransaccion: String?): Response<Resultado<ITDRespuesta>>
 
 }

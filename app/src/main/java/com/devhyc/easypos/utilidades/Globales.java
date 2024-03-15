@@ -1,6 +1,7 @@
 package com.devhyc.easypos.utilidades;
 
 import android.content.SharedPreferences;
+import android.widget.ArrayAdapter;
 
 import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin;
 import com.devhyc.easypos.data.model.DTDoc;
@@ -11,8 +12,12 @@ import com.devhyc.easypos.data.model.DTLogin;
 import com.devhyc.easypos.data.model.DTMedioPago;
 import com.devhyc.easypos.data.model.DTMedioPagoAceptado;
 import com.devhyc.easypos.fiserv.FiservITD;
+import com.devhyc.easypos.fiserv.device.DeviceApi;
+import com.devhyc.easypos.fiserv.device.IDeviceService;
+import com.devhyc.easypos.fiserv.presenter.TransactionLauncherPresenter;
 import com.devhyc.easypos.impresion.Impresion;
 import com.devhyc.easypos.impresion.ImpresionFiserv;
+import com.ingenico.fiservitdapi.transaction.Transaction;
 import com.integration.easyposkotlin.data.model.DTCaja;
 import com.integration.easyposkotlin.data.model.DTTerminalPos;
 import com.sunmi.pay.hardware.aidlv2.emv.EMVOptV2;
@@ -33,6 +38,15 @@ public class Globales {
     public static String CiudadPorDefecto = "Uruguay";
     //Fiserv
     public static FiservITD fiserv = new FiservITD();
+    public static String IDTransaccionActual="";
+    //FISERV
+    public static Transaction transactionApi;
+    public static TransactionLauncherPresenter transactionLauncherPresenter;
+    public static ArrayAdapter<String> currencySpinnerAdapter;
+    public static IDeviceService deviceService;
+    public static DeviceApi deviceApi;
+    public static String currencySelected = "UYU";
+
     //Fecha
     public static String FechaJson = "yyyy-MM-dd'T'HH:mm:ss";
     public static String Fecha_dd_MM_yyyy_HH_mm_ss= "dd/MM/yyyy HH:mm:ss";

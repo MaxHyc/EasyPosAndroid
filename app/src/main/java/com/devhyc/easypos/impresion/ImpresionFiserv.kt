@@ -91,6 +91,21 @@ class ImpresionFiserv: AppCompatActivity() {
                         }
                     }
                     Globales.fiserv.printer!!.feedLine(5)
+                    //MAS PAGINAS IMPRIME VAUCHER
+                    if (impresion.masPaginas.isNotEmpty())
+                    {
+                        Globales.fiserv.printer!!.addText(AlignMode.RIGHT,"TIENE MAS PAGINAS ${impresion.masPaginas.count()}")
+                        Globales.fiserv.printer!!.feedLine(5)
+                        Thread.sleep(3000)
+                        for (v:DTImpresion in impresion.masPaginas)
+                        {
+                            //Print(v,Contexto)
+                        }
+                    }
+                    else
+                    {
+                        Globales.fiserv.printer!!.addText(AlignMode.RIGHT,"NO TIENE MAS PAGINAS")
+                    }
                     Globales.fiserv.printer!!.startPrint(object : OnPrintListener.Stub()
                     {
                         override fun onFinish() {
@@ -126,7 +141,7 @@ class ImpresionFiserv: AppCompatActivity() {
 
     fun PrintPrueba(Contexto: Context)
     {
-        try {
+       try {
             if (Globales.fiserv.printer != null)
             {
                 if (Globales.fiserv.printer!!.status == PrinterError.SUCCESS)

@@ -3,6 +3,9 @@ package com.devhyc.easypos.data.network
 import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.data.model.Squareup.Country
+import com.devhyc.easypos.fiserv.model.ITDConfiguracion
+import com.devhyc.easypos.fiserv.model.ITDRespuesta
+import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
 import com.google.gson.Gson
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -733,4 +736,93 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
             }
         }
     }
+
+    //FISERV
+
+    suspend fun postCrearTransaccionITD(transaccion:ITDTransaccionNueva): Resultado<ITDRespuesta> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDRespuesta>> = api.postCrearTransaccionITD(transaccion)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getConfiguracionTerminalITD(nroTerminal: String): Resultado<ITDConfiguracion> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDConfiguracion>> = api.getConfiguracionTerminalITD(nroTerminal)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getTestDeConexionITD(nroTerminal: String): Resultado<Boolean> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<Boolean>> = api.getTestDeConexionITD(nroTerminal)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getConsultarTransaccionITD(nroTransaccion: String): Resultado<ITDRespuesta> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDRespuesta>> = api.getConsultarTransaccionITD(nroTransaccion)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getCancelarTransaccionITD(nroTerminal:String,nroTransaccion: String): Resultado<ITDRespuesta> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDRespuesta>> = api.getCancelarTransaccionITD(nroTerminal, nroTransaccion)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+
 }

@@ -178,17 +178,7 @@
         android:name="com.devhyc.easypos.ui.mediospagos.MediosDePagoFragment"
         android:label="Medios de pago"
         tools:layout="@layout/fragment_medios_de_pago">
-        <action
-            android:id="@+id/action_mediosDePagoFragment_to_integracionTarjetaFragment"
-            app:destination="@id/integracionTarjetaFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/mediosDePagoFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/integracionTarjetaFragment"
-        android:name="com.devhyc.easypos.ui.integraciontarjeta.IntegracionTarjetaFragment"
-        android:label="Pago con tarjeta"
-        tools:layout="@layout/fragment_integracion_tarjeta" />
     <fragment
         android:id="@+id/menuMantenimientoFragment"
         android:name="com.devhyc.easypos.ui.menumantenimiento.MenuMantenimientoFragment"

@@ -16,10 +16,9 @@ data class DTDocPago(@SerializedName("medioPagoCodigo") var medioPagoCodigo:Int,
                      @SerializedName("tarjetaCodigo") var tarjetaCodigo:String,
                      @SerializedName("cuotas") var cuotas:Int,
                      @SerializedName("autorizacion") var autorizacion:String,
-                     @SerializedName("transaccion") var transaccion:String
-                     /*@SerializedName("STRING1") var MPNOMBRE:String,
-                     @SerializedName("STRING2") var MPMONEDA:String*/
+                     @SerializedName("transaccion") var transaccion:String,
+                     @SerializedName("voucher") var Vaucher: DTDocVaucher?
                      )
 {
-    constructor() : this(0,"",0.0,0.0,"","","","","",0,"","")
+    constructor() : this(0,"",0.0,0.0,"","","","","",0,"","",null)
 }

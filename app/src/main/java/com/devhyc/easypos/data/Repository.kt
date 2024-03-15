@@ -4,6 +4,10 @@ import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.data.model.Squareup.Country
 import com.devhyc.easypos.data.network.ApiService
+import com.devhyc.easypos.fiserv.model.ITDConfiguracion
+import com.devhyc.easypos.fiserv.model.ITDRespuesta
+import com.devhyc.easypos.fiserv.model.ITDRespuestaErrorCT
+import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTTerminalPos
@@ -492,6 +496,53 @@ class Repository @Inject constructor(
     {
         return try {
             return api.getImpresion(nroTerminal, tipoDoc, nroDoc)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    ////FISERV
+    suspend fun postCrearTransaccionITD(transaccion:ITDTransaccionNueva): Resultado<ITDRespuesta>
+    {
+        return try {
+            return api.postCrearTransaccionITD(transaccion)
+        }
+        catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+    suspend fun getConfiguracionTerminalITD(nroTerminal: String): Resultado<ITDConfiguracion>
+    {
+        return try {
+            return api.getConfiguracionTerminalITD(nroTerminal)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun getTestDeConexionITD(nroTerminal: String): Resultado<Boolean>
+    {
+        return try {
+            return api.getTestDeConexionITD(nroTerminal)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun getConsultarTransaccionITD(nroTransaccion: String): Resultado<ITDRespuesta>
+    {
+        return try {
+            return api.getConsultarTransaccionITD(nroTransaccion)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun getCancelarTransaccionITD(nroTerminal: String, nroTransaccion: String): Resultado<ITDRespuesta>
+    {
+        return try {
+            return api.getCancelarTransaccionITD(nroTerminal,nroTransaccion)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
         }

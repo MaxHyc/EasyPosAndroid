@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import com.devhyc.easypos.databinding.ActivityLoginBinding
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
-import com.devhyc.easypos.utilidades.Globales.fiserv
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -47,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
         })
         //Boton iniciar sesion
         binding.btnIniciarSesion.setOnClickListener {
-            binding.animationlogin.isVisible = true
+            //binding.animationlogin.isVisible = true
             IniciarSesion(binding.etUsuario.text.toString(),binding.etPass.text.toString(),false)
             //fiserv.ConectarServicioITD(this)
         }

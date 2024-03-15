@@ -1,29 +1,40 @@
 package com.devhyc.easypos.fiserv
 
-import android.app.Activity
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Binder
 import android.os.IBinder
-import android.view.Gravity
+import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
+import com.devhyc.easypos.fiserv.device.DeviceApi
+import com.devhyc.easypos.fiserv.device.DeviceService
+import com.devhyc.easypos.fiserv.device.IDeviceService
+import com.devhyc.easypos.fiserv.presenter.TransactionLauncherPresenter
+import com.devhyc.easypos.fiserv.presenter.TransactionPresenter
+import com.devhyc.easypos.fiserv.service.TransactionServiceImpl
+import com.devhyc.easypos.ui.mediospagos.MediosDePagoFragment
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.ingenico.fiservitdapi.transaction.ITransactionDoneListener
 import com.ingenico.fiservitdapi.transaction.Transaction
 import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
 import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
+import com.ingenico.fiservitdapi.transaction.data.TransactionResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import com.usdk.apiservice.aidl.UDeviceService
 import com.usdk.apiservice.aidl.printer.UPrinter
+import java.math.BigDecimal
+import java.math.RoundingMode
 
-class FiservITD: ITransactionDoneListener {
+class FiservITD {
 
     private var transFiserv: Transaction? = null
     var deviceService:UDeviceService? = null
@@ -86,22 +97,23 @@ class FiservITD: ITransactionDoneListener {
         }
     }
 
-
-    fun ConectarServicioITD(cnt:Context)
+   /* fun ConectarServicioITD(cnt:Context)
     {
         try
         {
-            transFiserv = Transaction(cnt)
-            transFiserv?.connectService()
-            ComprobarConexion(cnt)
+            //transFiserv =  Transaction(cnt)
+            //transFiserv?.connectService()
+            //ComprobarConexion(cnt)
+           // transFiserv.registerTransactionDoneListener(this) // IMPORTANTE!
+            //transFiserv.start(transactionInputData)
         }
         catch (e:Exception)
         {
             AlertView.showAlert("¡Error al conectar con servicio de ITD","${e.message}",cnt)
         }
-    }
+    }*/
 
-    fun DesconectarServicioITD(cnt:Context)
+    /*fun DesconectarServicioITD(cnt:Context)
     {
         try {
             transFiserv?.disconnectService()
@@ -110,15 +122,15 @@ class FiservITD: ITransactionDoneListener {
         {
             AlertView.showAlert("¡Error al desconectar con servicio de ITD","${e.message}",cnt)
         }
-    }
+    }*/
 
-    fun ComprobarConexion(cnt:Context)
+    /*fun ComprobarConexion(cnt:Context)
     {
         try {
             var intentos:Int=0
             while(!transFiserv!!.connected)
             {
-                if (intentos < 30)
+                if (intentos < 60)
                 {
                     intentos++
                     Thread.sleep(1000)
@@ -131,18 +143,18 @@ class FiservITD: ITransactionDoneListener {
             }
             if (transFiserv!!.connected)
             {
-                transFiserv?.start(TransactionInputData(TransactionTypes.SALE, BigDecimal(10),null,858,null))
+                //transFiserv?.start(TransactionInputData(TransactionTypes.SALE, BigDecimal(10),null,858,null))
             }
         }
         catch (e:Exception)
         {
             AlertView.showAlert("¡Error al procesar pago ITD!","${e.message}",cnt)
         }
-    }
+    }*/
 
-    override fun onTransactionDone(transactionResult: com.ingenico.fiservitdapi.transaction.data.TransactionResult?) {
+   /* override fun onTransactionDone(transactionResult: com.ingenico.fiservitdapi.transaction.data.TransactionResult?) {
         GlobalScope.launch(Dispatchers.Main) {
             var hola = transactionResult.toString()
         }
-    }
+    }*/
 }
