@@ -172,6 +172,11 @@
             app:destination="@id/mediosDePagoFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/documentoPrincipalFragment" />
+        <action
+            android:id="@+id/action_documentoPrincipalFragment_to_mediosPagosLiteFragment"
+            app:destination="@id/mediosPagosLiteFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/documentoPrincipalFragment" />
     </fragment>
     <fragment
         android:id="@+id/mediosDePagoFragment"
@@ -198,4 +203,9 @@
         android:name="com.devhyc.easypos.ui.clientes.listado.ListaClientesFragment"
         android:label="Lista de clientes"
         tools:layout="@layout/fragment_lista_clientes" />
+    <fragment
+        android:id="@+id/mediosPagosLiteFragment"
+        android:name="com.devhyc.easypos.ui.mediospagoslite.MediosPagosLiteFragment"
+        android:label="Método de pago"
+        tools:layout="@layout/fragment_medios_pagos_lite" />
 </navigation>

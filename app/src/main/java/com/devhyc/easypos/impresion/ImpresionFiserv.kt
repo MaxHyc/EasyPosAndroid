@@ -104,7 +104,7 @@ class ImpresionFiserv: AppCompatActivity() {
                     }
                     else
                     {
-                        Globales.fiserv.printer!!.addText(AlignMode.RIGHT,"NO TIENE MAS PAGINAS")
+                        //Globales.fiserv.printer!!.addText(AlignMode.RIGHT,"NO TIENE MAS PAGINAS")
                     }
                     Globales.fiserv.printer!!.startPrint(object : OnPrintListener.Stub()
                     {

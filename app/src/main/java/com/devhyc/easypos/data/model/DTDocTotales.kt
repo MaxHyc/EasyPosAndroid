@@ -7,4 +7,5 @@ data class DTDocTotales(@SerializedName("subtotal") var subtotal:Double,
                         @SerializedName("totalDtos") var totalDtos:Double,
                         @SerializedName("redondeo") var redondeo:Double,
                         @SerializedName("total") var total:Double,
+                        @SerializedName("subtotalGravadoConDto") var subtotalGravadoConDto:Double,
                         @SerializedName("items") var items:List<DTDocDetalle>)

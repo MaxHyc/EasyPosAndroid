@@ -1,4 +1,4 @@
-package com.devhyc.easypos.ui.mediospagos
+package com.devhyc.easypos.ui.mediospagoslite
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,11 +14,10 @@ import com.devhyc.easypos.utilidades.Globales
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.math.RoundingMode
 import javax.inject.Inject
 
 @HiltViewModel
-class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val getListarBancosUseCase: GetListarBancosUseCase, val getListarFinancierasUseCase: GetListarFinancierasUseCase,val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val getImpresionUseCase: GetImpresionUseCase, val postCrearTransaccionITD: postCrearTransaccionITD, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val getCancelarTransaccionITDUseCase: GetCancelarTransaccionITDUseCase) : ViewModel() {
+class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val getListarBancosUseCase: GetListarBancosUseCase, val getListarFinancierasUseCase: GetListarFinancierasUseCase, val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val getImpresionUseCase: GetImpresionUseCase, val postCrearTransaccionITD: postCrearTransaccionITD, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val getCancelarTransaccionITDUseCase: GetCancelarTransaccionITDUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val LMedioPago = MutableLiveData<List<DTMedioPago>>()
     val ColFinancieras = MutableLiveData<ArrayList<DTFinanciera>>()
@@ -34,74 +33,58 @@ class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosD
             viewModelScope.launch {
                 isLoading.postValue(true)
                 val result = getMediosDePagos()
-                if (result != null)
-                {
-                    if (result.ok)
-                    {
+                if (result != null) {
+                    if (result.ok) {
                         LMedioPago.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)
             }
-        }
-        catch (e:Exception)
-        {
+        } catch (e: Exception) {
             isLoading.postValue(false)
         }
     }
 
-    fun ListarBancos()
-    {
+    fun ListarBancos() {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
                 val result = getListarBancosUseCase()
-                if (result != null)
-                {
-                    if (result.ok)
-                    {
+                if (result != null) {
+                    if (result.ok) {
                         ColBancos.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)
             }
-        }
-        catch (e:Exception)
-        {
+        } catch (e: Exception) {
             isLoading.postValue(false)
         }
     }
 
-    fun ListarFinancieras()
-    {
+    fun ListarFinancieras() {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
                 val result = getListarFinancierasUseCase()
-                if (result != null)
-                {
-                    if (result.ok)
-                    {
+                if (result != null) {
+                    if (result.ok) {
                         ColFinancieras.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)
             }
-        }
-        catch (e:Exception)
-        {
+        } catch (e: Exception) {
             isLoading.postValue(false)
         }
     }
 
-    fun CrearTransaccionITD(montopago:Double)
-    {
+    fun CrearTransaccionITD(montopago: Double) {
         viewModelScope.launch {
             mensajeDelServer.postValue("Creando transacción")
             isLoading.postValue(true)
             val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-            if (resultCon.ok)
-            {
+            if (resultCon.ok) {
                 mensajeDelServer.postValue(resultCon.mensaje)
                 //SI HAY CONEXIÓN CON ITD
                 //CREO LA TRANSACCION
@@ -121,76 +104,44 @@ class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosD
                     1,
                     0
                 )
-                if (Globales.DocumentoEnProceso.receptor != null)
-                {
+                if (Globales.DocumentoEnProceso.receptor != null) {
                     if (Globales.DocumentoEnProceso.receptor!!.receptorTipoDoc == 0)
                         transaccion.conRut = true
                 }
                 //
                 val result = postCrearTransaccionITD(transaccion)
-                if(result!!.ok)
-                {
+                if (result!!.ok) {
                     mensajeDelServer.postValue("Transacción creada")
                     Globales.IDTransaccionActual = result.elemento!!.transaccionId
                     mensajeDelServer.postValue("Abriendo App FISERV")
-                    llamarAppFiserv.postValue(BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2))
-                }
-                else
-                {
+                    llamarAppFiserv.postValue(
+                        BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)
+                    )
+                } else {
                     mensajeErrorDelServer.postValue(result.mensaje)
                 }
-            }
-            else
-            {
+            } else {
                 mensajeErrorDelServer.postValue(resultCon.mensaje)
             }
             isLoading.postValue(false)
         }
     }
 
-    fun ConsultarTransaccionITD(nroTransaccion:String)
-    {
+    fun ConsultarTransaccionITD(nroTransaccion: String) {
         viewModelScope.launch {
             isLoading.postValue(true)
             val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-            if (resultCon.ok)
-            {
+            if (resultCon.ok) {
                 mensajeDelServer.postValue(resultCon.mensaje)
                 //SI HAY CONEXIÓN CON ITD
                 val result = getConsultarTransaccionITDUseCase(nroTransaccion)
-                if(result!!.ok)
-                {
+                if (result!!.ok) {
                     TransaccionConsulta.postValue(result.elemento!!)
-                }
-                else
-                {
+                } else {
                     mensajeErrorDelServer.postValue(result.mensaje)
                 }
             }
             isLoading.postValue(false)
         }
     }
-
-   /* fun CancelarTransaccionITD(nroTransaccion:String)
-    {
-        viewModelScope.launch {
-            isLoading.postValue(true)
-            val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-            if (resultCon.ok)
-            {
-                mensajeDelServer.postValue(resultCon.mensaje)
-                //SI HAY CONEXIÓN CON ITD
-                val result = getCancelarTransaccionITDUseCase(Globales.Terminal.Codigo, nroTransaccion)
-                if(result!!.ok)
-                {
-                    TransaccionCancelada.postValue(result.elemento!!)
-                }
-                else
-                {
-                    mensajeErrorDelServer.postValue(result.mensaje)
-                }
-            }
-            isLoading.postValue(false)
-        }
-    }*/
 }

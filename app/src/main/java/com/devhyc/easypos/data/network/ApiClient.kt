@@ -66,7 +66,7 @@ interface ApiClient {
     suspend fun getListarArticulosRubros(): Response<Resultado<ArrayList<DTRubro>>>
 
     //LISTAR MEDIOS DE PAGO
-    @GET("MedioDePago")
+    @GET("MedioDePago/pos")
     suspend fun getListarMediosDePago(): Response<Resultado<ArrayList<DTMedioPago>>>
 
     //NUEVOS ENDPOINTS

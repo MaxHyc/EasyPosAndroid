@@ -5,6 +5,10 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentActivity
+import com.devhyc.easypos.MainActivity
+import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTFecha
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -98,6 +102,20 @@ class Herramientas @Inject constructor() {
             val imm =
                 cnt.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(it, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    fun VistaDeDrawerLauout(fragment:FragmentActivity,ver:Boolean)
+    {
+        if(ver)
+        {
+            val drawerLayout = fragment.findViewById<DrawerLayout>(R.id.drawer_layout)
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        }
+        else
+        {
+            val drawerLayout = fragment.findViewById<DrawerLayout>(R.id.drawer_layout)
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         }
     }
 }

@@ -85,6 +85,7 @@
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_mas_opciones.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_medio_pago.xml" value="0.5" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_medios_de_pago.xml" value="0.371875" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_medios_pagos_lite.xml" value="0.26452410383189123" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_menu_mantenimiento.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_menu_principal.xml" value="0.544405997693195" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/fragment_observaciones.xml" value="0.2994791666666667" />
@@ -104,6 +105,7 @@
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_moneda.xml" value="0.33125" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_nrosdocumentos.xml" value="0.5" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_pago_aceptado.xml" value="0.371875" />
+        <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/item_tipo_medio_pago.xml" value="0.67" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/layout/nav_header_main.xml" value="0.522020725388601" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/menu/activity_main_drawer.xml" value="0.371875" />
         <entry key="..\:/Users/MaximilianoPoggio/Desktop/Proyectos/Android/EasyPos/app/src/main/res/menu/main.xml" value="0.25104166666666666" />

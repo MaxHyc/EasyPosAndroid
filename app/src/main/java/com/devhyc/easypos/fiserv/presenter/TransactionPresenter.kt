@@ -6,6 +6,7 @@ import com.devhyc.easypos.fiserv.service.TransactionError
 import com.devhyc.easypos.fiserv.service.TransactionService
 import com.devhyc.easypos.fiserv.view.TransactionView
 import com.devhyc.easypos.ui.mediospagos.MediosDePagoFragment
+import com.devhyc.easypos.ui.mediospagoslite.MediosPagosLiteFragment
 import com.devhyc.easypos.utilidades.Globales
 import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import com.ingenico.fiservitdapi.transaction.data.TransactionResult
@@ -14,7 +15,7 @@ import java.math.BigDecimal
 import kotlin.coroutines.suspendCoroutine
 
 class TransactionPresenter(
-    private val transactionView: MediosDePagoFragment,
+    private val transactionView: MediosPagosLiteFragment,
     private val transactionService: TransactionService,
     private val scope: CoroutineScope,
     private val deviceApi: DeviceApi

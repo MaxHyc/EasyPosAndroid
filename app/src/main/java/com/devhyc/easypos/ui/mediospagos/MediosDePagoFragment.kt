@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -26,8 +26,6 @@ import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.databinding.FragmentMediosDePagoBinding
 import com.devhyc.easypos.fiserv.device.DeviceApi
 import com.devhyc.easypos.fiserv.device.DeviceService
-import com.devhyc.easypos.fiserv.device.IDeviceService
-import com.devhyc.easypos.fiserv.presenter.TransactionLauncherPresenter
 import com.devhyc.easypos.fiserv.presenter.TransactionPresenter
 import com.devhyc.easypos.fiserv.service.TransactionServiceImpl
 import com.devhyc.easypos.ui.mediospagos.adapter.*
@@ -42,7 +40,6 @@ import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 @AndroidEntryPoint
 class MediosDePagoFragment : Fragment() {
@@ -73,12 +70,19 @@ class MediosDePagoFragment : Fragment() {
     //
     var dialog: AlertDialog? = null
 
-
     override fun onDestroy() {
         super.onDestroy()
         //CUANDO SE CIERRA LA VENTANA, PONGO LOS PAGOS VACIOS
         Globales.DocumentoEnProceso.valorizado!!.pagos = ArrayList()
         Globales.transactionLauncherPresenter.onExit()
+        //RESTAURA COMPORTAMIENTO DEL DRAWERLAYOUT
+        Globales.Herramientas.VistaDeDrawerLauout(requireActivity(),true)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //DESABILITA EL COMPORTAMIENTO DEL DRAWERLAYOUT
+        Globales.Herramientas.VistaDeDrawerLauout(requireActivity(),false)
     }
 
     override fun onCreateView(
@@ -89,7 +93,8 @@ class MediosDePagoFragment : Fragment() {
         _binding = FragmentMediosDePagoBinding.inflate(inflater, container, false)
         val root: View = binding.root
         mediosViewModels.ListarMediosDePago()
-        //
+        //ELIMINO EL BOTON DE IR ATRAS
+        (requireActivity() as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         //CARGAR CONFIGURACION DE CALENDARIOS
         fechaVencimiento = Globales.Herramientas.ObtenerFechaActual().FechayyyygMMgdd
         //CONFIGURACION DE BOTONES DE CALENDARIO
@@ -220,6 +225,7 @@ class MediosDePagoFragment : Fragment() {
                 {
                     ItemTouchHelper.LEFT ->{
                         // TODO: Validar que si el medio de pago es tarjeta, no pueda borrar el item.
+                        //adapterPagosRealizados.mediosDepago[viewHolder.adapterPosition].
                         adapterPagosRealizados.mediosDepago.remove(adapterPagosRealizados.mediosDepago[viewHolder.adapterPosition])
                         adapterPagosRealizados.notifyDataSetChanged()
                         Recalcular()
@@ -230,19 +236,8 @@ class MediosDePagoFragment : Fragment() {
         val touchHelper = ItemTouchHelper(itemFinalTouchHelper)
         touchHelper.attachToRecyclerView(binding.rvMediosDePago)
 
-        //SALIR DEL DOCUMENTO
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                DialogoSalir()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
         mediosViewModels.isLoading.observe(viewLifecycleOwner, Observer {
-            if (it)
-                binding.cardTarjeta.visibility = View.VISIBLE
-            else
-                binding.cardTarjeta.visibility = View.GONE
+            //PantallaDeCarga(it)
         })
         // FISERV INTEGRACION
         FiservInstance()
@@ -250,40 +245,45 @@ class MediosDePagoFragment : Fragment() {
             Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionInputData(it))
         })
         mediosViewModels.mensajeDelServer.observe(viewLifecycleOwner, Observer {
-            DialogoFiserv("Mensaje del Servidor",it,true,true)
+            DialogoFiserv("Mensaje del Servidor",it)
         })
         mediosViewModels.mensajeErrorDelServer.observe(viewLifecycleOwner, Observer {
-            AlertView.showServerError("Error devuelto por fiserv", it,requireContext())
+            DialogoFiserv("Error devuelto por FISERV",it,true)
+            //AlertView.showServerError("Error devuelto por FISERV", it,requireContext())
         })
         mediosViewModels.TransaccionConsulta.observe(viewLifecycleOwner, Observer {
             //MUESTRA ESTADO DE LA TRANSACCIÓN
+            PantallaDeCarga(true)
             if (!it!!.conError)
             {
                 if (it.pago != null)
                 {
+                    //TODO("validar que el total de pagos sea igual al total de documento")
                     it.pago!!.medioPagoCodigo = adapterMediosDePagos.getItem(_medioPagoSelect).Id.toInt()
                     it.pago!!.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
                     adapterPagosRealizados.mediosDepago.add(it.pago)
                     adapterPagosRealizados.notifyDataSetChanged()
                     Recalcular()
-                    //LLAMAR AL FINALIZAR LA VENTA
-                    /*Snackbar.make(requireView(),"Transaccion finalizada: ${it.mensaje} | ${it.mensajePos}", Snackbar.LENGTH_SHORT)
-                        .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                        .setBackgroundTint(resources.getColor(R.color.colorGeocom))
-                        .show()*/
-                    FinalizarVenta()
+                    DialogoFiserv("Finalizando venta","",true,true)
+                    Thread.sleep(1000)
+                    if (totalPago == totalDoc)
+                        FinalizarVenta()
                 }
             }
             else
             {
-                AlertView.showServerError(it!!.transaccionId, it!!.mensaje + " | " + it!!.mensajePos,requireContext())
+                DialogoFiserv("Informe de transacción","${it.mensaje} | ${it.mensajePos} \n(Transac. ${it.transaccionId})",true)
             }
+            PantallaDeCarga(false)
         })
-        mediosViewModels.TransaccionCancelada.observe(viewLifecycleOwner, Observer {
-            //SI SE CANCELA LA TRANSACCION
-            Toast.makeText(requireContext(),it!!.transaccionId,Toast.LENGTH_SHORT).show()
-            AlertView.showServerError(it!!.transaccionId, it!!.mensaje + " | " + it!!.mensajePos,requireContext())
-        })
+        //
+        //SALIR DEL MEDIO DE PAGO
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                DialogoSalir()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
         //
         return root
     }
@@ -300,6 +300,14 @@ class MediosDePagoFragment : Fragment() {
                 EmitirDocumento()
             }
         }
+    }
+
+    fun PantallaDeCarga(valor:Boolean)
+    {
+        if (valor)
+            binding.cardTarjeta.visibility = View.VISIBLE
+        else
+            binding.cardTarjeta.visibility = View.GONE
     }
 
     fun AgregarMedio()
@@ -326,7 +334,7 @@ class MediosDePagoFragment : Fragment() {
                 Globales.TMedioPago.TARJETA.codigo.toString() -> {
                     //ADD PAGO CON TARJETA
                     // TODO: CONTROLAR QUE ESTE HABILITADO EL MEDIO DE PAGO FISERV
-                    mediosViewModels.CrearTransaccionITD()
+                    mediosViewModels.CrearTransaccionITD(binding.etMontoPago.text.toString().toDouble())
                     //ME VOY DE LA FUNCION
                     return
                 }
@@ -461,7 +469,7 @@ class MediosDePagoFragment : Fragment() {
     {
         if (adapterPagosRealizados.mediosDepago.isNotEmpty())
         {
-            AlertView.showError("¡Atención!","Ya existe un pago asociado, no puede cancelar. Finalice la venta.",binding.root.context)
+            AlertView.showError("¡Atención!","Ya existe un pago asociado, no puede volver atrás. Elimine el pago o finalice la venta.",binding.root.context)
         }
         else
         {
@@ -476,15 +484,15 @@ class MediosDePagoFragment : Fragment() {
             return if (result.ok) {
                 true
             } else {
-                AlertView.showServerError("¡Error al validar el documento!","${result.mensaje}",requireContext())
-                //PantallaDeCarga(false)
+                DialogoFiserv("¡Error al validar el documento!",result.mensaje,true)
+                //AlertView.showServerError("¡Error al validar el documento!", result.mensaje,requireContext())
                 false
             }
         }
         catch (e:Exception)
         {
-            AlertView.showAlert("¡Error al guardar el documento!","${e.message}",requireContext())
-            //PantallaDeCarga(false)
+            DialogoFiserv("¡Error al guardar el documento!",e.message.toString(),true)
+            //AlertView.showAlert("¡Error al guardar el documento!",e.message,requireContext())
             return false
         }
     }
@@ -534,21 +542,22 @@ class MediosDePagoFragment : Fragment() {
                         }
                         else if(trans.elemento!!.errorCodigo != 0)
                         {
-                            AlertView.showAlert("¡Error al obtener transacción!",
-                                trans.elemento!!.errorMensaje,requireContext())
+                            //AlertView.showAlert("¡Error al obtener transacción!", trans.elemento!!.errorMensaje,requireContext())
+                            DialogoFiserv("¡Error al obtener transacción!",trans.elemento!!.errorMensaje,true)
                         }
                     }
                     else
                     {
-                        AlertView.showAlert("¡Error al obtener transacción!",
-                            trans.mensaje,requireContext())
+                        //AlertView.showAlert("¡Error al obtener transacción!", trans.mensaje,requireContext())
+                        DialogoFiserv("¡Error al obtener transacción!",trans.mensaje,true)
                     }
                 }
             }
         }
         catch (e:Exception)
         {
-            AlertView.showAlert("¡Error al emitir el documento!","${e.message}",requireContext())
+            //AlertView.showAlert("¡Error al emitir el documento!","${e.message}",requireContext())
+            DialogoFiserv("¡Error al obtener transacción!",e.message.toString(),true)
         }
     }
 
@@ -557,14 +566,14 @@ class MediosDePagoFragment : Fragment() {
     fun FiservInstance()
     {
         try {
-            Globales.transactionApi = Transaction(requireContext())
+            /*Globales.transactionApi = Transaction(requireContext())
             Globales.transactionApi.connectService()
             val transactionService = TransactionServiceImpl( Globales.transactionApi)
             Globales.deviceService = DeviceService(requireContext().applicationContext as Application)
             Globales.deviceApi = DeviceApi()
             Globales.transactionLauncherPresenter = TransactionPresenter(
                 this, transactionService, lifecycleScope,  Globales.deviceApi
-            )
+            )*/
         }
         catch (e:Exception)
         {
@@ -600,13 +609,21 @@ class MediosDePagoFragment : Fragment() {
     }
 
     fun showErrorMessage(message: String) {
-        DialogoFiserv("Mensaje de Error de Fiserv","$message: ${binding.etMontoPago.text.toString().replace(".","").replace(",","")}")
+        DialogoFiserv("Mensaje de Error de Fiserv","$message: ${binding.etMontoPago.text.toString().replace(".","").replace(",","")}",true)
     }
 
     fun showTransactionResult(amount: String?, result: String?, code: String?) {
-        Toast.makeText(requireContext(),"Retomando control EasyPOS. Aguarde unos instantes",Toast.LENGTH_SHORT).show()
         //CUANDO VUELVE AL EASY POS, CONSULTO EL ESTADO DE LA TRANSACCION
-        mediosViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual)
+        try {
+            PantallaDeCarga(true)
+            DialogoFiserv("Retomando control EasyPOS","Aguarde unos instantes")
+            Toast.makeText(requireContext(),"Retomando control EasyPOS",Toast.LENGTH_SHORT).show()
+            mediosViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual)
+        }
+        catch (e:Exception)
+        {
+            DialogoFiserv("Error",e.message.toString(),true)
+        }
     }
 
     private fun convertToCurrencyType(currencyType: String): Int {
@@ -620,7 +637,7 @@ class MediosDePagoFragment : Fragment() {
         }
     }
 
-    private fun DialogoFiserv(titulo:String,mensaje:String,cerrar:Boolean = false,dejarCerrar:Boolean=false)
+    private fun DialogoFiserv(titulo:String,mensaje:String,cerrar:Boolean = false, cierreAutomatico:Boolean=false)
     {
         if (dialog == null)
         {
@@ -628,11 +645,12 @@ class MediosDePagoFragment : Fragment() {
                 .setTitle(titulo)
                 .setIcon(R.drawable.ic_baseline_payment_24)
                 .setMessage(mensaje)
-                /*.setPositiveButton("Cerrar") { _, _ ->
+                .setPositiveButton("Cerrar") { _, _ ->
                     dialog?.dismiss()
-                }*/
-                .setCancelable(dejarCerrar)
+                }
+                .setCancelable(false)
                 .create()
+            dialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.visibility = View.GONE
         }
         dialog?.show()
         //Cambiar Texto
@@ -640,10 +658,9 @@ class MediosDePagoFragment : Fragment() {
             dialog?.setTitle(titulo)
         if (titulo.isNotBlank())
             dialog?.setMessage(mensaje)
-        if (cerrar)
+        if (cierreAutomatico)
             dialog?.dismiss()
-        if (dejarCerrar)
-            dialog?.setCancelable(dejarCerrar)
+        dialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isVisible = cerrar
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

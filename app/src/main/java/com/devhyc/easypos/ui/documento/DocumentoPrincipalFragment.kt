@@ -206,7 +206,7 @@ class DocumentoPrincipalFragment : Fragment() {
             }
             else
             {
-                (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "N° Caja: ${it.Nro}"
+                (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "N° Caja: ${Globales.NroCaja} (${it.Usuario})"
             }
         })
         return root
@@ -398,7 +398,11 @@ class DocumentoPrincipalFragment : Fragment() {
         try {
             if (DocumentoEnProceso.detalle!!.isNotEmpty())
             {
-                val action = DocumentoPrincipalFragmentDirections.actionDocumentoPrincipalFragmentToMediosDePagoFragment()
+                //VENTANA MEDIO PAGO MULTIPLE
+                //val action = DocumentoPrincipalFragmentDirections.actionDocumentoPrincipalFragmentToMediosDePagoFragment()
+                //view?.findNavController()?.navigate(action)
+                //VENTANA MEDIO DE PAGO SIMPLE
+                val action = DocumentoPrincipalFragmentDirections.actionDocumentoPrincipalFragmentToMediosPagosLiteFragment()
                 view?.findNavController()?.navigate(action)
             }
         }
