@@ -11,6 +11,7 @@ import com.devhyc.easypos.data.model.DTDocPago
 import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.databinding.ItemMediopagoBinding
 import com.devhyc.easypos.databinding.ItemTipoMedioPagoBinding
+import com.devhyc.easypos.utilidades.Globales
 
 class ItemTipoMedioPago(var mediosDepago: ArrayList<DTMedioPago>): RecyclerView.Adapter<ItemTipoMedioPago.ItemTipoMedioPagoViewHolder>() {
     private lateinit var mListener: onItemClickListener
@@ -56,11 +57,32 @@ class ItemTipoMedioPago(var mediosDepago: ArrayList<DTMedioPago>): RecyclerView.
                 binding.tvTextoMedioPago.text = i.Nombre
                 if (i.Proveedor == "GEOCOM")
                 {
-                    binding.imgLogoFiserv.visibility = View.VISIBLE
+                    //binding.imgLogoFiserv.visibility = View.VISIBLE
                 }
                 else
                 {
-                    binding.imgLogoFiserv.visibility = View.GONE
+                    //binding.imgLogoFiserv.visibility = View.GONE
+                }
+                when(i.Tipo)
+                {
+                    Globales.TMedioPago.TARJETA.codigo.toString() -> {
+                        if(i.Proveedor == "GEOCOM")
+                            binding.imageView7.setImageResource(R.drawable.fiservlogo)
+                        else
+                            binding.imageView7.setImageResource(R.drawable.ic_baseline_payment_24)
+                    }
+                    Globales.TMedioPago.EFECTIVO.codigo.toString() -> {
+                        binding.imageView7.setImageResource(R.drawable.ic_baseline_money_24)
+                    }
+                    Globales.TMedioPago.CHEQUE.codigo.toString() -> {
+                        binding.imageView7.setImageResource(R.drawable.ic_cheque)
+                    }
+                    Globales.TMedioPago.GIFTCARD .codigo.toString() -> {
+                        binding.imageView7.setImageResource(R.drawable.ic_baseline_card_giftcard_24)
+                    }
+                    Globales.TMedioPago.MERCADOP.codigo.toString() -> {
+                        binding.imageView7.setImageResource(R.drawable.mercadopagologo)
+                    }
                 }
             }
             catch (e: Exception)

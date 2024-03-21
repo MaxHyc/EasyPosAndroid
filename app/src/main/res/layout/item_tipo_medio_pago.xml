@@ -22,14 +22,14 @@
             android:layout_margin="5dp">
 
             <ImageView
-                android:id="@+id/imgLogoMedioPago"
+                android:id="@+id/imageView7"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/ic_presupuestos" />
+                app:srcCompat="?android:attr/galleryItemBackground" />
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
@@ -50,14 +50,6 @@
                     android:gravity="center_horizontal|center_vertical"
                     android:text="TextView" />
 
-                <ImageView
-                    android:id="@+id/imgLogoFiserv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_margin="5dp"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/fiservlogo" />
             </LinearLayout>
 
             <androidx.constraintlayout.widget.Guideline

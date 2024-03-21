@@ -323,7 +323,7 @@ class MediosPagosLiteFragment : Fragment() {
         //CUANDO VUELVE AL EASY POS, CONSULTO EL ESTADO DE LA TRANSACCION
         try {
             PantallaDeCarga(true)
-            DialogoFiserv("Retomando control EasyPOS","Aguarde unos instantes")
+            //DialogoFiserv("Retomando control EasyPOS","Aguarde unos instantes")
             Toast.makeText(requireContext(),"Retomando control EasyPOS",Toast.LENGTH_SHORT).show()
             mediopagoViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual)
         }
