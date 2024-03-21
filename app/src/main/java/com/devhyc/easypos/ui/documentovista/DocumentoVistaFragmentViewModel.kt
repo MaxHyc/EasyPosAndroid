@@ -6,20 +6,23 @@ import androidx.lifecycle.viewModelScope
 import com.devhyc.easypos.data.model.DTDoc
 import com.devhyc.easypos.data.model.DTDocTotales
 import com.devhyc.easypos.data.model.DTImpresion
+import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.domain.GetDocumentoEmitidoUseCase
 import com.devhyc.easypos.domain.GetImpresionUseCase
+import com.devhyc.easypos.domain.GetMediosDePagos
 import com.devhyc.easypos.domain.PostCalcularDocumento
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitidoUseCase: GetDocumentoEmitidoUseCase, val postCalcularDocumento: PostCalcularDocumento, val getImpresionUseCase: GetImpresionUseCase) : ViewModel() {
+class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitidoUseCase: GetDocumentoEmitidoUseCase, val postCalcularDocumento: PostCalcularDocumento, val getImpresionUseCase: GetImpresionUseCase,val getMediosDePagos: GetMediosDePagos) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val MensajeServer = MutableLiveData<String>()
     val DocumentoObtenido = MutableLiveData<DTDoc>()
     val DocumentoCalculos = MutableLiveData<DTDocTotales>()
     val Impresion = MutableLiveData<DTImpresion>()
+    val LMedioPago = MutableLiveData<List<DTMedioPago>>()
 
     fun ObtenerDocumentoEmitido(terminal: String,tipoDocumento:String,NroDoc:String) {
         try {
@@ -96,6 +99,23 @@ class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitid
 
         }
         finally {
+            isLoading.postValue(false)
+        }
+    }
+
+    fun ListarMediosDePago() {
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                val result = getMediosDePagos()
+                if (result != null) {
+                    if (result.ok) {
+                        LMedioPago.postValue(result.elemento!!)
+                    }
+                }
+                isLoading.postValue(false)
+            }
+        } catch (e: Exception) {
             isLoading.postValue(false)
         }
     }

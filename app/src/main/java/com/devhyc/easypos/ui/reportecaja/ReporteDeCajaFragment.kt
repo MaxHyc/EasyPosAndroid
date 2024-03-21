@@ -75,9 +75,16 @@ class ReporteDeCajaFragment : Fragment() {
             binding.tvCajaVentasExenta.text = it.Cabezal.VentasExenta.toString()
             CargarNrosDocumentos(it.Cabezal.NrosDocumentos)
             estadoCaja = it
+            binding.svReporte.visibility = View.VISIBLE
         })
         reporteViewModel.impresionReporte.observe(viewLifecycleOwner, Observer {
             Globales.ControladoraFiservPrint.Print(it,requireContext())
+        })
+        reporteViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            if (it)
+                binding.progressBar5.visibility = View.VISIBLE
+            else
+                binding.progressBar5.visibility = View.GONE
         })
         return root
     }

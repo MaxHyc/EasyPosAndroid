@@ -1,19 +1,15 @@
 package com.devhyc.easypos.ui.documento
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,13 +23,9 @@ import com.devhyc.easypos.utilidades.Globales.DocumentoEnProceso
 import com.devhyc.easypos.utilidades.Globales.ParametrosDocumento
 import com.devhyc.jamesmobile.ui.documento.adapter.ItemDocTouchHelper
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.integration.easyposkotlin.data.model.DTArticulo
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import java.util.*
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
@@ -76,12 +68,12 @@ class DocumentoPrincipalFragment : Fragment() {
             //CARGO EL RECEPTOR
             if (DocumentoEnProceso.receptor != null)
             {
-                binding.tvClienteNombre.visibility = View.VISIBLE
+                binding.linearClienteSeleccionado.visibility = View.VISIBLE
                 binding.tvClienteNombre.text = DocumentoEnProceso.receptor!!.receptorRazon + "\n" + DocumentoEnProceso.receptor!!.receptorRut
             }
             else
             {
-                binding.tvClienteNombre.visibility = View.GONE
+                binding.linearClienteSeleccionado.visibility = View.GONE
             }
         }
         catch (e:Exception)
@@ -96,10 +88,18 @@ class DocumentoPrincipalFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.subtitle= ""
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DocPrincipalViewModel = ViewModelProvider(this)[DocumentoPrincipalViewModel::class.java]
         _binding = FragmentDocumentoPrincipalBinding.inflate(this.layoutInflater)
+        //
+        binding.btnEliminarCliente.setOnClickListener {
+            DocumentoEnProceso.receptor = null
+            binding.linearClienteSeleccionado.visibility = View.GONE
+            Snackbar.make(requireView(),"Cliente eliminado",Snackbar.LENGTH_SHORT).show()
+        }
+        //
         /*if(Globales.CajaActual != null)
         {
             (activity as? AppCompatActivity)?.supportActionBar?.setTitle(R.string.menu_pdv)
@@ -175,6 +175,8 @@ class DocumentoPrincipalFragment : Fragment() {
                 }
             }
         }
+        val touchHelper = ItemTouchHelper(itemFinalTouchHelper)
+        touchHelper.attachToRecyclerView(binding.rvItemsDoc)
         //SALIR DEL DOCUMENTO
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -182,9 +184,6 @@ class DocumentoPrincipalFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-        //
-        val touchHelper = ItemTouchHelper(itemFinalTouchHelper)
-        touchHelper.attachToRecyclerView(binding.rvItemsDoc)
         //
         //OBTENER LA CAJA ABIERTA
         DocPrincipalViewModel.ObtenerCajaAbierta()

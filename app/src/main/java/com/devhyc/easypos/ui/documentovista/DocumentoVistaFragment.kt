@@ -2,6 +2,7 @@ package com.devhyc.easypos.ui.documentovista
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTDoc
 import com.devhyc.easypos.data.model.DTDocDetalle
+import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.databinding.FragmentDocumentoVistaBinding
 import com.devhyc.easypos.ui.documento.adapter.ItemDocAdapter
 import com.devhyc.easypos.utilidades.AlertView
@@ -31,6 +33,12 @@ class DocumentoVistaFragment : Fragment() {
 
     private lateinit var monedaSignoSelect:String
 
+    private lateinit var listaMediosPagos:ArrayList<DTMedioPago>
+    //
+    private lateinit var terminal:String
+    private lateinit var tipo:String
+    private var nro:Long=0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DocumentoVistaViewModel = ViewModelProvider(this)[DocumentoVistaFragmentViewModel::class.java]
@@ -43,22 +51,26 @@ class DocumentoVistaFragment : Fragment() {
     ): View? {
         val root: View = binding.root
         setHasOptionsMenu(true)
+        //LISTAR MEDIOS DE PAGO
+        DocumentoVistaViewModel.LMedioPago.observe(viewLifecycleOwner, Observer {
+            listaMediosPagos = it.toCollection(ArrayList())
+            //CARGAR DOCUMENTO
+            DocumentoVistaViewModel.ObtenerDocumentoEmitido(terminal,tipo,nro.toString())
+        })
+        //
         //OBTENER ARGUMENTOS PASADOS POR PARAMETRO
         if (arguments !=null)
         {
             val bundle:Bundle = arguments as Bundle
-            val terminal:String = bundle.getString("terminal","")
-            val tipo:String = bundle.getString("tipodoc","")
-            val nro:Long = bundle.getLong("nrodoc",0)
+            terminal = bundle.getString("terminal","")
+            tipo= bundle.getString("tipodoc","")
+            nro= bundle.getLong("nrodoc",0)
             (activity as? AppCompatActivity)?.supportActionBar?.title = "Documento: " + tipo.toString()
             (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Nro $nro"
             //CargarDocumento
-            DocumentoVistaViewModel.ObtenerDocumentoEmitido(terminal,tipo,nro.toString())
+            DocumentoVistaViewModel.ListarMediosDePago()
+            //DocumentoVistaViewModel.ObtenerDocumentoEmitido(terminal,tipo,nro.toString())
         }
-        //EVENTOS
-        /*DocumentoVistaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
-            requireView().
-        })*/
         DocumentoVistaViewModel.Impresion.observe(viewLifecycleOwner, Observer {
             Globales.ControladoraFiservPrint.Print(it,requireContext())
         })
@@ -68,6 +80,7 @@ class DocumentoVistaFragment : Fragment() {
         DocumentoVistaViewModel.DocumentoObtenido.observe(viewLifecycleOwner, Observer {
             oDocumento = it
             CargarDatosDelDocumento()
+            binding.svDocumentoVista.visibility = View.VISIBLE
         })
         DocumentoVistaViewModel.DocumentoCalculos.observe(viewLifecycleOwner, Observer {
             if (it != null)
@@ -82,6 +95,12 @@ class DocumentoVistaFragment : Fragment() {
             {
                 binding.linearTotalesVista.visibility = View.GONE
             }
+        })
+        DocumentoVistaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            if(it)
+                binding.progressBar6.visibility = View.VISIBLE
+            else
+                binding.progressBar6.visibility = View.GONE
         })
         return root
     }
@@ -133,8 +152,8 @@ class DocumentoVistaFragment : Fragment() {
                 {
                     //SI TIENE PAGOS ASOCIADOS
                     var pagosdoc:String=""
-                    oDocumento.valorizado!!.pagos.forEach {
-                        pagosdoc += it.medioPagoCodigo.toString()
+                    oDocumento.valorizado!!.pagos.forEach { pago ->
+                        pagosdoc += listaMediosPagos.find { pago.medioPagoCodigo.toString() == it.Id }!!.Nombre
                     }
                     binding.tvPagosVista.text = pagosdoc
                     binding.tvPagosVista.visibility = View.VISIBLE

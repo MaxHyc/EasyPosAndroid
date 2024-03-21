@@ -3,14 +3,15 @@ package com.devhyc.easypos.ui.mediospagoslite
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devhyc.easypos.data.model.DTBanco
-import com.devhyc.easypos.data.model.DTFinanciera
-import com.devhyc.easypos.data.model.DTImpresion
-import com.devhyc.easypos.data.model.DTMedioPago
+import androidx.navigation.fragment.findNavController
+import com.devhyc.easypos.R
+import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.domain.*
 import com.devhyc.easypos.fiserv.model.ITDRespuesta
 import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
 import com.devhyc.easypos.utilidades.Globales
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -27,6 +28,7 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
     val Impresion = MutableLiveData<DTImpresion>()
     val llamarAppFiserv = MutableLiveData<BigDecimal>()
     var TransaccionConsulta = MutableLiveData<ITDRespuesta?>()
+    var TransaccionFinalizada = MutableLiveData<DTDocTransaccion>()
 
     fun ListarMediosDePago() {
         try {
@@ -36,40 +38,6 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
                 if (result != null) {
                     if (result.ok) {
                         LMedioPago.postValue(result.elemento!!)
-                    }
-                }
-                isLoading.postValue(false)
-            }
-        } catch (e: Exception) {
-            isLoading.postValue(false)
-        }
-    }
-
-    fun ListarBancos() {
-        try {
-            viewModelScope.launch {
-                isLoading.postValue(true)
-                val result = getListarBancosUseCase()
-                if (result != null) {
-                    if (result.ok) {
-                        ColBancos.postValue(result.elemento!!)
-                    }
-                }
-                isLoading.postValue(false)
-            }
-        } catch (e: Exception) {
-            isLoading.postValue(false)
-        }
-    }
-
-    fun ListarFinancieras() {
-        try {
-            viewModelScope.launch {
-                isLoading.postValue(true)
-                val result = getListarFinancierasUseCase()
-                if (result != null) {
-                    if (result.ok) {
-                        ColFinancieras.postValue(result.elemento!!)
                     }
                 }
                 isLoading.postValue(false)
@@ -141,6 +109,69 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
                     mensajeErrorDelServer.postValue(result.mensaje)
                 }
             }
+            isLoading.postValue(false)
+        }
+    }
+
+    fun FinalizarVenta()
+    {
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                val result = postValidarDocumento(Globales.DocumentoEnProceso)
+                if (result != null) {
+                    if (result.ok)
+                    {
+                        var trans = postEmitirDocumento(Globales.DocumentoEnProceso)
+                        if (trans != null)
+                        {
+                            //CONSULTO EL ESTADO DE LA TRANSACCION POR ESE NRO DE TRANSACCION
+                            if (trans.elemento!!.nroTransaccion.isNotEmpty())
+                            {
+                                var nroTrans = trans.elemento!!.nroTransaccion
+                                var cont = 0
+                                var tiempoEspera = trans.elemento!!.tiempoEsperaSeg
+                                while (cont < tiempoEspera)
+                                {
+                                    //CONSULTO LA TRANSACCION POR EL NUMERO
+                                    trans = getConsultarTransaccion(nroTrans)!!
+                                    if (trans.elemento!!.finalizada)
+                                    {
+                                        cont = tiempoEspera
+                                    }
+                                    else
+                                    {
+                                        cont += 1
+                                        Thread.sleep(1000)
+                                    }
+                                }
+                                if(trans.ok)
+                                {
+                                    if (trans.elemento!!.errorCodigo == 0)
+                                    {
+                                        Globales.isEmitido = true
+                                        TransaccionFinalizada.postValue(trans.elemento)
+                                    }
+                                    else if(trans.elemento!!.errorCodigo != 0)
+                                    {
+                                        mensajeErrorDelServer.postValue(trans.elemento!!.errorMensaje)
+                                    }
+                                }
+                                else
+                                {
+                                    mensajeErrorDelServer.postValue(trans.mensaje)
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        mensajeErrorDelServer.postValue(result.mensaje)
+                    }
+                }
+                isLoading.postValue(false)
+            }
+        } catch (e: Exception) {
             isLoading.postValue(false)
         }
     }

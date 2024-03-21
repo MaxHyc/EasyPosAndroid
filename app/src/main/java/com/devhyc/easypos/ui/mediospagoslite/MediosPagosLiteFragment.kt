@@ -12,9 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,8 +33,9 @@ import com.ingenico.fiservitdapi.transaction.Transaction
 import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
 import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
 import java.math.BigDecimal
+import kotlinx.coroutines.*
+import kotlin.concurrent.thread
 
 @AndroidEntryPoint
 class MediosPagosLiteFragment : Fragment() {
@@ -48,9 +47,7 @@ class MediosPagosLiteFragment : Fragment() {
     //
     private var _medioPagoSelect:Int =0
     private lateinit var adapterMediosDePagos: ItemTipoMedioPago
-    //private lateinit var adapterPagosRealizados: ItemMedioPago
     private var pagos: ArrayList<DTDocPago> = ArrayList()
-    var totalPago:Double = 0.0
     var totalDoc:Double = 0.0
     var dialog: AlertDialog? = null
 
@@ -95,32 +92,7 @@ class MediosPagosLiteFragment : Fragment() {
             adapterMediosDePagos = ItemTipoMedioPago(ArrayList<DTMedioPago>(it))
             adapterMediosDePagos.setOnItemClickListener(object: ItemTipoMedioPago.onItemClickListener {
                 override fun onItemClick(position: Int) {
-                    PantallaDeCarga(true)
-                    //CUANDO SELECCIONAS EL MEDIO DE PAGO
-                    _medioPagoSelect = adapterMediosDePagos.mediosDepago[position].Id.toInt()
-                    when(adapterMediosDePagos.mediosDepago[position].Tipo)
-                    {
-                        Globales.TMedioPago.TARJETA.codigo.toString() -> {
-                            //ADD PAGO CON TARJETA
-                            if (adapterMediosDePagos.mediosDepago[position].Proveedor == "GEOCOM")
-                            {
-                                mediopagoViewModels.CrearTransaccionITD(binding.etMontoTotal.text.toString().toDouble())
-                                return
-                            }
-                        }
-                        else -> {
-                            //SI NO ES TARJETA
-                            var pago = DTDocPago()
-                            pago.importe= binding.etMontoTotal.text.toString().toDouble()
-                            pago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
-                            pago.medioPagoCodigo = _medioPagoSelect
-                            pago.monedaCodigo = Globales.DocumentoEnProceso.valorizado!!.monedaCodigo
-                            pago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
-                            pago.fechaVto = Globales.DocumentoEnProceso.cabezal!!.fecha
-                            pagos.add(pago)
-                            FinalizarVenta()
-                        }
-                    }
+                        AgregarMedioDePago(position)
                 }
             })
             binding.rvMediosDePago.layoutManager = LinearLayoutManager(activity)
@@ -129,6 +101,21 @@ class MediosPagosLiteFragment : Fragment() {
         })
         // FISERV INTEGRACION
         FiservInstance()
+        mediopagoViewModels.TransaccionFinalizada.observe(viewLifecycleOwner, Observer {
+            Snackbar.make(requireView(), it.errorMensaje, Snackbar.LENGTH_SHORT)
+                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                .setBackgroundTint(resources.getColor(R.color.green))
+                .show()
+            //IMPRIMIR DOCUMENTO
+            when (Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(it.Impresion.impresionTicket,requireContext())
+            }
+            findNavController().popBackStack()
+        })
+        mediopagoViewModels.isLoading.observe(viewLifecycleOwner, Observer {
+            PantallaDeCarga(it)
+        })
         mediopagoViewModels.llamarAppFiserv.observe(viewLifecycleOwner, Observer {
             Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionInputData(it))
         })
@@ -140,7 +127,6 @@ class MediosPagosLiteFragment : Fragment() {
         })
         mediopagoViewModels.TransaccionConsulta.observe(viewLifecycleOwner, Observer {
             //MUESTRA ESTADO DE LA TRANSACCIÓN
-            PantallaDeCarga(true)
             if (!it!!.conError)
             {
                 if (it.pago != null)
@@ -149,15 +135,13 @@ class MediosPagosLiteFragment : Fragment() {
                     it.pago!!.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
                     pagos.add(it.pago)
                     DialogoFiserv("Finalizando venta","",true,true)
-                    if (totalPago == totalDoc)
-                        FinalizarVenta()
+                    FinalizarVenta()
                 }
             }
             else
             {
                 DialogoFiserv("Informe de transacción","${it.mensaje} | ${it.mensajePos} \n(Transac. ${it.transaccionId})",true)
             }
-            PantallaDeCarga(false)
         })
         //
         //SALIR DEL MEDIO DE PAGO
@@ -174,24 +158,59 @@ class MediosPagosLiteFragment : Fragment() {
 
     fun FinalizarVenta()
     {
-        runBlocking {
-            Toast.makeText(requireContext(),"Finalizando venta", Toast.LENGTH_SHORT).show()
-            Globales.DocumentoEnProceso.valorizado!!.pagos = pagos
-            Globales.DocumentoEnProceso.complemento!!.codigoDeposito = Globales.Terminal.Deposito
-            //VOY A EMITIR EL DOCUMENTO
-            if (ValidarDocumentoApi())
-            {
-                EmitirDocumento()
-            }
+        Globales.DocumentoEnProceso.valorizado!!.pagos = pagos
+        Globales.DocumentoEnProceso.complemento!!.codigoDeposito = Globales.Terminal.Deposito
+        mediopagoViewModels.FinalizarVenta()
+    }
+
+    fun AgregarMedioDePago(position:Int)
+    {
+        try {
+                //CUANDO SELECCIONAS EL MEDIO DE PAGO
+                _medioPagoSelect = adapterMediosDePagos.mediosDepago[position].Id.toInt()
+                when(adapterMediosDePagos.mediosDepago[position].Tipo)
+                {
+                    Globales.TMedioPago.TARJETA.codigo.toString() -> {
+                        //ADD PAGO CON TARJETA
+                        if (adapterMediosDePagos.mediosDepago[position].Proveedor == "GEOCOM")
+                        {
+                            mediopagoViewModels.CrearTransaccionITD(binding.etMontoTotal.text.toString().toDouble())
+                            return
+                        }
+                    }
+                    else -> {
+                        //SI NO ES TARJETA
+                        var pago = DTDocPago()
+                        pago.importe= binding.etMontoTotal.text.toString().toDouble()
+                        pago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
+                        pago.medioPagoCodigo = _medioPagoSelect
+                        pago.monedaCodigo = Globales.DocumentoEnProceso.valorizado!!.monedaCodigo
+                        pago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
+                        pago.fechaVto = Globales.DocumentoEnProceso.cabezal!!.fecha
+                        pagos.add(pago)
+                        //delay(500)
+                        FinalizarVenta()
+                    }
+                }
+        }
+        catch (e:Exception)
+        {
+            AlertView.showError("Error al agregar el medio de pago",e.message,requireContext())
         }
     }
 
     fun PantallaDeCarga(valor:Boolean)
     {
-        if (valor)
-            binding.cardCargando.visibility = View.VISIBLE
-        else
-            binding.cardCargando.visibility = View.GONE
+            if (valor)
+            {
+                binding.rvMediosDePago.visibility = View.GONE
+                binding.cardCargando.visibility = View.VISIBLE
+            }
+            else
+            {
+                binding.rvMediosDePago.visibility = View.VISIBLE
+                binding.cardCargando.visibility = View.GONE
+            }
     }
 
     private fun DialogoSalir()
@@ -203,85 +222,6 @@ class MediosPagosLiteFragment : Fragment() {
         else
         {
             view?.findNavController()?.navigateUp()
-        }
-    }
-
-    suspend fun ValidarDocumentoApi(): Boolean
-    {
-        try {
-            val result = mediopagoViewModels.postValidarDocumento(Globales.DocumentoEnProceso)
-            return if (result.ok) {
-                true
-            } else {
-                DialogoFiserv("¡Error al validar el documento!",result.mensaje,true)
-                false
-            }
-        }
-        catch (e:Exception)
-        {
-            DialogoFiserv("¡Error al guardar el documento!",e.message.toString(),true)
-            return false
-        }
-    }
-
-    suspend fun EmitirDocumento()
-    {
-        try {
-            //LLAMO AL EMITIR DOCUMENTO
-            var trans = mediopagoViewModels.postEmitirDocumento(Globales.DocumentoEnProceso)
-            if (trans != null)
-            {
-                //CONSULTO EL ESTADO DE LA TRANSACCION POR ESE NRO DE TRANSACCION
-                if (trans.elemento!!.nroTransaccion.isNotEmpty())
-                {
-                    var nroTrans = trans.elemento!!.nroTransaccion
-                    var cont = 0
-                    var tiempoEspera = trans.elemento!!.tiempoEsperaSeg
-                    while (cont < tiempoEspera)
-                    {
-                        //CONSULTO LA TRANSACCION POR EL NUMERO
-                        trans = mediopagoViewModels.getConsultarTransaccion(nroTrans)!!
-                        if (trans.elemento!!.finalizada)
-                        {
-                            cont = tiempoEspera
-                        }
-                        else
-                        {
-                            cont += 1
-                            Thread.sleep(1000)
-                        }
-                    }
-                    if(trans.ok)
-                    {
-                        if (trans.elemento!!.errorCodigo == 0)
-                        {
-                            Snackbar.make(requireView(), trans.elemento!!.errorMensaje, Snackbar.LENGTH_SHORT)
-                                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                                .setBackgroundTint(resources.getColor(R.color.green))
-                                .show()
-                            //IMPRIMIR DOCUMENTO
-                            when (Globales.ImpresionSeleccionada)
-                            {
-                                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(trans.elemento!!.Impresion.impresionTicket,requireContext())
-                            }
-                            Globales.isEmitido = true
-                            findNavController().popBackStack()
-                        }
-                        else if(trans.elemento!!.errorCodigo != 0)
-                        {
-                            DialogoFiserv("¡Error al obtener transacción!",trans.elemento!!.errorMensaje,true)
-                        }
-                    }
-                    else
-                    {
-                        DialogoFiserv("¡Error al obtener transacción!",trans.mensaje,true)
-                    }
-                }
-            }
-        }
-        catch (e:Exception)
-        {
-            DialogoFiserv("¡Error al obtener transacción!",e.message.toString(),true)
         }
     }
 
@@ -322,8 +262,7 @@ class MediosPagosLiteFragment : Fragment() {
     fun showTransactionResult(amount: String?, result: String?, code: String?) {
         //CUANDO VUELVE AL EASY POS, CONSULTO EL ESTADO DE LA TRANSACCION
         try {
-            PantallaDeCarga(true)
-            //DialogoFiserv("Retomando control EasyPOS","Aguarde unos instantes")
+            DialogoFiserv("Retomando control EasyPOS","Aguarde unos instantes")
             Toast.makeText(requireContext(),"Retomando control EasyPOS",Toast.LENGTH_SHORT).show()
             mediopagoViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual)
         }

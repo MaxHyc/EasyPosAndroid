@@ -45,23 +45,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         //DESREGISTRAR IMPRESORA FISERV
-        //DesregistrarServicioPDAFiserv()
+        DesregistrarServicioPDAFiserv()
         super.onDestroy()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        try {
-           /* IniciarSDK()
-            EmvUtil().init()*/
-        } catch (e: Exception)
-        {
-            AlertView.showAlert("No se pudo iniciar los lectores de tarjetas","No se pudo iniciar los lectores de tarjetas",this)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -251,7 +240,7 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_ADVERTISE), REQUEST)
     }
 
-    /*fun DesregistrarServicioPDAFiserv()
+    fun DesregistrarServicioPDAFiserv()
     {
         if(Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
         {
@@ -260,5 +249,5 @@ class MainActivity : AppCompatActivity() {
                 Globales.fiserv.RegistrarDeviceService(this,false)
             }
         }
-    }*/
+    }
 }

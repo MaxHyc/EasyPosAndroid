@@ -6,16 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".ui.documento.DocumentoPrincipalFragment">
 
-    <TextView
-        android:id="@+id/tvClienteNombre"
+    <LinearLayout
+        android:id="@+id/linearClienteSeleccionado"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="center_horizontal"
-        android:text="NOMBRE DEL CLIENTE"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
-        app:layout_constraintEnd_toEndOf="@+id/cardView"
-        app:layout_constraintStart_toStartOf="@+id/cardView" />
+        app:layout_constraintEnd_toStartOf="@+id/flAddRubro"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/btnEliminarCliente"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:backgroundTint="@color/blackred"
+            app:icon="@drawable/ic_baseline_delete_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+
+        <TextView
+            android:id="@+id/tvClienteNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:text="NOMBRE DEL CLIENTE" />
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/flAddRubro"
@@ -45,7 +64,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvClienteNombre"
+        app:layout_constraintBottom_toTopOf="@+id/linearClienteSeleccionado"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

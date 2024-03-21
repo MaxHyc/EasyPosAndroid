@@ -56,6 +56,13 @@ class CabezalFragment : Fragment() {
         val root: View = binding.root
         cabezalViewModel.ObtenerPaises()
         //
+        cabezalViewModel.isLoading.observe(viewLifecycleOwner, Observer {
+            if (it)
+                binding.progressCarga.visibility = View.VISIBLE
+            else
+                binding.progressCarga.visibility = View.GONE
+        })
+        //
         cabezalViewModel.listadoPaises.observe(viewLifecycleOwner, Observer {
             adapterPaises = customSpinnerPaises(requireContext(), it)
             binding.spPaises.adapter = adapterPaises
@@ -69,6 +76,7 @@ class CabezalFragment : Fragment() {
                 pospais += 1
             }
             MostrarDatos()
+            binding.svCabezalDoc.visibility = View.VISIBLE
         })
         binding.spPaises.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -120,24 +128,27 @@ class CabezalFragment : Fragment() {
         try {
             if (DocumentoEnProceso != null)
             {
-                DocumentoEnProceso.receptor = DTDocReceptor()
-                DocumentoEnProceso.receptor!!.receptorMail = binding.etMail.text.toString()
-                DocumentoEnProceso.receptor!!.receptorCiudad = binding.etCiudad.text.toString()
-                DocumentoEnProceso.receptor!!.receptorPais = adapterPaises.getItem(posicionPais).name
-                DocumentoEnProceso.receptor!!.receptorRazon = binding.etRazon.text.toString()
-                DocumentoEnProceso.receptor!!.receptorRut = binding.etRut.text.toString()
-                DocumentoEnProceso.receptor!!.receptorDireccion = binding.etDireccion.text.toString()
-                DocumentoEnProceso.receptor!!.receptorTel = binding.etTel.text.toString()
-                DocumentoEnProceso.cabezal!!.observaciones = binding.etObsservaciones.text.toString()
-                Snackbar.make(requireView(),"Cabezal guardado", Snackbar.LENGTH_SHORT)
-                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                    .setBackgroundTint(resources.getColor(R.color.green))
-                    .setDuration(Snackbar.LENGTH_SHORT)
-                    .setActionTextColor(resources.getColor(R.color.white))
-                    .setAction("Omitir",View.OnClickListener {
+                if (binding.etRazon.text.isNotBlank() && binding.etRut.text.isNotBlank())
+                {
+                    DocumentoEnProceso.receptor = DTDocReceptor()
+                    DocumentoEnProceso.receptor!!.receptorMail = binding.etMail.text.toString()
+                    DocumentoEnProceso.receptor!!.receptorCiudad = binding.etCiudad.text.toString()
+                    DocumentoEnProceso.receptor!!.receptorPais = adapterPaises.getItem(posicionPais).name
+                    DocumentoEnProceso.receptor!!.receptorRazon = binding.etRazon.text.toString()
+                    DocumentoEnProceso.receptor!!.receptorRut = binding.etRut.text.toString()
+                    DocumentoEnProceso.receptor!!.receptorDireccion = binding.etDireccion.text.toString()
+                    DocumentoEnProceso.receptor!!.receptorTel = binding.etTel.text.toString()
+                    DocumentoEnProceso.cabezal!!.observaciones = binding.etObsservaciones.text.toString()
+                    Snackbar.make(requireView(),"Cabezal guardado", Snackbar.LENGTH_SHORT)
+                        .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                        .setBackgroundTint(resources.getColor(R.color.green))
+                        .setDuration(Snackbar.LENGTH_SHORT)
+                        .setActionTextColor(resources.getColor(R.color.white))
+                        .setAction("Omitir",View.OnClickListener {
 
-                    })
-                    .show()
+                        })
+                        .show()
+                }
             }
         }
         catch (e:Exception)

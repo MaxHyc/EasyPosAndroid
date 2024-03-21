@@ -40,12 +40,12 @@
     <fragment
         android:id="@+id/ingresoRetiroFragment"
         android:name="com.devhyc.easypos.ui.ingresoretiro.IngresoRetiroFragment"
-        android:label="fragment_ingreso_retiro"
-        tools:layout="@layout/fragment_ingreso_retiro" >
+        android:label="Ingreso / Retiro"
+        tools:layout="@layout/fragment_ingreso_retiro">
         <argument
             android:name="TipoMovimiento"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/cierreCajaFragment"
@@ -98,11 +98,6 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/menuPrincipalFragment" />
         <action
-            android:id="@+id/action_menuPrincipalFragment_to_masOpcionesFragment"
-            app:destination="@id/masOpcionesFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/menuPrincipalFragment" />
-        <action
             android:id="@+id/action_menuPrincipalFragment_to_listaDeDocumentosFragment"
             app:destination="@id/listaDeDocumentosFragment" />
         <action
@@ -143,11 +138,6 @@
             app:argType="long" />
     </fragment>
     <fragment
-        android:id="@+id/masOpcionesFragment"
-        android:name="com.devhyc.easypos.ui.masopciones.MasOpcionesFragment"
-        android:label="Integradores"
-        tools:layout="@layout/fragment_mas_opciones" />
-    <fragment
         android:id="@+id/listaDeDocumentosFragment"
         android:name="com.devhyc.easypos.ui.listadodocumentos.ListaDeDocumentosFragment"
         android:label="@string/menu_documentos"
@@ -159,8 +149,7 @@
     <fragment
         android:id="@+id/documentoPrincipalFragment"
         android:name="com.devhyc.easypos.ui.documento.DocumentoPrincipalFragment"
-        android:label="fragment_documento_principal"
-        tools:layout="@layout/fragment_documento_principal" >
+        tools:layout="@layout/fragment_documento_principal">
         <action
             android:id="@+id/action_documentoPrincipalFragment_to_cabezalFragment"
             app:destination="@id/cabezalFragment" />
