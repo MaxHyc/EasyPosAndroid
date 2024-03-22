@@ -21,8 +21,6 @@ import javax.inject.Inject
 class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val getListarBancosUseCase: GetListarBancosUseCase, val getListarFinancierasUseCase: GetListarFinancierasUseCase, val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val getImpresionUseCase: GetImpresionUseCase, val postCrearTransaccionITD: postCrearTransaccionITD, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val getCancelarTransaccionITDUseCase: GetCancelarTransaccionITDUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val LMedioPago = MutableLiveData<List<DTMedioPago>>()
-    val ColFinancieras = MutableLiveData<ArrayList<DTFinanciera>>()
-    val ColBancos = MutableLiveData<ArrayList<DTBanco>>()
     val mensajeErrorDelServer = MutableLiveData<String>()
     val mensajeDelServer = MutableLiveData<String>()
     val Impresion = MutableLiveData<DTImpresion>()
@@ -46,6 +44,8 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
             isLoading.postValue(false)
         }
     }
+
+    //FISERV
 
     fun CrearTransaccionITD(montopago: Double) {
         viewModelScope.launch {
@@ -113,6 +113,8 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
         }
     }
 
+    ////////
+
     fun FinalizarVenta()
     {
         try {
@@ -175,4 +177,6 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
             isLoading.postValue(false)
         }
     }
+
+
 }

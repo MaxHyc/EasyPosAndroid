@@ -6,6 +6,7 @@ import com.devhyc.easypos.data.model.Squareup.Country
 import com.devhyc.easypos.fiserv.model.ITDConfiguracion
 import com.devhyc.easypos.fiserv.model.ITDRespuesta
 import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
+import com.devhyc.easypos.mercadopago.model.*
 import com.google.gson.Gson
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -823,6 +824,4 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
             }
         }
     }
-
-
 }

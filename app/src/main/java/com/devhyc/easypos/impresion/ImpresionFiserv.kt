@@ -90,7 +90,7 @@ class ImpresionFiserv: AppCompatActivity() {
                             Globales.fiserv.printer!!.feedLine(2)
                         }
                     }
-                    Globales.fiserv.printer!!.feedLine(5)
+                    Globales.fiserv.printer!!.feedLine(2)
                     //MAS PAGINAS IMPRIME VAUCHER
                     if (impresion.masPaginas.isNotEmpty())
                     {

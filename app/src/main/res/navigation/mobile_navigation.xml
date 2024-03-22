@@ -172,6 +172,10 @@
         android:name="com.devhyc.easypos.ui.mediospagos.MediosDePagoFragment"
         android:label="Medios de pago"
         tools:layout="@layout/fragment_medios_de_pago">
+        <action
+            android:id="@+id/action_mediosDePagoFragment_to_mercadoPagoFragment"
+            app:destination="@id/mercadoPagoFragment"
+            app:popUpTo="@id/mediosDePagoFragment" />
     </fragment>
     <fragment
         android:id="@+id/menuMantenimientoFragment"
@@ -196,5 +200,16 @@
         android:id="@+id/mediosPagosLiteFragment"
         android:name="com.devhyc.easypos.ui.mediospagoslite.MediosPagosLiteFragment"
         android:label="Método de pago"
-        tools:layout="@layout/fragment_medios_pagos_lite" />
+        tools:layout="@layout/fragment_medios_pagos_lite" >
+        <action
+            android:id="@+id/action_mediosPagosLiteFragment_to_mercadoPagoFragment"
+            app:destination="@id/mercadoPagoFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mediosPagosLiteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mercadoPagoFragment"
+        android:name="com.devhyc.easypos.mercadopago.MercadoPagoFragment"
+        android:label="Mercado Pago"
+        tools:layout="@layout/fragment_mercado_pago" />
 </navigation>

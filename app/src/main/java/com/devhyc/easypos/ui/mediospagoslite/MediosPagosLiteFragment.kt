@@ -25,6 +25,7 @@ import com.devhyc.easypos.fiserv.presenter.TransactionPresenter
 import com.devhyc.easypos.fiserv.service.TransactionServiceImpl
 import com.devhyc.easypos.ui.mediospagos.adapter.*
 import com.devhyc.easypos.ui.mediospagoslite.adapter.ItemTipoMedioPago
+import com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragmentDirections
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -178,6 +179,10 @@ class MediosPagosLiteFragment : Fragment() {
                             return
                         }
                     }
+                    Globales.TMedioPago.MERCADOP.codigo.toString() -> {
+                        val action = MediosPagosLiteFragmentDirections.actionMediosPagosLiteFragmentToMercadoPagoFragment()
+                        view?.findNavController()?.navigate(action)
+                    }
                     else -> {
                         //SI NO ES TARJETA
                         var pago = DTDocPago()
@@ -262,8 +267,10 @@ class MediosPagosLiteFragment : Fragment() {
     fun showTransactionResult(amount: String?, result: String?, code: String?) {
         //CUANDO VUELVE AL EASY POS, CONSULTO EL ESTADO DE LA TRANSACCION
         try {
-            DialogoFiserv("Retomando control EasyPOS","Aguarde unos instantes")
-            Toast.makeText(requireContext(),"Retomando control EasyPOS",Toast.LENGTH_SHORT).show()
+            Snackbar.make(requireView(),"Retomando control EasyPOS",Snackbar.LENGTH_SHORT)
+                .setBackgroundTint(context!!.getColor(R.color.fiservcolor))
+                .setTextColor(context!!.getColor(R.color.white))
+                .show()
             mediopagoViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual)
         }
         catch (e:Exception)

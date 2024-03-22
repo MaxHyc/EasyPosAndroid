@@ -8,6 +8,7 @@ import com.devhyc.easypos.data.model.Resultado
 import com.devhyc.easypos.fiserv.model.ITDConfiguracion
 import com.devhyc.easypos.fiserv.model.ITDRespuesta
 import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
+import com.devhyc.easypos.mercadopago.model.*
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTTerminalPos
