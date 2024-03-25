@@ -60,7 +60,7 @@ class ItemMedioPago(var mediosDepago:ArrayList<DTDocPago>, var lmoneda:ArrayList
                 }!!.Nombre
                 binding.tvMontoMedioPago.text = i.importe.toString()
                 //
-                if (i.numero.isNotEmpty())
+                if (i.numero!!.isNotEmpty())
                 {
                     binding.tvNroTarjetaMedioPago.visibility = View.VISIBLE
                     binding.tvNroTarjetaMedioPago.text = "NRO: ${i.numero}"
@@ -74,7 +74,7 @@ class ItemMedioPago(var mediosDepago:ArrayList<DTDocPago>, var lmoneda:ArrayList
                     binding.tvCuotasMedioPago.visibility = View.VISIBLE
                     binding.tvCuotasMedioPago.text = "CUOTAS: ${i.cuotas.toString()}"
                 }
-                if (i.autorizacion.isNotEmpty())
+                if (i.autorizacion!!.isNotEmpty())
                 {
                     binding.tvAutorizacionMedioPago.visibility = View.VISIBLE
                     binding.tvAutorizacionMedioPago.text = "AUTORIZACIÓN: ${i.autorizacion}"

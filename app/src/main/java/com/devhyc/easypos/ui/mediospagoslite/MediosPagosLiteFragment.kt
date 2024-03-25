@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.*
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -180,11 +181,30 @@ class MediosPagosLiteFragment : Fragment() {
                         }
                     }
                     Globales.TMedioPago.MERCADOP.codigo.toString() -> {
+                        //ADD PAGO CON MERCADOPAGO
+                        //ABRO LA VENTANA DE MERCADOPAGO
                         val action = MediosPagosLiteFragmentDirections.actionMediosPagosLiteFragmentToMercadoPagoFragment()
                         view?.findNavController()?.navigate(action)
+                        //ESCUCHO QUE DEVUELVE EL FRAGMENT DE MERCADOPAGO
+                        parentFragmentManager.setFragmentResultListener("resultadoKey",this)
+                        { _, bundle ->
+                            val resultadoPago = bundle.getParcelable<DTDocPago>("resultadoPago")
+                            // RECIBO EL DTDOCPAGO DE LA VENTANA DE MERCADOPAGO
+                            if (resultadoPago != null) {
+                                resultadoPago.importe= binding.etMontoTotal.text.toString().toDouble()
+                                resultadoPago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
+                                resultadoPago.medioPagoCodigo = _medioPagoSelect
+                                resultadoPago.monedaCodigo = Globales.DocumentoEnProceso.valorizado!!.monedaCodigo
+                                resultadoPago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
+                                resultadoPago.fechaVto = Globales.DocumentoEnProceso.cabezal!!.fecha
+                                pagos.add(resultadoPago!!)
+                                FinalizarVenta()
+                            }
+                        }
+                        //
                     }
                     else -> {
-                        //SI NO ES TARJETA
+                        //ADD PAGO CON OTRO MEDIO
                         var pago = DTDocPago()
                         pago.importe= binding.etMontoTotal.text.toString().toDouble()
                         pago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
