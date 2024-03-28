@@ -65,18 +65,6 @@ class MenuPrincipalFragment : Fragment() {
         super.onResume()
     }
 
-    fun BorrarMenu(nav_Menu:Menu)
-    {
-        //Borrar todo el menu
-        /*nav_Menu.setGroupVisible(R.id.modulo_preventa,false)
-        nav_Menu.setGroupVisible(R.id.modulo_doc,false)
-        nav_Menu.setGroupVisible(R.id.modulo_activos,false)
-        nav_Menu.setGroupVisible(R.id.modulo_articulos,false)
-        nav_Menu.setGroupVisible(R.id.modulo_rma,false)
-        nav_Menu.setGroupVisible(R.id.modulo_servicios,false)
-        nav_Menu.setGroupVisible(R.id.modulo_print,false)*/
-    }
-
     fun HabilitarModulos()
     {
         try {

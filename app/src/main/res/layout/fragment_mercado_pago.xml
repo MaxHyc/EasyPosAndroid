@@ -40,16 +40,27 @@
                 tools:src="@drawable/atencion" />
 
             <TextView
+                android:id="@+id/tvMsjEscaneo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center_horizontal"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/tvMensajeMp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
                 android:gravity="center_horizontal" />
 
             <Button
                 android:id="@+id/btnCancelarMp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancelar" />
+                android:text="Cancelar"
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

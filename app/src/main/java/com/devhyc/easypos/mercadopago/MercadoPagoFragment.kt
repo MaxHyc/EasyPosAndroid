@@ -41,17 +41,16 @@ class MercadoPagoFragment : Fragment() {
         Globales.Herramientas.VistaDeDrawerLauout(requireActivity(),false)
         //Ocultar boton de ir atras
         (requireActivity() as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        //Seter subtitulo del fragment
-        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
+        (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = ""
         //
         mpViewModel = ViewModelProvider(this)[MercadoPagoViewModel::class.java]
         _binding = FragmentMercadoPagoBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //INTERACCION DE INTERFAZ DE USUARIO
         binding.btnCancelarMp.setOnClickListener {
-            binding.btnCancelarMp.visibility = View.GONE
-            mpViewModel.cancelarOrden()
+            mpViewModel.cancelarOrdenActual()
         }
+
         //REFRESCAR VISTAS
         mpViewModel.ImagenQr.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             binding.imgQrMp.visibility = View.VISIBLE
@@ -59,28 +58,30 @@ class MercadoPagoFragment : Fragment() {
                 .load(it)
                 .into(binding.imgQrMp)
         })
+        mpViewModel.BotonCancelar.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            if (it)
+                binding.btnCancelarMp.visibility = View.VISIBLE
+            else
+                binding.btnCancelarMp.visibility = View.GONE
+        })
         mpViewModel.mensajeDelServer.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             AlertView.showError("¡Atención!",it,requireContext())
         })
         mpViewModel.EstadoDescripcion.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             binding.tvMensajeMp.text = it
         })
-        mpViewModel.OrdenCancelada.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            if (it)
-                findNavController().popBackStack()
-            else
-                binding.btnCancelarMp.visibility = View.VISIBLE
-        })
         mpViewModel.PagoFinalizado.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             val bundle = Bundle().apply {
                 putParcelable("resultadoPago",it as? Parcelable)
             }
             parentFragmentManager.setFragmentResult("resultadoKey",bundle)
-            //findNavController().popBackStack()
+            findNavController().popBackStack()
+        })
+        mpViewModel.MensajeEscaneo.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            binding.tvMsjEscaneo.text = it
         })
         //
         mpViewModel.CrearOrden()
-        //
         //CONTROLAR EL EVENTO DE BACK
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

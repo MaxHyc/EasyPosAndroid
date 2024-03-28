@@ -37,7 +37,7 @@ android {
             resValue "string","app_name","POS TESTING"
         }
         produccionVersion {
-            applicationId 'com.devhyc.easymanagementmobile'
+            applicationId 'com.devhyc.easypos'
             buildConfigField 'boolean', 'VERSION_TESTING', "false"
             buildConfigField 'String', 'DIRECCION_HYC',"\"http://www.hyc.uy/controlappsapi/api/\""
             buildConfigField 'String', 'DIRECCION_URL', "\"https://hyc.uy\""

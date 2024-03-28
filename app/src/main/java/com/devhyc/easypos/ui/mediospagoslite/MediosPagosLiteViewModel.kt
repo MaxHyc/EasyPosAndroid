@@ -1,5 +1,6 @@
 package com.devhyc.easypos.ui.mediospagoslite
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,24 +10,55 @@ import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.domain.*
 import com.devhyc.easypos.fiserv.model.ITDRespuesta
 import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
+import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
+import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
+import kotlin.math.truncate
 
 @HiltViewModel
 class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val getListarBancosUseCase: GetListarBancosUseCase, val getListarFinancierasUseCase: GetListarFinancierasUseCase, val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val getImpresionUseCase: GetImpresionUseCase, val postCrearTransaccionITD: postCrearTransaccionITD, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val getCancelarTransaccionITDUseCase: GetCancelarTransaccionITDUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val LMedioPago = MutableLiveData<List<DTMedioPago>>()
-    val mensajeErrorDelServer = MutableLiveData<String>()
-    val mensajeDelServer = MutableLiveData<String>()
     val Impresion = MutableLiveData<DTImpresion>()
-    val llamarAppFiserv = MutableLiveData<BigDecimal>()
-    var TransaccionConsulta = MutableLiveData<ITDRespuesta?>()
     var TransaccionFinalizada = MutableLiveData<DTDocTransaccion>()
+    var pagos:ArrayList<DTDocPago> = ArrayList()
+    var pagoseleccionado:Int = 0
+    //
+    private val _mostrarEstado = MutableLiveData<String>()
+    val mostrarEstado: LiveData<String> = _mostrarEstado
+    fun mostrarEstado(mensaje:String)
+    {
+        _mostrarEstado.value = mensaje
+    }
+    //
+    private val _errorlocal = SingleLiveEvent<String>()
+    val mostrarErrorLocal: LiveData<String> = _errorlocal
+
+    fun mostrarErrorLocal(message: String) {
+        _errorlocal.value = message
+    }
+    //
+    private val _errorServer = SingleLiveEvent<String>()
+    val mostrarErrorServer: LiveData<String> = _errorServer
+
+    fun mostrarErrorServer(message: String) {
+        _errorServer.value = message
+    }
+    //
+    private val _informe = SingleLiveEvent<String>()
+    val mostrarInforme: LiveData<String> = _informe
+
+    fun mostrarInforme(message: String) {
+        _informe.value = message
+    }
 
     fun ListarMediosDePago() {
         try {
@@ -49,67 +81,118 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
 
     fun CrearTransaccionITD(montopago: Double) {
         viewModelScope.launch {
-            mensajeDelServer.postValue("Creando transacción")
-            isLoading.postValue(true)
-            val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-            if (resultCon.ok) {
-                mensajeDelServer.postValue(resultCon.mensaje)
-                //SI HAY CONEXIÓN CON ITD
-                //CREO LA TRANSACCION
-                var transaccion = ITDTransaccionNueva(
-                    Globales.DocumentoEnProceso.cabezal!!.terminal,
-                    Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
-                    Globales.DocumentoEnProceso.cabezal!!.nroDoc,
-                    Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
-                    Globales.UsuarioLoggueado.funcionarioId.toString(),
-                    Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
-                    Globales.TotalesDocumento.total,
-                    Globales.TotalesDocumento.subtotalGravadoConDto,
-                    Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
-                    montopago,
-                    Globales.DocumentoEnProceso.valorizado!!.tipoCambio,
-                    false,
-                    1,
-                    0
-                )
-                if (Globales.DocumentoEnProceso.receptor != null) {
-                    if (Globales.DocumentoEnProceso.receptor!!.receptorTipoDoc == 0)
-                        transaccion.conRut = true
-                }
-                //
-                val result = postCrearTransaccionITD(transaccion)
-                if (result!!.ok) {
-                    mensajeDelServer.postValue("Transacción creada")
-                    Globales.IDTransaccionActual = result.elemento!!.transaccionId
-                    mensajeDelServer.postValue("Abriendo App FISERV")
-                    llamarAppFiserv.postValue(
-                        BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)
+            try
+            {
+                isLoading.postValue(true)
+                mostrarEstado("Creando transacción")
+                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
+                if (resultCon.ok) {
+                    mostrarEstado(resultCon.mensaje)
+                    //SI HAY CONEXIÓN CON ITD
+                    //CREO LA TRANSACCION
+                    var transaccion = ITDTransaccionNueva(
+                        Globales.DocumentoEnProceso.cabezal!!.terminal,
+                        Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
+                        Globales.DocumentoEnProceso.cabezal!!.nroDoc,
+                        Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
+                        Globales.UsuarioLoggueado.funcionarioId.toString(),
+                        Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
+                        Globales.TotalesDocumento.total,
+                        Globales.TotalesDocumento.subtotalGravadoConDto,
+                        Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
+                        montopago,
+                        Globales.DocumentoEnProceso.valorizado!!.tipoCambio,
+                        false,
+                        1,
+                        0
                     )
+                    if (Globales.DocumentoEnProceso.receptor != null) {
+                        if (Globales.DocumentoEnProceso.receptor!!.receptorTipoDoc == 0)
+                            transaccion.conRut = true
+                    }
+                    //
+                    val result = postCrearTransaccionITD(transaccion)
+                    if (result!!.ok) {
+                        mostrarEstado("Transacción creada")
+                        Globales.IDTransaccionActual = result.elemento!!.transaccionId
+                        mostrarEstado("Abriendo App FISERV")
+                        Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionInputData(BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)))
+                    } else {
+                        mostrarErrorServer(result.mensaje)
+                    }
                 } else {
-                    mensajeErrorDelServer.postValue(result.mensaje)
+                    mostrarErrorServer(resultCon.mensaje)
                 }
-            } else {
-                mensajeErrorDelServer.postValue(resultCon.mensaje)
             }
-            isLoading.postValue(false)
+            catch (e:Exception)
+            {
+                mostrarErrorLocal(e.message.toString())
+            }
+            finally {
+                isLoading.postValue(false)
+            }
+        }
+    }
+
+    private fun createTransactionInputData(monto: BigDecimal): TransactionInputData {
+        return TransactionInputData(
+            transactionType = TransactionTypes.SALE,
+            monto,
+            null,
+            currency = convertToCurrencyType(Globales.currencySelected),
+            null
+        )
+    }
+
+    private fun convertToCurrencyType(currencyType: String): Int {
+        return when (currencyType) {
+            "USD" ->
+                840
+            "UYU" ->
+                858
+            else ->
+                840
         }
     }
 
     fun ConsultarTransaccionITD(nroTransaccion: String) {
         viewModelScope.launch {
-            isLoading.postValue(true)
-            val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-            if (resultCon.ok) {
-                mensajeDelServer.postValue(resultCon.mensaje)
-                //SI HAY CONEXIÓN CON ITD
-                val result = getConsultarTransaccionITDUseCase(nroTransaccion)
-                if (result!!.ok) {
-                    TransaccionConsulta.postValue(result.elemento!!)
-                } else {
-                    mensajeErrorDelServer.postValue(result.mensaje)
+            try {
+                isLoading.postValue(true)
+                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
+                if (resultCon.ok) {
+                    //mensajeDelServer.postValue(resultCon.mensaje)
+                    //SI HAY CONEXIÓN CON ITD
+                    val result = getConsultarTransaccionITDUseCase(nroTransaccion)
+                    if (result!!.ok) {
+                        //TransaccionConsulta.postValue(result.elemento!!)
+                        if (!result.elemento!!.conError)
+                        {
+                            if (result.elemento!!.pago != null)
+                            {
+                                result.elemento!!.pago!!.medioPagoCodigo = pagoseleccionado
+                                result.elemento!!.pago!!.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
+                                //AGREGO EL PAGO DE FISERV
+                                pagos.add(result.elemento!!.pago!!)
+                                FinalizarVenta()
+                            }
+                        }
+                        else
+                        {
+                            mostrarInforme("${result.elemento!!.mensaje} | ${result.elemento!!.mensajePos} \n(Transac. ${result.elemento!!.transaccionId}")
+                        }
+                    } else {
+                        mostrarErrorServer(result.mensaje)
+                    }
                 }
             }
-            isLoading.postValue(false)
+            catch (e:Exception)
+            {
+                mostrarErrorLocal(e.message.toString())
+            }
+            finally {
+                isLoading.postValue(false)
+            }
         }
     }
 
@@ -120,6 +203,10 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
+                //AGREGO LOS PAGOS Y SELECCIONO EL DEPOSITO
+                Globales.DocumentoEnProceso.valorizado!!.pagos = pagos
+                Globales.DocumentoEnProceso.complemento!!.codigoDeposito = Globales.Terminal.Deposito
+                //
                 val result = postValidarDocumento(Globales.DocumentoEnProceso)
                 if (result != null) {
                     if (result.ok)
@@ -156,27 +243,27 @@ class MediosPagosLiteViewModel @Inject constructor(val getMediosDePagos: GetMedi
                                     }
                                     else if(trans.elemento!!.errorCodigo != 0)
                                     {
-                                        mensajeErrorDelServer.postValue(trans.elemento!!.errorMensaje)
+                                        mostrarErrorServer(trans.elemento!!.errorMensaje)
                                     }
                                 }
                                 else
                                 {
-                                    mensajeErrorDelServer.postValue(trans.mensaje)
+                                    mostrarErrorServer(trans.mensaje)
                                 }
                             }
                         }
                     }
                     else
                     {
-                        mensajeErrorDelServer.postValue(result.mensaje)
+                        mostrarErrorServer(result.mensaje)
                     }
                 }
-                isLoading.postValue(false)
             }
         } catch (e: Exception) {
+            mostrarErrorLocal(e.message.toString())
+        }
+        finally {
             isLoading.postValue(false)
         }
     }
-
-
 }

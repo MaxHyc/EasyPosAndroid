@@ -35,7 +35,8 @@ class TransactionPresenter(
                 transactionService.doTransaction(transactionInputData)
             }
         } catch (e: java.lang.Exception) {
-            Log.d("Exception", "Ocurrio un error")
+            throw Exception(e.message)
+            //Log.d("Exception", "Ocurrio un error")
         }
     }
 

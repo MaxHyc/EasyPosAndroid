@@ -122,11 +122,10 @@ class MpOrdenes(private val token:String,private val url:String) {
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "DELETE"
                 connection.setRequestProperty("Authorization", token)
-
                 // Consulta la respuesta
                 try {
                     val res = connection.responseCode
-                    // Puedes realizar alguna acción adicional aquí si es necesario
+                    res.toString()
                 } catch (e: Exception) {
                     throw Exception(e.message)
                 }

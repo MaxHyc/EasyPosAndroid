@@ -34,7 +34,8 @@ class TransactionServiceImpl(
         }
         else
         {
-            throw ServiceIsNotConnected("Transaction Service no está conectado.")
+            //throw ServiceIsNotConnected("Transaction Service no está conectado.")
+            throw Exception("El servicio no está conectado, aguarde unos instantes y pruebe nuevamente")
         }
 
     }
