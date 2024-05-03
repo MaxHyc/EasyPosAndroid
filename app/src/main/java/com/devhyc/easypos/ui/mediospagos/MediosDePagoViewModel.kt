@@ -14,11 +14,10 @@ import com.devhyc.easypos.utilidades.Globales
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.math.RoundingMode
 import javax.inject.Inject
 
 @HiltViewModel
-class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val getListarBancosUseCase: GetListarBancosUseCase, val getListarFinancierasUseCase: GetListarFinancierasUseCase,val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val getImpresionUseCase: GetImpresionUseCase, val postCrearTransaccionITD: postCrearTransaccionITD, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val getCancelarTransaccionITDUseCase: GetCancelarTransaccionITDUseCase) : ViewModel() {
+class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val getListarBancosUseCase: GetListarBancosUseCase, val getListarFinancierasUseCase: GetListarFinancierasUseCase, val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val getImpresionUseCase: GetImpresionUseCase, val postCrearTransaccionITDUseCase: postCrearTransaccionITDUseCase, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val getCancelarTransaccionITDUseCase: GetCancelarTransaccionITDUseCase) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     val LMedioPago = MutableLiveData<List<DTMedioPago>>()
     val ColFinancieras = MutableLiveData<ArrayList<DTFinanciera>>()
@@ -127,7 +126,7 @@ class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosD
                         transaccion.conRut = true
                 }
                 //
-                val result = postCrearTransaccionITD(transaccion)
+                val result = postCrearTransaccionITDUseCase(transaccion)
                 if(result!!.ok)
                 {
                     mensajeDelServer.postValue("Transacción creada")

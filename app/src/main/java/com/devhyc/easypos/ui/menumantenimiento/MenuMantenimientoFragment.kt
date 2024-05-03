@@ -39,6 +39,10 @@ class MenuMantenimientoFragment : Fragment() {
             val action = MenuMantenimientoFragmentDirections.actionMenuMantenimientoFragmentToListaClientesFragment()
             view?.findNavController()?.navigate(action)
         }
+        binding.btnConfiguracionTerminal.setOnClickListener {
+            val action = MenuMantenimientoFragmentDirections.actionMenuMantenimientoFragmentToConfiguracionDeCajaFragment()
+            view?.findNavController()?.navigate(action)
+        }
         return root
     }
 }

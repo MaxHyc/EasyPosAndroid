@@ -139,8 +139,10 @@ class MenuPrincipalFragment : Fragment() {
             val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToMenuMantenimientoFragment()
             view?.findNavController()?.navigate(action)
         }
-        binding.buttonIrConfiguracion.setOnClickListener {
-            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToConfiguracionDeCajaFragment()
+        binding.buttonIrFiserv.setOnClickListener {
+            //val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToConfiguracionDeCajaFragment()
+            //view?.findNavController()?.navigate(action)
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToTransaccionesITDFragment(0,false,false)
             view?.findNavController()?.navigate(action)
         }
         binding.buttonIrDocumentos.setOnClickListener {

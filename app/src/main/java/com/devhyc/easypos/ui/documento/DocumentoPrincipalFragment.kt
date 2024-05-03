@@ -205,6 +205,7 @@ class DocumentoPrincipalFragment : Fragment() {
             }
             else
             {
+                Globales.CajaActual = it
                 (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "N° Caja: ${Globales.NroCaja} (${it.Usuario})"
             }
         })
@@ -226,7 +227,7 @@ class DocumentoPrincipalFragment : Fragment() {
     suspend fun ObtenerParametrosDocumentoApi()
     {
         try {
-            val result = DocPrincipalViewModel.getNuevoDocumentoUseCase(Globales.UsuarioLoggueado.usuario, Globales.Terminal.Codigo,"TICK")
+            val result = DocPrincipalViewModel.getNuevoDocumentoUseCase(Globales.UsuarioLoggueado.usuario, Globales.Terminal.Codigo, Globales.Terminal.Documentos.Contado)
             if (result!!.ok)
             {
                 ParametrosDocumento = result.elemento!!.parametros

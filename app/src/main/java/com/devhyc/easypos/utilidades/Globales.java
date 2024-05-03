@@ -172,7 +172,7 @@ public class Globales {
     {
         EFECTIVO("EFECTIVO",1),
         CHEQUE("CHEQUE",2),
-        TARJETA("PUNTO",3),
+        TARJETA("TARJETA",3),
         TICKET("TICKET",4),
         PUNTO("PUNTO",5),
         GIFTCARD("GIFTCARD",6),

@@ -51,7 +51,8 @@
                 android:inputType="textMultiLine|textPersonName|textImeMultiLine"
                 android:lineSpacingExtra="10sp"
                 android:maxLines="10"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
     </ScrollView>
 
@@ -65,6 +66,7 @@
         android:visibility="gone"
         app:backgroundTint="#4CAF50"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

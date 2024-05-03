@@ -54,9 +54,6 @@ class IngresoRetiroFragment : Fragment() {
         //
         binding.flIngresoOk.visibility = View.VISIBLE
         //
-       /* ingresosViewModel.mensaje.observe(viewLifecycleOwner, Observer {
-            AlertView.showAlert("¡Atención!",it,requireActivity())
-        })*/
         binding.flIngresoOk.setOnClickListener {
             if(binding.etMontoIR.text.toString() == "")
             {
@@ -68,12 +65,12 @@ class IngresoRetiroFragment : Fragment() {
                     0 ->
                     {
                         //INGRESO DE DINERO
-                        //ingresosViewModel.Ingreso(binding.etMontoIR.text.toString())
+                        //ingresosViewModel.RealizarMovimientoDeCaja(binding.etMontoIR.text.toString(),true)
                     }
                     1 ->
                     {
                         //RETIRO DE CAJA
-                        //ingresosViewModel.Retiro(binding.etMontoIR.text.toString())
+                        //ingresosViewModel.RealizarMovimientoDeCaja(binding.etMontoIR.text.toString(),false)
                     }
                     2 ->
                     {

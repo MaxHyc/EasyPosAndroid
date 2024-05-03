@@ -5,9 +5,7 @@ import com.devhyc.easypos.data.model.DTLogin
 import com.devhyc.easypos.data.model.DTLoginRequest
 import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.data.model.Resultado
-import com.devhyc.easypos.fiserv.model.ITDConfiguracion
-import com.devhyc.easypos.fiserv.model.ITDRespuesta
-import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
+import com.devhyc.easypos.fiserv.model.*
 import com.devhyc.easypos.mercadopago.model.*
 import com.integration.easyposkotlin.data.model.DTArticulo
 import com.integration.easyposkotlin.data.model.DTCaja
@@ -98,8 +96,12 @@ interface ApiClient {
     @GET("documentos/emitido/{terminal}/{tipodoc}/{nrodoc}")
     suspend fun getDocumentoEmitido(@Path("terminal") terminal:String,@Path("tipodoc") tipodoc:String,@Path("nrodoc") nrodoc:String): Response<Resultado<DTDoc>>
 
-    @POST("documentos/listar")
-    suspend fun postListarDocumentos(@Body filtros: DTParamDocLista): Response<Resultado<List<DTDocLista>>>
+    @POST("documentos/listar/{terminal}")
+    suspend fun postListarDocumentos(@Body filtros: DTParamDocLista,@Path("terminal") terminal: String): Response<Resultado<List<DTDocLista>>>
+
+    @POST("documentos/devolucion")
+    suspend fun postDevolverDocumento(@Body docDevolucion: DTDocDevolucion): Response<Resultado<DTDocTransaccion>>
+
     //
     @GET("articulos/familias")
     suspend fun getFamilias(): Response<Resultado<List<DTFamiliaPadre>>>
@@ -191,5 +193,23 @@ interface ApiClient {
 
     @GET("itd/cancelar/{nroTerminal}/{nroTransaccion}")
     suspend fun getCancelarTransaccionITD(@Path("nroTerminal") nroTerminal: String?, @Path("nroTransaccion") nroTransaccion: String?): Response<Resultado<ITDRespuesta>>
+
+    @GET("itd/transacciones/{nroTerminal}/{nroCaja}")
+    suspend fun getListarTransacciones(@Path("nroTerminal") nroTerminal: String?, @Path("nroCaja") nroCaja: Long): Response<Resultado<ArrayList<ITDTransaccionLista>>>
+
+    @GET("itd/sinasociar/{terminal}")
+    suspend fun getTransaccionesSinAsociarITD(@Path("terminal") nroTerminal: String?): Response<Resultado<ArrayList<ITDTransaccionLista>>>
+
+    @POST("itd/consultar/{nroTransaccion}")
+    suspend fun postConsultarEstadoTransaccion(@Path("nroTransaccion") nroTransaccion: String): Response<Resultado<Boolean>>
+
+    @POST("itd/anulacion")
+    suspend fun postCrearAnulacionITD(@Body transaccion: ITDTransaccionAnular?): Response<Resultado<ITDRespuesta>>
+
+    @POST("itd/devolucion/{idtransaccion}")
+    suspend fun postCrearDevolucionITD(@Body transaccion: ITDTransaccionNueva?, @Path("idtransaccion") idTransaccion:String): Response<Resultado<ITDRespuesta>>
+
+    @POST("itd/validar")
+    suspend fun postValidarTransaccionITD(@Body validacionConsulta:ITDValidacionConsulta): Response<Resultado<ITDValidacion>>
 
 }

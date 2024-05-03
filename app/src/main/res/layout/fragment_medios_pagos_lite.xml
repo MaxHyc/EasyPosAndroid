@@ -4,7 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MediosPagosLiteFragment">
+    tools:context=".ui.mediospagoslite.MediosPagosLiteFragment">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerCargandoMediosP"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shimmer_auto_start="true"
+        tools:ignore="MissingConstraints">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/view_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/fragment_de_carga" />
+
+            <include layout="@layout/fragment_de_carga" />
+
+            <include layout="@layout/fragment_de_carga" />
+
+            <include layout="@layout/fragment_de_carga" />
+
+            <include layout="@layout/fragment_de_carga" />
+
+            <include layout="@layout/fragment_de_carga" />
+
+            <include layout="@layout/fragment_de_carga" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <ProgressBar
         android:id="@+id/progressBar7"

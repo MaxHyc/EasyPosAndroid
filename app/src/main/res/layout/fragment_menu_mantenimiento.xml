@@ -40,24 +40,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button6"
+            android:id="@+id/btnConfiguracionTerminal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:text="Button" />
-
-        <Button
-            android:id="@+id/button7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:text="Button" />
+            android:text="@string/menu_configuracion"
+            app:icon="@drawable/ic_baseline_miscellaneous_services_24"
+            app:iconGravity="textTop" />
 
     </LinearLayout>
 

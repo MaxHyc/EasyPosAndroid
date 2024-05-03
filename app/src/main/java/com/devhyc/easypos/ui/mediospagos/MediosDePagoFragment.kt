@@ -2,10 +2,10 @@ package com.devhyc.easypos.ui.mediospagos
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -287,6 +287,7 @@ class MediosDePagoFragment : Fragment() {
         //
         return root
     }
+
 
     fun FinalizarVenta()
     {

@@ -3,9 +3,7 @@ package com.devhyc.easypos.data.network
 import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.data.model.Squareup.Country
-import com.devhyc.easypos.fiserv.model.ITDConfiguracion
-import com.devhyc.easypos.fiserv.model.ITDRespuesta
-import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
+import com.devhyc.easypos.fiserv.model.*
 import com.devhyc.easypos.mercadopago.model.*
 import com.google.gson.Gson
 import com.integration.easyposkotlin.data.model.DTCaja
@@ -432,10 +430,10 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
-    suspend fun postListarDocumentos(parametros:DTParamDocLista): Resultado<List<DTDocLista>> {
+    suspend fun postListarDocumentos(parametros:DTParamDocLista,terminal:String): Resultado<List<DTDocLista>> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<List<DTDocLista>>> = api.postListarDocumentos(parametros)
+            val response: Response<Resultado<List<DTDocLista>>> = api.postListarDocumentos(parametros,terminal)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -812,6 +810,129 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         return withContext(Dispatchers.IO)
         {
             val response: Response<Resultado<ITDRespuesta>> = api.getCancelarTransaccionITD(nroTerminal, nroTransaccion)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getListarTransaccionesITD(nroTerminal:String,nroCaja: Long): Resultado<ArrayList<ITDTransaccionLista>> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ArrayList<ITDTransaccionLista>>> = api.getListarTransacciones(nroTerminal, nroCaja)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun getTransaccionesSinAsociarITD(nroTerminal:String): Resultado<ArrayList<ITDTransaccionLista>> {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ArrayList<ITDTransaccionLista>>> = api.getTransaccionesSinAsociarITD(nroTerminal)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun postConsultarEstadoTransaccionITD(nroTerminal:String): Resultado<Boolean> {
+       return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<Boolean>> = api.postConsultarEstadoTransaccion(nroTerminal)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun postCrearAnulacionITD(transaccion: ITDTransaccionAnular): Resultado<ITDRespuesta>
+    {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDRespuesta>> = api.postCrearAnulacionITD(transaccion)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun postDevolverDocumento(docDevolucion: DTDocDevolucion): Resultado<DTDocTransaccion>
+    {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<DTDocTransaccion>> = api.postDevolverDocumento(docDevolucion)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun postValidarTransaccionITD(validarConsulta: ITDValidacionConsulta): Resultado<ITDValidacion>
+    {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDValidacion>> = api.postValidarTransaccionITD(validarConsulta)
+            if (response.isSuccessful)
+            {
+                response.body()!!
+            }
+            else
+            {
+                var s = response.errorBody()?.string().toString()
+                val gson = Gson().fromJson(s, Resultado::class.java)
+                Resultado(gson.ok,gson.mensaje,null)
+            }
+        }
+    }
+
+    suspend fun postCrearDevolucionITD(transaccionNuevo:ITDTransaccionNueva,idTransaccion:String): Resultado<ITDRespuesta>
+    {
+        return withContext(Dispatchers.IO)
+        {
+            val response: Response<Resultado<ITDRespuesta>> = api.postCrearDevolucionITD(transaccionNuevo,idTransaccion)
             if (response.isSuccessful)
             {
                 response.body()!!

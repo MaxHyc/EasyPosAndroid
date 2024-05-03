@@ -7,6 +7,6 @@ import com.devhyc.easypos.data.model.Resultado
 import javax.inject.Inject
 
 class PostListarDocumentosUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(parametros: DTParamDocLista): Resultado<List<DTDocLista>> =
-        repository.postListarDocumentos(parametros)
+    suspend operator fun invoke(parametros: DTParamDocLista,terminal:String): Resultado<List<DTDocLista>> =
+        repository.postListarDocumentos(parametros, terminal)
 }

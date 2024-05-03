@@ -103,8 +103,8 @@ dependencies {
     //implementation 'com.github.dantsu:escpos-thermalprinter-android:3.3.0'
     //FISERV
     implementation fileTree(dir: 'libs', include: ["*.jar", "*.aar"])
-    implementation files('libs\\usdk_api_aidl_v13.5.10RB.20220606.jar')
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation files('libs/usdk_api_aidl_v13.5.10RB.20220606.jar')
+    implementation 'com.google.code.gson:gson:2.8.9'
     //API GOOLGE PARA PAISES Y CIUDADES
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'

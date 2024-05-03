@@ -105,26 +105,33 @@ class ConexionImpresora : Fragment() {
             adapterImpresora = ItemImpresoraAdapter(ArrayList<DTImpresora>(vinculadas))
             adapterImpresora.setOnItemClickListener(object: ItemImpresoraAdapter.OnItemClickListener{
                 override fun onItemClick(position: Int) {
-                    //Restaurar seleccion
-                    for (i in adapterImpresora.impresoras)
+                    try
                     {
-                        i.seleccionada = false
+                        //Restaurar seleccion
+                        for (i in adapterImpresora.impresoras)
+                        {
+                            i.seleccionada = false
+                        }
+                        //Mostrar la seleccionada
+                        adapterImpresora.impresoras[position].seleccionada = true
+                        adapterImpresora.notifyDataSetChanged()
+                        //
+                        val editor = Globales.sharedPreferences.edit()
+                        editor.putString(getString(R.string._mac), adapterImpresora.impresoras[position].mac)
+                        editor.putBoolean(getString(R.string._configuracion_impresora), false)
+                        editor.commit()
+                        //
+                        //
+                        //Toast.makeText(requireContext(),"${adapterImpresora.impresoras[position].nombre} guardada",Toast.LENGTH_SHORT).show()
+                        Snackbar.make(binding.clayout,"${adapterImpresora.impresoras[position].nombre} guardada",Snackbar.LENGTH_SHORT)
+                            //.setAction(R.string.Descartar,MyUndoListener())
+                            .setAnimationMode(ANIMATION_MODE_SLIDE)
+                            .show()
                     }
-                    //Mostrar la seleccionada
-                    adapterImpresora.impresoras[position].seleccionada = true
-                    adapterImpresora.notifyDataSetChanged()
-                    //
-                    val editor = Globales.sharedPreferences.edit()
-                    editor.putString(getString(R.string._mac), adapterImpresora.impresoras[position].mac)
-                    editor.putBoolean(getString(R.string._configuracion_impresora), false)
-                    editor.commit()
-                    //
-                    //
-                    //Toast.makeText(requireContext(),"${adapterImpresora.impresoras[position].nombre} guardada",Toast.LENGTH_SHORT).show()
-                    Snackbar.make(binding.clayout,"${adapterImpresora.impresoras[position].nombre} guardada",Snackbar.LENGTH_SHORT)
-                        //.setAction(R.string.Descartar,MyUndoListener())
-                        .setAnimationMode(ANIMATION_MODE_SLIDE)
-                        .show()
+                    catch (e:Exception)
+                    {
+                        Snackbar.make(requireView(),e.message.toString(),Snackbar.LENGTH_SHORT).show()
+                    }
                 }
             })
 

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.DTDoc
@@ -14,6 +15,7 @@ import com.devhyc.easypos.data.model.DTDocDetalle
 import com.devhyc.easypos.data.model.DTMedioPago
 import com.devhyc.easypos.databinding.FragmentDocumentoVistaBinding
 import com.devhyc.easypos.ui.documento.adapter.ItemDocAdapter
+import com.devhyc.easypos.ui.mediospagoslite.MediosPagosLiteFragmentDirections
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -39,6 +41,12 @@ class DocumentoVistaFragment : Fragment() {
     private lateinit var tipo:String
     private var nro:Long=0
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Globales.DocumentoEnProceso = null
+        Globales.TotalesDocumento = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DocumentoVistaViewModel = ViewModelProvider(this)[DocumentoVistaFragmentViewModel::class.java]
@@ -50,7 +58,6 @@ class DocumentoVistaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root: View = binding.root
-        setHasOptionsMenu(true)
         //LISTAR MEDIOS DE PAGO
         DocumentoVistaViewModel.LMedioPago.observe(viewLifecycleOwner, Observer {
             listaMediosPagos = it.toCollection(ArrayList())
@@ -65,7 +72,7 @@ class DocumentoVistaFragment : Fragment() {
             terminal = bundle.getString("terminal","")
             tipo= bundle.getString("tipodoc","")
             nro= bundle.getLong("nrodoc",0)
-            (activity as? AppCompatActivity)?.supportActionBar?.title = "Documento: " + tipo.toString()
+            (activity as? AppCompatActivity)?.supportActionBar?.title = tipo.toString()
             (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Nro $nro"
             //CargarDocumento
             DocumentoVistaViewModel.ListarMediosDePago()
@@ -78,13 +85,16 @@ class DocumentoVistaFragment : Fragment() {
             AlertView.showServerError("¡Atención!",it,requireContext())
         })
         DocumentoVistaViewModel.DocumentoObtenido.observe(viewLifecycleOwner, Observer {
+            Globales.DocumentoEnProceso = it
             oDocumento = it
             CargarDatosDelDocumento()
             binding.svDocumentoVista.visibility = View.VISIBLE
+            setHasOptionsMenu(true)
         })
         DocumentoVistaViewModel.DocumentoCalculos.observe(viewLifecycleOwner, Observer {
             if (it != null)
             {
+                Globales.TotalesDocumento = it
                 binding.tvIvaVista.text = "IVA: ${it.totalImpuestos}"
                 binding.tvDtoVista.text = "DTO: ${it.totalDtos}"
                 binding.tvSubtotalVista.text = "SUBTOTAL: ${it.subtotal}"
@@ -178,7 +188,7 @@ class DocumentoVistaFragment : Fragment() {
                 //SI TIENE RECEPTOR
                 if(oDocumento.receptor!!.receptorRut != "")
                 {
-                    binding.tvTituloCabezal.visibility = View.GONE
+                    //binding.tvTituloCabezal.visibility = View.GONE
                     binding.tvDatosClienteVista.text = "Cliente: ${oDocumento.receptor!!.receptorRazon} (${oDocumento.receptor!!.clienteCodigo})"
                     binding.tvDatosClienteVista.visibility = View.VISIBLE
                 }
@@ -215,10 +225,26 @@ class DocumentoVistaFragment : Fragment() {
                 binding.cardArticulosVista.visibility = View.GONE
             }
             //REFERENCIAS
-            if (oDocumento.referencias != null)
+            if (oDocumento.referencias!!.isNotEmpty())
             {
-
+                //TERMINAL TIPO NRO TOTAL
+                binding.linearReferencias.visibility = View.VISIBLE
+                var ref:String = ""
+                oDocumento.referencias!!.forEach {
+                    ref += "Terminal: ${it.terminalCodigo} | TipoDoc: ${it.tipoDocCodigo} | Nro: ${it.nroDocumento} | Total: ${it.total} \r\n"
+                }
+                binding.tvRefInfo.text =ref
             }
+            else
+            {
+                binding.linearReferencias.visibility = View.GONE
+            }
+            //SI ES DEVOLUCION QUE NO MUESTRE EL BOTON DE DEVOLVER
+            /*  val devolverTickItem = menu.findItem(R.id.tvDevolvertick)
+            if (oDocumento.cabezal!!.tipoDocCodigo == Globales.Terminal.Documentos.DevContado)
+            {
+                devolverTickItem.isVisible = false
+            }*/
         }
         catch (e:Exception)
         {
@@ -229,6 +255,7 @@ class DocumentoVistaFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.menu_reimprimir,menu)
+        menu.findItem(R.id.tvDevolvertick).isVisible = oDocumento.cabezal!!.tipoDocCodigo != Globales.Terminal.Documentos.DevContado
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -238,10 +265,11 @@ class DocumentoVistaFragment : Fragment() {
             R.id.tvReImprimir ->
             {
                 DocumentoVistaViewModel.ObtenerImpresion(oDocumento.cabezal!!.terminal,oDocumento.cabezal!!.tipoDocCodigo,oDocumento.cabezal!!.nroDoc)
-                /*Snackbar.make(requireView(),"Acción no disponible actualmente", Snackbar.LENGTH_SHORT)
-                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                    .setBackgroundTint(resources.getColor(R.color.rosado))
-                    .show()*/
+            }
+            R.id.tvDevolvertick ->
+            {
+                val action = DocumentoVistaFragmentDirections.actionDocumentoVistaFragmentToMediosPagosLiteFragment(true)
+                view?.findNavController()?.navigate(action)
             }
         }
         return super.onOptionsItemSelected(item)

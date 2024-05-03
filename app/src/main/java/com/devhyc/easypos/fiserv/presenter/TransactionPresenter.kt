@@ -1,6 +1,7 @@
 package com.devhyc.easypos.fiserv.presenter
 
 import android.util.Log
+import androidx.fragment.app.Fragment
 import com.devhyc.easypos.fiserv.device.DeviceApi
 import com.devhyc.easypos.fiserv.service.TransactionError
 import com.devhyc.easypos.fiserv.service.TransactionService

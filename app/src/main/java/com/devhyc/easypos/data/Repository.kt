@@ -4,9 +4,7 @@ import com.devhyc.easymanagementmobile.data.model.DTUserControlLogin
 import com.devhyc.easypos.data.model.*
 import com.devhyc.easypos.data.model.Squareup.Country
 import com.devhyc.easypos.data.network.ApiService
-import com.devhyc.easypos.fiserv.model.ITDConfiguracion
-import com.devhyc.easypos.fiserv.model.ITDRespuesta
-import com.devhyc.easypos.fiserv.model.ITDTransaccionNueva
+import com.devhyc.easypos.fiserv.model.*
 import com.devhyc.easypos.mercadopago.model.*
 import com.integration.easyposkotlin.data.model.DTCaja
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -200,10 +198,10 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun postListarDocumentos(parametros:DTParamDocLista): Resultado<List<DTDocLista>>
+    suspend fun postListarDocumentos(parametros:DTParamDocLista,terminal:String): Resultado<List<DTDocLista>>
     {
         return try {
-            return api.postListarDocumentos(parametros)
+            return api.postListarDocumentos(parametros,terminal)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
         }
@@ -465,6 +463,73 @@ class Repository @Inject constructor(
             return api.getCancelarTransaccionITD(nroTerminal,nroTransaccion)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun getListarTransaccionesITD(nroTerminal: String, nroCaja: Long): Resultado<ArrayList<ITDTransaccionLista>>
+    {
+        return try {
+            return api.getListarTransaccionesITD(nroTerminal,nroCaja)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun getTransaccionesSinAsociarITD(nroTerminal: String): Resultado<ArrayList<ITDTransaccionLista>>
+    {
+        return try {
+            return api.getTransaccionesSinAsociarITD(nroTerminal)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun postConsultarEstadoTransaccionITD(nroTransaccion: String): Resultado<Boolean>
+    {
+        return try {
+            return api.postConsultarEstadoTransaccionITD(nroTransaccion)
+        } catch (e: Exception) {
+            Resultado(false, e.message.toString(), null)
+        }
+    }
+
+    suspend fun postCrearAnulacionITD(transaccion:ITDTransaccionAnular): Resultado<ITDRespuesta>
+    {
+        return try {
+            return api.postCrearAnulacionITD(transaccion)
+        } catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
+    suspend fun postDevolverDocumento(docDevolucion: DTDocDevolucion): Resultado<DTDocTransaccion>
+    {
+        return try {
+            return api.postDevolverDocumento(docDevolucion)
+        } catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
+    suspend fun postValidarTransaccionITD(validarConsulta: ITDValidacionConsulta): Resultado<ITDValidacion>
+    {
+        return try {
+            return api.postValidarTransaccionITD(validarConsulta)
+        } catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
+        }
+    }
+
+    suspend fun postCrearDevolucionITD(transaccion:ITDTransaccionNueva,idTransaccion:String): Resultado<ITDRespuesta>
+    {
+        return try {
+            return api.postCrearDevolucionITD(transaccion,idTransaccion)
+        } catch (e:Exception)
+        {
+            Resultado(false,e.message.toString(),null)
         }
     }
 }

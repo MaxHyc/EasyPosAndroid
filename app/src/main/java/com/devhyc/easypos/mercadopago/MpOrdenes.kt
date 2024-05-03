@@ -149,7 +149,7 @@ class MpOrdenes(private val token:String,private val url:String) {
                 System.setProperty("https.protocols", "TLSv1.2")
                 System.setProperty("http.keepAlive", "false")
 
-                val url = URL("$url" + "Ordenes/devolucion/" + nroOrden)
+                val url = URL("$url" + "Ordenes/transacciones/" + nroOrden)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
                 connection.setRequestProperty("Authorization", token)

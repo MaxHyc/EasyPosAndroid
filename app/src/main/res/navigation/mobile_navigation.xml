@@ -108,6 +108,11 @@
             android:id="@+id/action_menuPrincipalFragment_to_menuMantenimientoFragment"
             app:destination="@id/menuMantenimientoFragment"
             app:popUpTo="@id/menuPrincipalFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_transaccionesITDFragment"
+            app:destination="@id/transaccionesITDFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuPrincipalFragment" />
     </fragment>
     <fragment
         android:id="@+id/conexionImpresora"
@@ -136,6 +141,11 @@
         <argument
             android:name="nrodoc"
             app:argType="long" />
+        <action
+            android:id="@+id/action_documentoVistaFragment_to_mediosPagosLiteFragment"
+            app:destination="@id/mediosPagosLiteFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/documentoVistaFragment" />
     </fragment>
     <fragment
         android:id="@+id/listaDeDocumentosFragment"
@@ -190,6 +200,11 @@
             android:id="@+id/action_menuMantenimientoFragment_to_listaClientesFragment"
             app:destination="@id/listaClientesFragment"
             app:popUpTo="@id/menuMantenimientoFragment" />
+        <action
+            android:id="@+id/action_menuMantenimientoFragment_to_configuracionDeCajaFragment"
+            app:destination="@id/configuracionDeCajaFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/menuMantenimientoFragment" />
     </fragment>
     <fragment
         android:id="@+id/listaClientesFragment"
@@ -206,10 +221,35 @@
             app:destination="@id/mercadoPagoFragment"
             app:launchSingleTop="true"
             app:popUpTo="@id/mediosPagosLiteFragment" />
+        <argument
+            android:name="esDevolucion"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_mediosPagosLiteFragment_to_transaccionesITDFragment"
+            app:destination="@id/transaccionesITDFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/mediosPagosLiteFragment" />
     </fragment>
     <fragment
         android:id="@+id/mercadoPagoFragment"
         android:name="com.devhyc.easypos.mercadopago.MercadoPagoFragment"
         android:label="Mercado Pago"
         tools:layout="@layout/fragment_mercado_pago" />
+    <fragment
+        android:id="@+id/transaccionesITDFragment"
+        android:name="com.devhyc.easypos.ui.transacciones.TransaccionesITDFragment"
+        android:label="Transacciones"
+        tools:layout="@layout/fragment_transacciones" >
+        <argument
+            android:name="transaccionesNoAsociadas"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="codMedioPago"
+            app:argType="integer" />
+        <argument
+            android:name="esDevolucion"
+            app:argType="boolean" />
+    </fragment>
 </navigation>
