@@ -38,13 +38,13 @@ class CajaFragment : Fragment() {
         cajaViewModel = ViewModelProvider(this)[CajaFragmentViewModel::class.java]
         _binding = FragmentCajaBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        (activity as? AppCompatActivity)?.supportActionBar?.subtitle = ""
         binding.btnIngresoDinero.setOnClickListener {
-            val action = CajaFragmentDirections.actionIngresoR(0)
+            val action = CajaFragmentDirections.actionIngresoR(Globales.TTipoMovimientoCaja.INGRESO.codigo)
             view?.findNavController()?.navigate(action)
-            //AbrirFragmentInicioCaja()
         }
         binding.btnRetiroDinero.setOnClickListener {
-            val action = CajaFragmentDirections.actionIngresoR(1)
+            val action = CajaFragmentDirections.actionIngresoR(Globales.TTipoMovimientoCaja.RETIRO.codigo)
             view?.findNavController()?.navigate(action)
         }
         binding.btnReporteX.setOnClickListener {
@@ -52,13 +52,13 @@ class CajaFragment : Fragment() {
             view?.findNavController()?.navigate(action)
         }
         binding.btnCierreCaja.setOnClickListener {
-            val action = CajaFragmentDirections.actionCierreCaja(1)
+            val action = CajaFragmentDirections.actionCierreCaja(Globales.TTipoMovimientoCaja.RETIRO.codigo)
             view?.findNavController()?.navigate(action)
         }
         binding.btnInicioCaja.setOnClickListener {
-            val action = CajaFragmentDirections.actionIngresoR(2)
-            //view?.findNavController()?.navigate(action)
-            AbrirFragmentInicioCaja()
+            val action = CajaFragmentDirections.actionIngresoR(Globales.TTipoMovimientoCaja.INICIO.codigo)
+            view?.findNavController()?.navigate(action)
+            //AbrirFragmentInicioCaja()
         }
         //
         cajaViewModel.isLoading.observe(viewLifecycleOwner, Observer {
@@ -102,22 +102,7 @@ class CajaFragment : Fragment() {
         cajaViewModel.ObtenerCajaAbierta()
         return root
     }
-
-    override fun onResume() {
-        super.onResume()
-        //Ver si la caja está abierta
-        if (Globales.CajaActual != null)
-        {
-
-        }
-        else
-        {
-            //No hay caja abierta
-
-        }
-    }
-
-    fun AbrirFragmentInicioCaja()
+    /*fun AbrirFragmentInicioCaja()
     {
         try
         {
@@ -125,6 +110,8 @@ class CajaFragment : Fragment() {
             val view = inflater.inflate(R.layout.fragment_ingreso_retiro, null)
             //
             var etMontoIngreso = view.findViewById<EditText>(R.id.etMontoIR)
+            var etObs = view.findViewById<EditText>(R.id.etObsIR)
+            etObs.isVisible = false
             //
             lateinit var dialog: AlertDialog
             dialog= AlertDialog.Builder(requireContext())
@@ -133,7 +120,6 @@ class CajaFragment : Fragment() {
                 .setView(view)
                 .setPositiveButton("Aceptar") { dialogInterface, i ->
                     run {
-                       //
                         cajaViewModel.IniciarCaja(etMontoIngreso.text.toString())
                     }
                 }
@@ -147,5 +133,5 @@ class CajaFragment : Fragment() {
         {
 
         }
-    }
+    }*/
 }

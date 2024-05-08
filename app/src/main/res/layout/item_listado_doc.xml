@@ -36,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="NRODOC"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/tvVistaTipoDocCod"
                 app:layout_constraintStart_toEndOf="@+id/tvVistaTipoDocCod"
                 app:layout_constraintTop_toTopOf="@+id/tvVistaTipoDocCod" />
@@ -46,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="TIPODOCCODIGO"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvVistaClienteNombre" />
 

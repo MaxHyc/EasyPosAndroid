@@ -256,7 +256,7 @@ class DocumentoPrincipalFragment : Fragment() {
                 DocumentoEnProceso!!.complemento = DTDocComplemento()
                 if (ParametrosDocumento.Validaciones.Valorizado)
                 {
-                    DocumentoEnProceso!!.valorizado = DTDocValorizado(ParametrosDocumento.Configuraciones.MonedaCodigo,ParametrosDocumento.Configuraciones.TipoCambio,0,ParametrosDocumento.Configuraciones.ListaPrecioCodigo,ArrayList())
+                    DocumentoEnProceso!!.valorizado = DTDocValorizado(ParametrosDocumento.Configuraciones.MonedaCodigo,ParametrosDocumento.Configuraciones.TipoCambio,0,ParametrosDocumento.Configuraciones.ListaPrecioCodigo,ArrayList(),0.0)
                 }
                 else
                 {

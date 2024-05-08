@@ -29,7 +29,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="10dp"
             android:orientation="vertical">
+
+            <RadioGroup
+                android:id="@+id/radioMonedaMovimiento"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="match_parent">
+
+                <RadioButton
+                    android:id="@+id/rmonedaPesos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:tag="1"
+                    android:text="$" />
+
+                <RadioButton
+                    android:id="@+id/rmonedaDolares"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="2"
+                    android:text="U$S" />
+            </RadioGroup>
 
             <EditText
                 android:id="@+id/etMontoIR"
@@ -50,10 +73,23 @@
                 android:hint="Observaciones - Opcional"
                 android:inputType="textMultiLine|textPersonName|textImeMultiLine"
                 android:lineSpacingExtra="10sp"
-                android:maxLines="10"
+                android:maxLines="10" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lotcargandoc"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
                 android:visibility="gone"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading"
+                tools:ignore="MissingConstraints"
                 tools:visibility="visible" />
+
         </LinearLayout>
+
+
     </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

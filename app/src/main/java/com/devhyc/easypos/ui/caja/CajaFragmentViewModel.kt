@@ -54,7 +54,7 @@ class CajaFragmentViewModel @Inject constructor(val getCajaAbiertaUseCase: GetCa
         }
     }
 
-    fun IniciarCaja(monto:String)
+   /* fun IniciarCaja(monto:String)
     {
         viewModelScope.launch {
             isLoading.postValue(true)
@@ -89,5 +89,5 @@ class CajaFragmentViewModel @Inject constructor(val getCajaAbiertaUseCase: GetCa
             }
             isLoading.postValue(false)
         }
-    }
+    }*/
 }

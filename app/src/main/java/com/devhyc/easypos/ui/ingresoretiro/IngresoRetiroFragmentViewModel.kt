@@ -14,9 +14,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class IngresoRetiroFragmentViewModel @Inject constructor(val postValidarDocumento: PostValidarDocumento,val postEmitirDocumento: PostEmitirDocumento, val getConsultarTransaccion: GetConsultarTransaccion,val getNuevoDocumentoUseCase: GetNuevoDocumentoUseCase): ViewModel() {
+class IngresoRetiroFragmentViewModel @Inject constructor(val postIniciarCaja: PostIniciarCaja,val getImpresionInicioCajaUseCase: GetImpresionInicioCajaUseCase,val postValidarDocumento: PostValidarDocumento,val postEmitirDocumento: PostEmitirDocumento, val getConsultarTransaccion: GetConsultarTransaccion,val getNuevoDocumentoUseCase: GetNuevoDocumentoUseCase): ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
     var TransaccionFinalizada = MutableLiveData<DTDocTransaccion>()
+
+    val iniciarCaja = MutableLiveData<DTCaja>()
+    val impresionInicio = MutableLiveData<DTImpresion>()
+
 
     private val _mostrarEstado = MutableLiveData<String>()
     val mostrarEstado: LiveData<String> = _mostrarEstado
@@ -39,15 +43,17 @@ class IngresoRetiroFragmentViewModel @Inject constructor(val postValidarDocument
         _errorServer.value = message
     }
 
-    fun RealizarMovimientoDeCaja(moneda:String,monto:String,ingreso:Boolean)
+    fun RealizarMovimientoDeCaja(moneda:String,monto:String,observacion:String,codigoMovimiento:Int)
     {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                var tipoDoc = if(ingreso)
-                    Globales.Terminal.Documentos.Ingreso
-                else
-                    Globales.Terminal.Documentos.Retiro
+                var tipoDoc = ""
+                when(codigoMovimiento)
+                {
+                    Globales.TTipoMovimientoCaja.INGRESO.codigo -> tipoDoc = Globales.Terminal.Documentos.Ingreso
+                    Globales.TTipoMovimientoCaja.RETIRO.codigo -> tipoDoc = Globales.Terminal.Documentos.Retiro
+                }
 
                 val resultDoc = getNuevoDocumentoUseCase(Globales.UsuarioLoggueado.usuario, Globales.Terminal.Codigo,tipoDoc)
                 if (resultDoc != null)
@@ -56,14 +62,21 @@ class IngresoRetiroFragmentViewModel @Inject constructor(val postValidarDocument
                     {
                         //CARGO EL MONTO Y MONEDA
                         resultDoc.elemento!!.documento.complemento!!.codigoSucursal = Globales.Terminal.SucursalDoc
-                        resultDoc.elemento!!.documento.valorizado!!.monedaCodigo = moneda
-                        TODO("CARGAR MONTO Y MONEDA")
+                        resultDoc.elemento!!.documento.cabezal!!.observaciones = observacion
+                        when(moneda)
+                        {
+                            "1" -> { resultDoc.elemento!!.documento.valorizado!!.monedaCodigo = "1" }
+                            "2" -> { resultDoc.elemento!!.documento.valorizado!!.monedaCodigo = "2" }
+                            "" -> { resultDoc.elemento!!.documento.valorizado!!.monedaCodigo = "1" }
+                        }
+                        resultDoc.elemento!!.documento.valorizado!!.monedaCodigo = moneda.toString()
+                        resultDoc.elemento!!.documento.valorizado!!.ImporteManual = monto.toDouble()
                         //
                         val result = postValidarDocumento(resultDoc.elemento!!.documento)
                         if (result != null) {
                             if (result.ok)
                             {
-                                var trans = postEmitirDocumento(Globales.DocumentoEnProceso)
+                                var trans = postEmitirDocumento(resultDoc.elemento!!.documento)
                                 if (trans != null)
                                 {
                                     //CONSULTO EL ESTADO DE LA TRANSACCION POR ESE NRO DE TRANSACCION
@@ -118,6 +131,58 @@ class IngresoRetiroFragmentViewModel @Inject constructor(val postValidarDocument
         }
         finally {
             isLoading.postValue(false)
+        }
+    }
+
+    fun IniciarCaja(monto:String)
+    {
+        viewModelScope.launch {
+            try {
+                isLoading.postValue(true)
+                var caja = DTIngresoCaja(Globales.Terminal.Codigo,Globales.UsuarioLoggueado.usuario,monto.toDouble())
+                val result = postIniciarCaja(caja)
+                if (result!!.ok)
+                {
+                    //iniciarCaja.postValue(result.elemento!!)
+                    ImpresionInicio(result.elemento!!)
+                }
+                else
+                {
+                    mostrarErrorServer(result.mensaje)
+                }
+            }
+            catch (e:Exception)
+            {
+                mostrarErrorLocal(e.message.toString())
+            }
+            finally {
+                isLoading.postValue(false)
+            }
+        }
+    }
+
+    fun ImpresionInicio(caja:DTCaja)
+    {
+        viewModelScope.launch {
+            try {
+                isLoading.postValue(true)
+                val result = getImpresionInicioCajaUseCase(Globales.Terminal.Codigo,caja.Nro.toString())
+                if (result!!.ok)
+                {
+                    impresionInicio.postValue(result.elemento!!)
+                }
+                else
+                {
+                    mostrarErrorServer(result.mensaje)
+                }
+            }
+            catch (e:Exception)
+            {
+                mostrarErrorLocal(e.message.toString())
+            }
+            finally {
+                isLoading.postValue(false)
+            }
         }
     }
 }

@@ -48,27 +48,29 @@ data class DTDocComplemento(@SerializedName("codigoSucursal") var codigoSucursal
 }
 
 data class DTDocValorizado(@SerializedName("monedaCodigo") var monedaCodigo:String,
-                        @SerializedName("tipoCambio") var tipoCambio:Double,
-                        @SerializedName("formaPagoDias") var formaPagoDias:Int,
-                        @SerializedName("listaPrecioCodigo") var listaPrecioCodigo:String,
-                        @SerializedName("pagos") var pagos:ArrayList<DTDocPago>) {
-    constructor() : this("1",0.0,0,"", ArrayList())
+                           @SerializedName("tipoCambio") var tipoCambio:Double,
+                           @SerializedName("formaPagoDias") var formaPagoDias:Int,
+                           @SerializedName("listaPrecioCodigo") var listaPrecioCodigo:String,
+                           @SerializedName("pagos") var pagos:ArrayList<DTDocPago>,
+                           @SerializedName("importeManual") var ImporteManual:Double?)
+{
+    constructor() : this("1",0.0,0,"", ArrayList(),null)
 }
 
 data class DTDocDetalle(@SerializedName("articuloId") var articuloId:Long,
-                     @SerializedName("codigoIngresado") var codigoIngresado:String,
-                     @SerializedName("descripcion") var descripcion:String,
-                     @SerializedName("descripcionAdicional") var descripcionAdicional:String,
-                     @SerializedName("unidad") var unidad:String,
-                     @SerializedName("cantidad") var cantidad:Double,
-                     @SerializedName("precioUnitario") var precioUnitario:Double,
-                     @SerializedName("impuestoCodigo") var impuestoCodigo:Int,
-                     @SerializedName("impuestoTasa") var impuestoTasa:Double,
-                     @SerializedName("descuentoPorc") var descuentoPorc:Double,
-                     @SerializedName("noFacturable") var noFacturable:Boolean,
-                     @SerializedName("promocion") var promocion:String,
-                     @SerializedName("precioOriginal") var precioOriginal:Double,
-                     @SerializedName("Grupos") var grupos:String,
+                        @SerializedName("codigoIngresado") var codigoIngresado:String,
+                        @SerializedName("descripcion") var descripcion:String,
+                        @SerializedName("descripcionAdicional") var descripcionAdicional:String,
+                        @SerializedName("unidad") var unidad:String,
+                        @SerializedName("cantidad") var cantidad:Double,
+                        @SerializedName("precioUnitario") var precioUnitario:Double,
+                        @SerializedName("impuestoCodigo") var impuestoCodigo:Int,
+                        @SerializedName("impuestoTasa") var impuestoTasa:Double,
+                        @SerializedName("descuentoPorc") var descuentoPorc:Double,
+                        @SerializedName("noFacturable") var noFacturable:Boolean,
+                        @SerializedName("promocion") var promocion:String,
+                        @SerializedName("precioOriginal") var precioOriginal:Double,
+                        @SerializedName("Grupos") var grupos:String,
                         @SerializedName("serie") var serie:String)
 {
     constructor() : this(0,"","","","",0.0,0.0,0,0.0,0.0,false,"",0.0,"","")

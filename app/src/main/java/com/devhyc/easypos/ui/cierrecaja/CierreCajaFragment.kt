@@ -53,7 +53,10 @@ class CierreCajaFragment : Fragment() {
             cierreViewModel.ImpresionCierre(it)
         })
         cierreViewModel.impresionCierre.observe(viewLifecycleOwner, Observer {
-            Globales.ControladoraFiservPrint.Print(it,requireContext())
+            when (Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(it,requireActivity())
+            }
             findNavController().popBackStack()
         })
         cierreViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentIngresoRetiroBinding
 import com.devhyc.easypos.utilidades.AlertView
@@ -29,10 +30,6 @@ class IngresoRetiroFragment : Fragment() {
     //ViewModel
     private lateinit var ingresosViewModel: IngresoRetiroFragmentViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,33 +43,46 @@ class IngresoRetiroFragment : Fragment() {
             tipo = bundle.getInt("TipoMovimiento",0)
             when(tipo)
             {
-                0 -> (activity as? AppCompatActivity)?.supportActionBar?.title = "Ingreso de dinero"
-                1 -> (activity as? AppCompatActivity)?.supportActionBar?.title = "Retiro de dinero"
-                2 -> (activity as? AppCompatActivity)?.supportActionBar?.title = "Inicio de caja"
+                Globales.TTipoMovimientoCaja.INGRESO.codigo -> (activity as? AppCompatActivity)?.supportActionBar?.title = "Ingreso de dinero"
+                Globales.TTipoMovimientoCaja.RETIRO.codigo -> (activity as? AppCompatActivity)?.supportActionBar?.title = "Retiro de dinero"
+                Globales.TTipoMovimientoCaja.INICIO.codigo -> {
+                    (activity as? AppCompatActivity)?.supportActionBar?.title = "Inicio de caja"
+                    binding.etObsIR.visibility = View.GONE
+                }
             }
         }
         //
         binding.flIngresoOk.visibility = View.VISIBLE
         //
         binding.flIngresoOk.setOnClickListener {
+            Cargando(true)
             if(binding.etMontoIR.text.toString() == "")
             {
                 AlertView.showAlert(getString(R.string.Atencion),"El monto no puede ser vacío",requireContext())
             }
             else {
+                //ME QUEDO CON LA MONEDA
                 when(tipo)
                 {
-                    0 ->
+                    Globales.TTipoMovimientoCaja.INGRESO.codigo ->
                     {
                         //INGRESO DE DINERO
-                        //ingresosViewModel.RealizarMovimientoDeCaja(binding.etMontoIR.text.toString(),true)
+                        ingresosViewModel.RealizarMovimientoDeCaja(
+                            if (binding.rmonedaPesos.isChecked) "1" else "2",
+                            binding.etMontoIR.text.toString(),
+                            binding.etObsIR.text.toString(),
+                            Globales.TTipoMovimientoCaja.INGRESO.codigo)
                     }
-                    1 ->
+                    Globales.TTipoMovimientoCaja.RETIRO.codigo ->
                     {
                         //RETIRO DE CAJA
-                        //ingresosViewModel.RealizarMovimientoDeCaja(binding.etMontoIR.text.toString(),false)
+                        ingresosViewModel.RealizarMovimientoDeCaja(
+                            if (binding.rmonedaPesos.isChecked) "1" else "2",
+                            binding.etMontoIR.text.toString(),
+                            binding.etObsIR.text.toString(),
+                            Globales.TTipoMovimientoCaja.RETIRO.codigo)
                     }
-                    2 ->
+                    Globales.TTipoMovimientoCaja.INICIO.codigo ->
                     {
                         //INICIO DE CAJA
                         if (binding.etMontoIR.equals(""))
@@ -81,40 +91,53 @@ class IngresoRetiroFragment : Fragment() {
                         }
                         else
                         {
-                            //ingresosViewModel.IniciarCaja(binding.etMontoIR.text.toString())
+                            ingresosViewModel.IniciarCaja(binding.etMontoIR.text.toString())
                         }
                     }
                 }
             }
+            Cargando(false)
         }
-        //INICIO DE CAJA
-       /* ingresosViewModel.inicioCaja.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(requireView(),"Imprimiendo inicio de caja", Snackbar.LENGTH_LONG).setAnimationMode(
-                BaseTransientBottomBar.ANIMATION_MODE_SLIDE
-            ).show()
-            //Globales.ControladoraDeImpresion.Print("",requireContext())
-            view?.findNavController()?.navigateUp()
+        ingresosViewModel.TransaccionFinalizada.observe(viewLifecycleOwner, Observer {
+            Snackbar.make(requireView(), it.errorMensaje, Snackbar.LENGTH_SHORT)
+                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                .setBackgroundTint(resources.getColor(R.color.green))
+                .show()
+            //IMPRIMIR DOCUMENTO
+            when (Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(it!!.Impresion.impresionTicket,requireContext())
+            }
+            findNavController().popBackStack()
         })
-        //INGRESO DE CAJA
-        ingresosViewModel.ingresoCaja.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(requireView(),"Imprimiendo ingreso de caja", Snackbar.LENGTH_LONG).setAnimationMode(
-                BaseTransientBottomBar.ANIMATION_MODE_SLIDE
-            ).show()
-            //Globales.ControladoraDeImpresion.Print("",requireContext())
-            view?.findNavController()?.navigateUp()
+        ingresosViewModel.impresionInicio.observe(viewLifecycleOwner, Observer {
+            when (Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(it,requireContext())
+            }
+            findNavController().popBackStack()
         })
-        //RETIRO DE CAJA
-        ingresosViewModel.retiroCaja.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(requireView(),"Imprimiendo retiro de caja", Snackbar.LENGTH_LONG).setAnimationMode(
-                BaseTransientBottomBar.ANIMATION_MODE_SLIDE
-            ).show()
-            //Globales.ControladoraDeImpresion.Print("it.activo.codigoCpcl.toString()",requireContext())
-            view?.findNavController()?.navigateUp()
-        })*/
-        //
+        ingresosViewModel.mostrarErrorServer.observe(viewLifecycleOwner, Observer {
+            AlertView.showError("El server retorno el siguiente error",it,requireContext())
+        })
+        ingresosViewModel.mostrarErrorLocal.observe(viewLifecycleOwner, Observer {
+            AlertView.showError("Ocurrio el siguiente error",it,requireContext())
+        })
         ingresosViewModel.isLoading.observe(viewLifecycleOwner, Observer {
             binding.progressBar2.isVisible = it
+            Cargando(it)
         })
+        binding.etMontoIR.selectAll()
+        binding.etMontoIR.requestFocus()
         return root
+    }
+
+    fun Cargando(ver:Boolean)
+    {
+        binding.etMontoIR.isVisible = ver
+        binding.etObsIR.isVisible = ver
+        binding.radioMonedaMovimiento.isVisible = ver
+        binding.flIngresoOk.isVisible = ver
+        binding.lotcargandoc.isVisible = ver
     }
 }

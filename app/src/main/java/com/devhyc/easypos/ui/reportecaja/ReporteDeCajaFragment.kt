@@ -78,7 +78,10 @@ class ReporteDeCajaFragment : Fragment() {
             binding.svReporte.visibility = View.VISIBLE
         })
         reporteViewModel.impresionReporte.observe(viewLifecycleOwner, Observer {
-            Globales.ControladoraFiservPrint.Print(it,requireContext())
+            when (Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(it,requireContext())
+            }
         })
         reporteViewModel.isLoading.observe(viewLifecycleOwner, Observer {
             if (it)

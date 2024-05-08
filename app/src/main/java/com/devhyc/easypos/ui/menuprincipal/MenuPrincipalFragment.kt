@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.devhyc.easypos.BuildConfig
 import com.devhyc.easypos.R
+import com.devhyc.easypos.databinding.FragmentDocumentoPrincipalBinding
 import com.devhyc.easypos.databinding.FragmentMenuPrincipalBinding
 import com.devhyc.easypos.ui.documento.DocumentoPrincipalViewModel
 import com.devhyc.easypos.ui.login.LoginActivity
@@ -52,9 +53,13 @@ class MenuPrincipalFragment : Fragment() {
                     binding.tvCajaActual.text = "Caja: ${Globales.NroCaja}"
             }
             if (Globales.CajaActual != null)
+            {
                 binding.tvInfoAbierto.text = "Caja abierta: ${Globales.Herramientas.TransformarFecha(Globales.CajaActual.FechaHora,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)} \n Nro: ${Globales.CajaActual.Nro} \n Usuario que inició: ${Globales.CajaActual.Usuario}"
+            }
             else
+            {
                 binding.tvInfoAbierto.text= ""
+            }
             HabilitarModulos()
             //
         }
@@ -111,10 +116,6 @@ class MenuPrincipalFragment : Fragment() {
 
         }
         super.onPause()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentMenuMantenimientoBinding
@@ -43,6 +44,7 @@ class MenuMantenimientoFragment : Fragment() {
             val action = MenuMantenimientoFragmentDirections.actionMenuMantenimientoFragmentToConfiguracionDeCajaFragment()
             view?.findNavController()?.navigate(action)
         }
+        (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = ""
         return root
     }
 }

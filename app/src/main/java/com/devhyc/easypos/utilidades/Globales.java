@@ -245,4 +245,28 @@ public class Globales {
         }
     }
 
+    public enum TTipoMovimientoCaja
+    {
+        INICIO("INICIO",0),
+        INGRESO("INGRESO",1),
+        RETIRO("RETIRO",2),
+        ;
+
+        private String nombre;
+        private int codigo;
+
+        private TTipoMovimientoCaja (String nombre, int codigo){
+            this.nombre = nombre;
+            this.codigo = codigo;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getCodigo() {
+            return codigo;
+        }
+    }
+
 }
