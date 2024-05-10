@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.devhyc.easypos.databinding.ItemTransaccionBinding
@@ -11,7 +12,7 @@ import com.devhyc.easypos.fiserv.model.ITDEstadoTransaccion
 import com.devhyc.easypos.fiserv.model.ITDTransaccionLista
 import com.devhyc.easypos.utilidades.Globales
 
-class ItemDevolucionAdapter(var items:ArrayList<ITDTransaccionLista>): RecyclerView.Adapter<ItemDevolucionAdapter.ItemDevolucionViewHolder>() {
+class ItemDevolucionAdapter(var items:ArrayList<ITDTransaccionLista>,var mostrarBotonSeleccionar:Boolean): RecyclerView.Adapter<ItemDevolucionAdapter.ItemDevolucionViewHolder>() {
     private lateinit var mListener: OnItemClickListener
 
     fun updateList(newList:ArrayList<ITDTransaccionLista>)
@@ -49,7 +50,7 @@ class ItemDevolucionAdapter(var items:ArrayList<ITDTransaccionLista>): RecyclerV
 
     override fun onBindViewHolder(holder: ItemDevolucionViewHolder, position: Int) {
         val item: ITDTransaccionLista = items[position]
-        holder.bind(item)
+        holder.bind(item,mostrarBotonSeleccionar)
     }
 
     override fun getItemCount(): Int = items.size
@@ -63,10 +64,11 @@ class ItemDevolucionAdapter(var items:ArrayList<ITDTransaccionLista>): RecyclerV
             fun onItemClick(position: Int)
         }
 
-        fun bind(d: ITDTransaccionLista) {
+        fun bind(d: ITDTransaccionLista,mostrarBotonSeleccionar:Boolean) {
             binding.tvDocumentoDev.text = "Documento: ${d.Documento}"
             binding.tvMontoDev.text = "Monto: ${d.Monto}"
             binding.tvNroTransaccionDev.text = "Transacción Nro: ${d.TransaccionId}"
+            binding.btnSeleccionarPago.isVisible = mostrarBotonSeleccionar
 
             when (d.Estado) {
                 ITDEstadoTransaccion.CONERROR.value -> {

@@ -17,9 +17,9 @@
     <application
         android:name="com.devhyc.easypos.EasyPos"
         android:allowBackup="true"
-        android:icon="@drawable/pos2"
+        android:icon="@drawable/eposf"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/pos2"
+        android:roundIcon="@drawable/eposf"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyPosTheme"
         android:usesCleartextTraffic="true">

@@ -75,7 +75,7 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
                 pagoseleccionado = medio.Id.toInt()
                 when (medio.Tipo) {
                     Globales.TMedioPago.TARJETA.codigo.toString() -> {
-                        if (medio.Proveedor == "GEOCOM") {
+                        if (medio.Proveedor == Globales.TProveedorTarjeta.FISERV.valor) {
                             mostrarEstado("Agregando pago FISERV")
                             if (esDevolucion)
                                 ObtenerNroTransaccionITD(medio.Proveedor, monto)

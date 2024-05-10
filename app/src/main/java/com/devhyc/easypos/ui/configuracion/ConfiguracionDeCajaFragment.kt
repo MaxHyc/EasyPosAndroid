@@ -2,12 +2,14 @@ package com.devhyc.easypos.ui.configuracion
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.findNavController
+import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentConfiguracionDeCajaBinding
 import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.snackbar.BaseTransientBottomBar

@@ -269,4 +269,29 @@ public class Globales {
         }
     }
 
+    public enum TProveedorTarjeta
+    {
+        FISERV("GEOCOM","GEOCOM"),
+        HANDY("HANDY","HANDY"),
+        GETNET("GETNET","GETNET"),
+        OCA("OCA","OCA")
+        ;
+
+        private String nombre;
+        private String valor;
+
+        private TProveedorTarjeta (String nombre, String valor){
+            this.nombre = nombre;
+            this.valor = valor;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public String getValor() {
+            return valor;
+        }
+    }
+
 }

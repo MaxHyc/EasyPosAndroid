@@ -9,6 +9,5 @@
 
     <item android:id="@+id/btn_menu_RealizarCierre"
         android:title="Realizar cierre"
-        app:showAsAction="always"/>
-    <!--android:icon="@drawable/ic_baseline_exit_to_app_24"-->
+        app:showAsAction="always" />
 </menu>

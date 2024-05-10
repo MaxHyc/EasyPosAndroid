@@ -212,7 +212,7 @@ class MediosPagosLiteFragment : Fragment() {
                 var idMedioPago:String = ""
                 //TODO ("PONER QUE ID DE MEDIO DE PAGO SEA EL CORRECTO")
                 adapterMediosDePagos.mediosDepago.forEach {
-                    if (it.Proveedor == "GEOCOM")
+                    if (it.Proveedor == Globales.TProveedorTarjeta.FISERV.valor)
                     {
                         idMedioPago = it.Id
                     }

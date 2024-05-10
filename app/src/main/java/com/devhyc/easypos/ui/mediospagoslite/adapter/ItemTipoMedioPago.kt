@@ -55,7 +55,7 @@ class ItemTipoMedioPago(var mediosDepago: ArrayList<DTMedioPago>): RecyclerView.
             try
             {
                 binding.tvTextoMedioPago.text = i.Nombre
-                if (i.Proveedor == "GEOCOM")
+                if (i.Proveedor == Globales.TProveedorTarjeta.FISERV.valor)
                 {
                     //binding.imgLogoFiserv.visibility = View.VISIBLE
                 }
@@ -66,10 +66,14 @@ class ItemTipoMedioPago(var mediosDepago: ArrayList<DTMedioPago>): RecyclerView.
                 when(i.Tipo)
                 {
                     Globales.TMedioPago.TARJETA.codigo.toString() -> {
-                        if(i.Proveedor == "GEOCOM")
-                            binding.imageView7.setImageResource(R.drawable.fiservlogo)
-                        else
-                            binding.imageView7.setImageResource(R.drawable.ic_baseline_payment_24)
+                        when(i.Proveedor)
+                        {
+                            Globales.TProveedorTarjeta.FISERV.valor -> binding.imageView7.setImageResource(R.drawable.fiservlogo)
+                            Globales.TProveedorTarjeta.HANDY.valor -> binding.imageView7.setImageResource(R.drawable.handylogo2)
+                            Globales.TProveedorTarjeta.GETNET.valor -> binding.imageView7.setImageResource(R.drawable.logogetnet)
+                            Globales.TProveedorTarjeta.OCA.valor -> binding.imageView7.setImageResource(R.drawable.logooca)
+                            else -> binding.imageView7.setImageResource(R.drawable.ic_baseline_payment_24)
+                        }
                     }
                     Globales.TMedioPago.EFECTIVO.codigo.toString() -> {
                         binding.imageView7.setImageResource(R.drawable.ic_baseline_money_24)

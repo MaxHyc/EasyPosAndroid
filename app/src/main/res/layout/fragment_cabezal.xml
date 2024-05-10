@@ -34,7 +34,7 @@
         android:id="@+id/svCabezalDoc"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="20dp"
+        android:layout_margin="5dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,9 +64,58 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvNombreCliente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="NOMBRE DEL CLIENTE"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal|center_vertical"
+                        android:layout_weight="1"
+                        android:foregroundGravity="center|center_horizontal"
+                        android:gravity="center_horizontal|center_vertical"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnBuscarClienteExistente"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/azulmarino"
+                            android:text="Buscar cliente"
+                            android:textSize="10sp"
+                            app:cornerRadius="15dp"
+                            app:icon="@drawable/ic_baseline_search_24"
+                            app:iconGravity="textStart" />
+
+                        <Button
+                            android:id="@+id/btnLimpiarClienteSelect"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/blackred"
+                            android:text="Limpiar selección"
+                            android:textSize="10sp"
+                            android:visibility="gone"
+                            app:cornerRadius="15dp"
+                            app:icon="@drawable/ic_baseline_delete_24"
+                            app:iconGravity="textStart" />
+                    </LinearLayout>
+
+                    <TextView
                         android:id="@+id/textView24"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:text="Razón social" />
 
                     <EditText
@@ -74,18 +123,54 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:layout_weight="2"
                         android:ems="10"
                         android:inputType="textPersonName" />
+
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/radioRut"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="RUT" />
+
+                        <RadioButton
+                            android:id="@+id/radioCI"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="CI" />
+
+                        <RadioButton
+                            android:id="@+id/radioPP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Pasaporte" />
+
+                        <RadioButton
+                            android:id="@+id/radioOtro"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Otro" />
+                    </RadioGroup>
 
                     <TextView
                         android:id="@+id/textView23"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="RUT" />
+                        android:text="NRO" />
 
                     <EditText
-                        android:id="@+id/etRut"
+                        android:id="@+id/etNroDocCli"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -148,13 +233,28 @@
                         android:layout_height="wrap_content"
                         android:text="Mail" />
 
-                    <EditText
-                        android:id="@+id/etMail"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:ems="10"
-                        android:inputType="textPersonName" />
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/etMail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:inputType="textPersonName" />
+
+                        <CheckBox
+                            android:id="@+id/chkEnviarFacturaPorMail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Enviar factura por mail" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/textView3"

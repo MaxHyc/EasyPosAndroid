@@ -147,6 +147,17 @@ class DocumentoVistaFragment : Fragment() {
                         monedaSignoSelect = ""
                     }
                 }
+                //SI TIENE IMPORTE MANUAL
+                if (oDocumento.valorizado!!.ImporteManual != null)
+                {
+                    binding.cardImporteManual.visibility = View.VISIBLE
+                    binding.cardTotalesVista.visibility = View.GONE
+                    binding.tvMonedaImporteManual.text = monedaSignoSelect
+                    binding.tvTotalImporteManual.text = oDocumento.valorizado!!.ImporteManual.toString()
+                }
+                else
+                    binding.cardImporteManual.visibility = View.GONE
+                //
                 if (oDocumento.valorizado!!.tipoCambio != 0.0 && oDocumento.valorizado!!.monedaCodigo.isNotEmpty())
                 {
                     binding.tvTipoCambioVista.text = "Tipo de cambio: ${oDocumento.valorizado!!.tipoCambio}\nMoneda: ${monedaSignoSelect}"
@@ -219,6 +230,10 @@ class DocumentoVistaFragment : Fragment() {
                 })
                 binding.rvArticulosDocVista.layoutManager = LinearLayoutManager(activity)
                 binding.rvArticulosDocVista.adapter = adapterItems
+                if (adapterItems.itemCount <= 0)
+                {
+                    binding.cardArticulosVista.visibility = View.GONE
+                }
             }
             else
             {

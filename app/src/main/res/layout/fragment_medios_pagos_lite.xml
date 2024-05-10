@@ -64,8 +64,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -104,6 +103,7 @@
         android:id="@+id/rvMediosDePago"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="10dp"
         app:layout_constraintBottom_toTopOf="@+id/cardView6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -116,6 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        app:cardBackgroundColor="@color/colorGeocom"
         app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -130,22 +131,25 @@
             <TextView
                 android:id="@+id/tvTextoTotal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="TOTAL:" />
+                android:gravity="center_horizontal|center_vertical"
+                android:text="TOTAL:"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/etMontoTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:ems="5"
                 android:enabled="false"
                 android:gravity="center_horizontal"
                 android:hint="TOTAL"
                 android:inputType="textPersonName"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
                 android:textSize="24sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

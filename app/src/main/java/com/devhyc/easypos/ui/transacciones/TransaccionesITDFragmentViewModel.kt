@@ -137,7 +137,7 @@ class TransaccionesITDFragmentViewModel @Inject constructor(val getListadoTransa
         }
     }
 
-    fun ConsultarEstadoTransaccion(nroTransaccion:String)
+    fun ConsultarEstadoTransaccion(nroTransaccion:String,transacionessinasociar:Boolean)
     {
         try {
             viewModelScope.launch {
@@ -147,6 +147,10 @@ class TransaccionesITDFragmentViewModel @Inject constructor(val getListadoTransa
                 {
                     if (result.ok)
                     {
+                        if (transacionessinasociar)
+                            ListarDocumentosSinAsociarITD()
+                        else
+                            ListarDocumentosITD()
                         ActualizarLista.postValue(result.mensaje)
                     }
                     else

@@ -47,27 +47,14 @@ class TransaccionesITDFragment : Fragment() {
             transaccionesNoAsociadas = bundle.getBoolean("transaccionesNoAsociadas",false)
             esDevolucion = bundle.getBoolean("esDevolucion",false)
             pagoSelect = bundle.getInt("codMedioPago",0)
-            if (transaccionesNoAsociadas)
-            {
-                (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = "Transacciones aprobadas"
-                (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = ""
-                //CARGO LAS TRANSACCIONES
-                TransaccionesITDViewModel.ListarDocumentosSinAsociarITD()
-            }
-            else
-            {
-                (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = "Transacciones realizadas"
-                (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = ""
-                //CARGO LAS TRANSACCIONES
-                TransaccionesITDViewModel.ListarDocumentosITD()
-            }
+            CargarTransacciones()
         }
         TransaccionesITDViewModel.ListadoDocumentos.observe(this, Observer {
-            adapterTransacciones = ItemDevolucionAdapter(ArrayList(it))
+            adapterTransacciones = ItemDevolucionAdapter(ArrayList(it),transaccionesNoAsociadas)
             adapterTransacciones.setOnItemClickListener(object: ItemDevolucionAdapter.OnItemClickListener {
                 override fun onConsultarButtonClick(position: Int) {
                     itemSelect=position
-                    TransaccionesITDViewModel.ConsultarEstadoTransaccion(adapterTransacciones.items[position].TransaccionId)
+                    TransaccionesITDViewModel.ConsultarEstadoTransaccion(adapterTransacciones.items[position].TransaccionId,transaccionesNoAsociadas)
                 }
                 override fun onAnularButtonClick(position: Int) {
                     if (adapterTransacciones.items[position].Tipo == "ANULACIÓN")
@@ -115,7 +102,7 @@ class TransaccionesITDFragment : Fragment() {
             AlertView.showError("¡Atención!",it,binding.root.context)
         })
         TransaccionesITDViewModel.ActualizarLista.observe(viewLifecycleOwner, Observer {
-            adapterTransacciones.notifyItemChanged(itemSelect)
+            binding.rvTransacciones.smoothScrollToPosition(itemSelect)
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterTransacciones.items.count()}"
             Snackbar.make(requireView(),it,Snackbar.LENGTH_SHORT).show()
         })
@@ -160,5 +147,29 @@ class TransaccionesITDFragment : Fragment() {
         if (cierreAutomatico)
             dialog?.dismiss()
         dialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isVisible = cerrar
+    }
+
+    fun CargarTransacciones()
+    {
+        try {
+            if (transaccionesNoAsociadas)
+            {
+                (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = "Transacciones aprobadas"
+                (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = ""
+                //CARGO LAS TRANSACCIONES
+                TransaccionesITDViewModel.ListarDocumentosSinAsociarITD()
+            }
+            else
+            {
+                (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = "Transacciones realizadas"
+                (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = ""
+                //CARGO LAS TRANSACCIONES
+                TransaccionesITDViewModel.ListarDocumentosITD()
+            }
+        }
+        catch (e:Exception)
+        {
+            AlertView.showError("Error al buscar las transacciones", e.message, requireContext())
+        }
     }
 }
