@@ -2,7 +2,8 @@ package com.devhyc.easypos.fiserv.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ITDTransaccionNueva(@SerializedName("terminalCodigo") var TerminalCodigo:String,
+data class ITDTransaccionNueva(@SerializedName("medioPagoCodigo") var MedioPagoCodigo:Int,
+                               @SerializedName("terminalCodigo") var TerminalCodigo:String,
                                @SerializedName("tipoDocCodigo") val tipoDocCodigo: String,
                                @SerializedName("nroDoc") val nroDoc: Long,
                                @SerializedName("sucursalCodigo") val sucursalCodigo: String,
@@ -15,4 +16,5 @@ data class ITDTransaccionNueva(@SerializedName("terminalCodigo") var TerminalCod
                                @SerializedName("tipoCambio") val tipoCambio: Double,
                                @SerializedName("conRut") var conRut: Boolean,
                                @SerializedName("cuotas") val cuotas: Int,
-                               @SerializedName("plan") val plan: Int)
+                               @SerializedName("plan") val plan: Int,
+                               @SerializedName("solicitarConfirmacion") val SolicitarConfirmacion: Boolean)

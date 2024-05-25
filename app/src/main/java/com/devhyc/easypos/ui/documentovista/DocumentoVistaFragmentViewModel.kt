@@ -11,14 +11,18 @@ import com.devhyc.easypos.domain.GetDocumentoEmitidoUseCase
 import com.devhyc.easypos.domain.GetImpresionUseCase
 import com.devhyc.easypos.domain.GetMediosDePagos
 import com.devhyc.easypos.domain.PostCalcularDocumento
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitidoUseCase: GetDocumentoEmitidoUseCase, val postCalcularDocumento: PostCalcularDocumento, val getImpresionUseCase: GetImpresionUseCase,val getMediosDePagos: GetMediosDePagos) : ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
-    val MensajeServer = MutableLiveData<String>()
+    val MensajeServer = SingleLiveEvent<String>()
+    val MensajeErrorLocal = SingleLiveEvent<String>()
     val DocumentoObtenido = MutableLiveData<DTDoc>()
     val DocumentoCalculos = MutableLiveData<DTDocTotales>()
     val Impresion = MutableLiveData<DTImpresion>()
@@ -28,26 +32,27 @@ class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitid
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getDocumentoEmitidoUseCase(terminal,tipoDocumento,NroDoc)
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    val result = getDocumentoEmitidoUseCase(terminal,tipoDocumento,NroDoc)
+                    if (result != null)
                     {
-                        DocumentoObtenido.postValue(result.elemento!!)
-                    }
-                    else
-                    {
-                        MensajeServer.postValue(result.mensaje)
+                        if (result.ok)
+                        {
+                            DocumentoObtenido.postValue(result.elemento!!)
+                        }
+                        else
+                        {
+                            MensajeServer.postValue(result.mensaje)
+                        }
                     }
                 }
+                isLoading.postValue(false)
             }
         }
         catch (e:Exception)
         {
-
-        }
-        finally {
-            isLoading.postValue(false)
+            MensajeErrorLocal.postValue(e.message)
         }
     }
 
@@ -55,16 +60,19 @@ class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitid
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = postCalcularDocumento(doc)
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    val result = postCalcularDocumento(doc)
+                    if (result != null)
                     {
-                        DocumentoCalculos.postValue(result.elemento!!)
-                    }
-                    else
-                    {
-                        MensajeServer.postValue(result.mensaje)
+                        if (result.ok)
+                        {
+                            DocumentoCalculos.postValue(result.elemento!!)
+                        }
+                        else
+                        {
+                            MensajeServer.postValue(result.mensaje)
+                        }
                     }
                 }
                 isLoading.postValue(false)
@@ -72,7 +80,7 @@ class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitid
         }
         catch (e:Exception)
         {
-            isLoading.postValue(false)
+            MensajeErrorLocal.postValue(e.message)
         }
     }
 
@@ -80,26 +88,27 @@ class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitid
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getImpresionUseCase(terminal,tipoDocumento,NroDoc)
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    val result = getImpresionUseCase(terminal,tipoDocumento,NroDoc)
+                    if (result != null)
                     {
-                        Impresion.postValue(result.elemento!!)
-                    }
-                    else
-                    {
-                        MensajeServer.postValue(result.mensaje)
+                        if (result.ok)
+                        {
+                            Impresion.postValue(result.elemento!!)
+                        }
+                        else
+                        {
+                            MensajeServer.postValue(result.mensaje)
+                        }
                     }
                 }
+                isLoading.postValue(false)
             }
         }
         catch (e:Exception)
         {
-
-        }
-        finally {
-            isLoading.postValue(false)
+            MensajeErrorLocal.postValue(e.message)
         }
     }
 
@@ -107,16 +116,19 @@ class DocumentoVistaFragmentViewModel @Inject constructor(val getDocumentoEmitid
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getMediosDePagos()
-                if (result != null) {
-                    if (result.ok) {
-                        LMedioPago.postValue(result.elemento!!)
+                withContext(Dispatchers.IO)
+                {
+                    val result = getMediosDePagos()
+                    if (result != null) {
+                        if (result.ok) {
+                            LMedioPago.postValue(result.elemento!!)
+                        }
                     }
                 }
                 isLoading.postValue(false)
             }
         } catch (e: Exception) {
-            isLoading.postValue(false)
+            MensajeErrorLocal.postValue(e.message)
         }
     }
 }

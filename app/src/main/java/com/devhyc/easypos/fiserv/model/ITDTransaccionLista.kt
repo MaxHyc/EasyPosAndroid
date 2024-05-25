@@ -2,8 +2,9 @@ package com.devhyc.easypos.fiserv.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ITDTransaccionLista(@SerializedName("consultaIsEnabled") var ConsultaIsEnabled:Boolean,
+data class ITDTransaccionLista(//@SerializedName("consultaIsEnabled") var ConsultaIsEnabled:Boolean,
                                @SerializedName("transaccionId") var TransaccionId:String,
+                               @SerializedName("proveedor") var Proveedor:String,
                                @SerializedName("terminalCodigo") var TerminalCodigo:String,
                                @SerializedName("tipodocCodigo") var TipodocCodigo:String,
                                @SerializedName("nroDoc") var NroDoc:Long,
@@ -12,7 +13,8 @@ data class ITDTransaccionLista(@SerializedName("consultaIsEnabled") var Consulta
                                @SerializedName("monedaSigno") var MonedaSigno:String,
                                @SerializedName("monto") var Monto:Double,
                                @SerializedName("fechaHora") var FechaHora:String,
-                               @SerializedName("tipo") var Tipo:String)
+                               @SerializedName("tipo") var Tipo:String
+                               )
 {
 
 }

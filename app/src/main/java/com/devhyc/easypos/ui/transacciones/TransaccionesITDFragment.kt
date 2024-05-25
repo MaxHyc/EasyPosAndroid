@@ -33,7 +33,7 @@ class TransaccionesITDFragment : Fragment() {
     var itemSelect:Int=0
     var transaccionesNoAsociadas:Boolean = false
     var esDevolucion:Boolean = false
-    var pagoSelect:Int=0
+    //var pagoSelect:Int=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,6 @@ class TransaccionesITDFragment : Fragment() {
             val bundle:Bundle = arguments as Bundle
             transaccionesNoAsociadas = bundle.getBoolean("transaccionesNoAsociadas",false)
             esDevolucion = bundle.getBoolean("esDevolucion",false)
-            pagoSelect = bundle.getInt("codMedioPago",0)
             CargarTransacciones()
         }
         TransaccionesITDViewModel.ListadoDocumentos.observe(this, Observer {
@@ -54,20 +53,13 @@ class TransaccionesITDFragment : Fragment() {
             adapterTransacciones.setOnItemClickListener(object: ItemDevolucionAdapter.OnItemClickListener {
                 override fun onConsultarButtonClick(position: Int) {
                     itemSelect=position
-                    TransaccionesITDViewModel.ConsultarEstadoTransaccion(adapterTransacciones.items[position].TransaccionId,transaccionesNoAsociadas)
+                    TransaccionesITDViewModel.ConsultarEstadoTransaccion(adapterTransacciones.items[position].TransaccionId,adapterTransacciones.items[position].Proveedor,transaccionesNoAsociadas)
                 }
-                override fun onAnularButtonClick(position: Int) {
-                    if (adapterTransacciones.items[position].Tipo == "ANULACIÓN")
-                        Snackbar.make(requireView(),"Esta transacción ya es una anulación",Snackbar.LENGTH_SHORT).show()
-                    else
-                        TransaccionesITDViewModel.AnularTransaccion(adapterTransacciones.items[position].TransaccionId)
-                }
-
                 override fun onSeleccionarPagoButtonClick(position: Int) {
                     if (transaccionesNoAsociadas)
                     {
                         //BUSCO ESA TRANSACCION
-                        TransaccionesITDViewModel.ConsultarTransaccionITD(adapterTransacciones.items[position].TransaccionId,esDevolucion,pagoSelect)
+                        TransaccionesITDViewModel.ConsultarTransaccionITD(adapterTransacciones.items[position].TransaccionId,adapterTransacciones.items[position].Proveedor)
                     }
                     else
                     {
@@ -77,8 +69,10 @@ class TransaccionesITDFragment : Fragment() {
             })
             binding.rvTransacciones.layoutManager = LinearLayoutManager(activity)
             binding.rvTransacciones.adapter = adapterTransacciones
-            adapterTransacciones.notifyDataSetChanged()
+            adapterTransacciones.notifyItemChanged(itemSelect)
+            binding.rvTransacciones.scrollToPosition(itemSelect)
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterTransacciones.items.count()}"
+            Snackbar.make(requireView(),"${adapterTransacciones.items.count()} transacciones listadas",Snackbar.LENGTH_SHORT).show()
         })
     }
 
@@ -96,30 +90,23 @@ class TransaccionesITDFragment : Fragment() {
         })
         TransaccionesITDViewModel.isLoading.observe(viewLifecycleOwner, Observer {
             binding.shimmerSeleccionTrans.isVisible = it
+            binding.progressBar8.isVisible = it
             binding.rvTransacciones.isVisible = !it
         })
         TransaccionesITDViewModel.MensajeServer.observe(viewLifecycleOwner, Observer {
             AlertView.showError("¡Atención!",it,binding.root.context)
         })
-        TransaccionesITDViewModel.ActualizarLista.observe(viewLifecycleOwner, Observer {
-            binding.rvTransacciones.smoothScrollToPosition(itemSelect)
+        /*TransaccionesITDViewModel.ActualizarLista.observe(viewLifecycleOwner, Observer {
             (requireActivity() as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterTransacciones.items.count()}"
             Snackbar.make(requireView(),it,Snackbar.LENGTH_SHORT).show()
-        })
+        })*/
         //VIEWMODELS
-        TransaccionesITDViewModel.mostrarEstado.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
-            //binding.tvMensajeAccion.text = it
-        })
         TransaccionesITDViewModel.mostrarErrorLocal.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
             DialogoPersonalizado("Ocurrió el siguiente error",it,true)
         })
         TransaccionesITDViewModel.mostrarErrorServer.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
             DialogoPersonalizado("Error devuelto por FISERV",it,true)
         })
-        TransaccionesITDViewModel.mostrarInforme.observe(viewLifecycleOwner,
-            SingleLiveEvent.EventObserver {
-                AlertView.showAlert("Informe de transacción", it, requireContext())
-            })
         return root
     }
 

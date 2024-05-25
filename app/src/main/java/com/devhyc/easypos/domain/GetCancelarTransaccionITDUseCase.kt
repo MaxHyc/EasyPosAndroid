@@ -7,5 +7,5 @@ import com.devhyc.easypos.fiserv.model.ITDRespuesta
 import javax.inject.Inject
 
 class GetCancelarTransaccionITDUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(nroTerminal: String, nroTransaccion: String): Resultado<ITDRespuesta>? = repository.getCancelarTransaccionITD(nroTerminal,nroTransaccion)
+    suspend operator fun invoke(nroTerminal: String, nroTransaccion: String,proveedor:String,confirm:Boolean): Resultado<ITDRespuesta>? = repository.getCancelarTransaccionITD(nroTerminal,nroTransaccion,proveedor, confirm)
 }

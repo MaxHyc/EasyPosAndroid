@@ -44,8 +44,10 @@ class Repository @Inject constructor(
     suspend fun getPaises(): Resultado<List<Country>>
     {
         return try {
-            val response = api.getPaises()
-            appProvider.listadoPaises = response
+            //val response = api.getPaises()
+            //appProvider.listadoPaises
+            //appProvider.listadoPaises = response
+            val response = appProvider.listadoPaisesAMano
             return Resultado(true,"",response)
         }
         catch (e:Exception)
@@ -439,28 +441,28 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun getTestDeConexionITD(nroTerminal: String): Resultado<Boolean>
+    suspend fun getTestDeConexionITD(medioPago: Int): Resultado<Boolean>
     {
         return try {
-            return api.getTestDeConexionITD(nroTerminal)
+            return api.getTestDeConexionITD(medioPago)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
         }
     }
 
-    suspend fun getConsultarTransaccionITD(nroTransaccion: String): Resultado<ITDRespuesta>
+    suspend fun getConsultarTransaccionITD(nroTransaccion: String,proveedor:String): Resultado<ITDRespuesta>
     {
         return try {
-            return api.getConsultarTransaccionITD(nroTransaccion)
+            return api.getConsultarTransaccionITD(nroTransaccion,proveedor)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
         }
     }
 
-    suspend fun getCancelarTransaccionITD(nroTerminal: String, nroTransaccion: String): Resultado<ITDRespuesta>
+    suspend fun getCancelarTransaccionITD(nroTerminal: String, nroTransaccion: String,proveedor:String,confirm:Boolean): Resultado<ITDRespuesta>
     {
         return try {
-            return api.getCancelarTransaccionITD(nroTerminal,nroTransaccion)
+            return api.getCancelarTransaccionITD(nroTerminal,nroTransaccion,proveedor, confirm)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
         }
@@ -484,10 +486,10 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun postConsultarEstadoTransaccionITD(nroTransaccion: String): Resultado<Boolean>
+    suspend fun postConsultarEstadoTransaccionITD(nroTransaccion: String,proveedor:String): Resultado<Boolean>
     {
         return try {
-            return api.postConsultarEstadoTransaccionITD(nroTransaccion)
+            return api.postConsultarEstadoTransaccionITD(nroTransaccion,proveedor)
         } catch (e: Exception) {
             Resultado(false, e.message.toString(), null)
         }

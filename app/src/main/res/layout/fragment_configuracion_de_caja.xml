@@ -29,7 +29,7 @@
 
                 <RadioGroup
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent">
 
                     <RadioButton
                         android:id="@+id/radioBluetooth"
@@ -43,6 +43,27 @@
                         android:layout_height="wrap_content"
                         android:text="Impresion Fiserv" />
                 </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Tiempo espera impresión ticket comercio (en milisegundos)" />
+
+                    <EditText
+                        android:id="@+id/etTiempoEntreImpresion"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:ems="10"
+                        android:inputType="number" />
+                </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

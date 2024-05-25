@@ -21,6 +21,7 @@ import com.devhyc.easypos.databinding.FragmentListaDeDocumentosBinding
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.DatePickerFragment
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -38,6 +39,7 @@ class ListaDeDocumentosFragment : Fragment() {
     private var originalArrayDoc: ArrayList<DTDocLista> = ArrayList()
     private var filtradoArrayDoc: ArrayList<DTDocLista> = ArrayList()
     private var adapterDocumentos: ListaDeDocAdapter = ListaDeDocAdapter(ArrayList())
+    private var posicionSeleccionada:Int=0
 
     override fun onPause() {
         super.onPause()
@@ -46,10 +48,7 @@ class ListaDeDocumentosFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (adapterDocumentos != null)
-        {
-            (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterDocumentos.itemCount}"
-        }
+        ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +65,7 @@ class ListaDeDocumentosFragment : Fragment() {
         fechaDesde = Globales.Herramientas.ObtenerFechaActual().FechayyyygMMgdd
         fechaHasta = Globales.Herramientas.ObtenerFechaActual().FechayyyygMMgdd
 
-        ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
+        //ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
         ListadoDocViewModel.ListadoDocs.observe(this, Observer {
             try {
                 if (it.ok)
@@ -76,6 +75,7 @@ class ListaDeDocumentosFragment : Fragment() {
                     adapterDocumentos = ListaDeDocAdapter(ArrayList<DTDocLista>(it.elemento!!))
                     adapterDocumentos.setOnItemClickListener(object: ListaDeDocAdapter.OnItemClickListener{
                         override fun onItemClick(position: Int) {
+                            posicionSeleccionada = position
                             //LLAMAR PARA VER EL DOCUMENTO
                             if (binding.chkPendientes.isChecked)
                             {
@@ -108,6 +108,7 @@ class ListaDeDocumentosFragment : Fragment() {
                     binding.tvCantidadDocs.text= "Cantidad: ${adapterDocumentos.itemCount}"
                     (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Cantidad: ${adapterDocumentos.itemCount}"
                     binding.rvListaDocs.isVisible = true
+                    binding.rvListaDocs.scrollToPosition(posicionSeleccionada)
                 }
                 else
                 {
@@ -136,6 +137,9 @@ class ListaDeDocumentosFragment : Fragment() {
         binding.chkAnulados.setOnCheckedChangeListener { buttonView, isChecked ->
             ListadoDocViewModel.ListarDocumentos(DTParamDocLista(binding.chkPendientes.isChecked,binding.chkAnulados.isChecked,fechaDesde,fechaHasta))
         }
+        ListadoDocViewModel.MostarError.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            AlertView.showError("¡Ocurrió un error!",it,requireContext())
+        })
         //
         return root
     }

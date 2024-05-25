@@ -31,7 +31,7 @@ android {
             applicationIdSuffix ".testing"
             versionNameSuffix "-testing"
             buildConfigField 'boolean', 'VERSION_TESTING', "true"
-            buildConfigField 'String', 'DIRECCION_HYC',"\"http://www.hyc.uy/controlappsapi/api/\""
+            buildConfigField 'String', 'DIRECCION_HYC',"\"https://www.hyc.uy/controlappsapi/api/\""
             buildConfigField 'String', 'DIRECCION_URL', "\"https://hyc.uy\""
             buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://plexo.com\""
             resValue "string","app_name","POS TESTING"
@@ -39,7 +39,7 @@ android {
         produccionVersion {
             applicationId 'com.devhyc.easypos'
             buildConfigField 'boolean', 'VERSION_TESTING', "false"
-            buildConfigField 'String', 'DIRECCION_HYC',"\"http://www.hyc.uy/controlappsapi/api/\""
+            buildConfigField 'String', 'DIRECCION_HYC',"\"https://www.hyc.uy/controlappsapi/api/\""
             buildConfigField 'String', 'DIRECCION_URL', "\"https://hyc.uy\""
             buildConfigField 'String', 'DIRECCION_PLEXO', "\"https://plexo.com\""
             resValue "string","app_name","Easy POS"
@@ -106,8 +106,8 @@ dependencies {
     implementation files('libs/usdk_api_aidl_v13.5.10RB.20220606.jar')
     implementation 'com.google.code.gson:gson:2.8.9'
     //API GOOLGE PARA PAISES Y CIUDADES
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    //implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    //implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     //GLIDE
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'

@@ -17,6 +17,7 @@ import com.devhyc.easypos.data.model.DTDocReceptor
 import com.devhyc.easypos.databinding.FragmentCabezalBinding
 import com.devhyc.easypos.ui.cabezal.adapter.customSpinnerPaises
 import com.devhyc.easypos.ui.clientes.listado.ListaClientesFragment
+import com.devhyc.easypos.ui.documento.DocumentoPrincipalFragment_GeneratedInjector
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.devhyc.easypos.utilidades.Globales.DocumentoEnProceso
@@ -144,6 +145,10 @@ class CabezalFragment : Fragment() {
                         binding.radioOtro.isChecked -> DocumentoEnProceso.receptor!!.receptorTipoDoc = 3
                         else -> DocumentoEnProceso.receptor!!.receptorTipoDoc = 0
                     }
+                    if (binding.tvIdCliente.text.isNotEmpty())
+                        DocumentoEnProceso.receptor!!.clienteId = binding.tvIdCliente.text.toString().toLong()
+                    if (binding.tvCodCliente.text.isNotEmpty())
+                        DocumentoEnProceso.receptor!!.clienteCodigo = binding.tvCodCliente.text.toString()
                     DocumentoEnProceso.receptor!!.receptorMail = binding.etMail.text.toString()
                     DocumentoEnProceso.receptor!!.receptorCiudad = binding.etCiudad.text.toString()
                     DocumentoEnProceso.receptor!!.receptorPais = adapterPaises.getItem(posicionPais).name
@@ -196,6 +201,8 @@ class CabezalFragment : Fragment() {
                         3 -> binding.radioOtro.isChecked = true
                     }
                     //
+                    binding.tvIdCliente.setText(DocumentoEnProceso.receptor!!.clienteId.toString())
+                    binding.tvCodCliente.setText(DocumentoEnProceso.receptor!!.clienteCodigo)
                     binding.tvNombreCliente.setText(DocumentoEnProceso.receptor!!.clienteNombre)
                     binding.etRazon.setText(DocumentoEnProceso.receptor!!.receptorRazon)
                     binding.etNroDocCli.setText(DocumentoEnProceso.receptor!!.receptorRut)
@@ -249,25 +256,19 @@ class CabezalFragment : Fragment() {
                     2 -> binding.radioPP.isChecked = true
                     3 -> binding.radioOtro.isChecked = true
                 }
+                binding.tvIdCliente.text = cliente.id.toString()
+                binding.tvCodCliente.text = cliente.codigo
                 binding.tvNombreCliente.visibility = View.VISIBLE
                 binding.tvNombreCliente.setText(cliente.nombre)
                 binding.etRazon.setText(cliente.razonSocial)
                 binding.etNroDocCli.setText(cliente.documento)
                 binding.etDireccion.setText(cliente.direccion)
-                //pais
-                /*var ppis = 0
-                adapterPaises.paises.forEach {
-                    if (it.name == cliente)
-                    {
-                        binding.spPaises.setSelection(ppis)
-                    }
-                    ppis += 1
-                }*/
                 binding.etCiudad.setText(cliente.ciudad)
                 binding.etMail.setText(cliente.EnviarFacturaMail)
                 binding.chkEnviarFacturaPorMail.isChecked = cliente.EnviarFactura
                 binding.etTel.setText(cliente.telefono)
                 binding.btnLimpiarClienteSelect.visibility = View.VISIBLE
+                binding.llidcli.visibility = View.VISIBLE
             }
             else
             {
@@ -281,6 +282,7 @@ class CabezalFragment : Fragment() {
                 binding.etNroDocCli.setText("")
                 binding.etObsservaciones.setText("")
                 binding.tvNombreCliente.visibility = View.GONE
+                binding.llidcli.visibility =View.GONE
             }
         }
         catch (e:Exception)

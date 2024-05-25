@@ -9,9 +9,12 @@ import com.devhyc.easypos.data.model.DTRubro
 import com.devhyc.easypos.domain.GetArticulosFiltradosUseCase
 import com.devhyc.easypos.domain.GetArticulosRubrosUseCase
 import com.devhyc.easypos.domain.GetFamiliasUseCase
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.integration.easyposkotlin.data.model.DTArticulo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,19 +22,23 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
     val isLoading = MutableLiveData<Boolean>()
     val ListaFamilias = MutableLiveData<List<DTFamiliaPadre>>()
     val ListaArticulos = MutableLiveData<List<DTArticulo>>()
-    val mensajeDelServer = MutableLiveData<String>()
+    val mensajeDelServer = SingleLiveEvent<String>()
+    val mensajeDeError = SingleLiveEvent<String>()
     val ListaRubros = MutableLiveData<ArrayList<DTRubro>>()
 
     fun CargarFamilias() {
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getFamiliasUseCase()
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    val result = getFamiliasUseCase()
+                    if (result != null)
                     {
-                        ListaFamilias.postValue(result.elemento!!)
+                        if (result.ok)
+                        {
+                            ListaFamilias.postValue(result.elemento!!)
+                        }
                     }
                 }
                 isLoading.postValue(false)
@@ -39,7 +46,7 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
         }
         catch (e:Exception)
         {
-            isLoading.postValue(false)
+            mensajeDeError.postValue(e.message)
         }
     }
 
@@ -48,12 +55,15 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getArticulosFiltradosUseCase(cantidad, listaPecio,tipo,valorBusqueda)
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    val result = getArticulosFiltradosUseCase(cantidad, listaPecio,tipo,valorBusqueda)
+                    if (result != null)
                     {
-                        ListaArticulos.postValue(result.elemento!!)
+                        if (result.ok)
+                        {
+                            ListaArticulos.postValue(result.elemento!!)
+                        }
                     }
                 }
                 isLoading.postValue(false)
@@ -61,7 +71,7 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
         }
         catch (e:Exception)
         {
-            isLoading.postValue(false)
+            mensajeDeError.postValue(e.message)
         }
     }
 
@@ -69,12 +79,15 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getArticulosRubrosUseCase()
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    val result = getArticulosRubrosUseCase()
+                    if (result != null)
                     {
-                        ListaRubros.postValue(result.elemento!!)
+                        if (result.ok)
+                        {
+                            ListaRubros.postValue(result.elemento!!)
+                        }
                     }
                 }
                 isLoading.postValue(false)
@@ -82,7 +95,7 @@ class ListaDeArticulosViewModel @Inject constructor(val getFamiliasUseCase: GetF
         }
         catch (e:Exception)
         {
-            isLoading.postValue(false)
+            mensajeDeError.postValue(e.message)
         }
     }
 }

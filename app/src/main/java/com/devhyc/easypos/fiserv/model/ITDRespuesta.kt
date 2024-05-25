@@ -4,6 +4,7 @@ import com.devhyc.easypos.data.model.DTDocPago
 import com.google.gson.annotations.SerializedName
 
 data class ITDRespuesta(@SerializedName("transaccionId") val transaccionId: String,
+                        @SerializedName("proveedor") val Proveedor: String,
                         @SerializedName("estado") val estado: Int,
                         @SerializedName("mensaje") val mensaje: String,
                         @SerializedName("mensajePos") val mensajePos: String,

@@ -3,17 +3,18 @@ package com.devhyc.easypos.ui.mediospagoslite
 import android.app.Application
 import android.os.Bundle
 import android.view.*
+import android.widget.Gallery
 import androidx.fragment.app.Fragment
-import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
 import com.devhyc.easypos.data.model.*
@@ -22,10 +23,7 @@ import com.devhyc.easypos.fiserv.device.DeviceApi
 import com.devhyc.easypos.fiserv.device.DeviceService
 import com.devhyc.easypos.fiserv.presenter.TransactionPresenter
 import com.devhyc.easypos.fiserv.service.TransactionServiceImpl
-import com.devhyc.easypos.ui.mediospagos.MediosDePagoFragmentDirections
-import com.devhyc.easypos.ui.mediospagos.adapter.*
 import com.devhyc.easypos.ui.mediospagoslite.adapter.ItemTipoMedioPago
-import com.devhyc.easypos.ui.menuprincipal.MenuPrincipalFragmentDirections
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.devhyc.easypos.utilidades.SingleLiveEvent
@@ -37,6 +35,10 @@ import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.AndroidEntryPoint
 import java.math.BigDecimal
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import okhttp3.Dispatcher
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
 @AndroidEntryPoint
@@ -60,7 +62,7 @@ class MediosPagosLiteFragment : Fragment() {
         if (Globales.IDTransaccionActual.isNotEmpty())
         {
             Thread.sleep(500)
-            mediopagoViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual,esDevolucion)
+            mediopagoViewModels.ConsultarTransaccionITD(Globales.IDTransaccionActual,Globales.ProveedorActual,esDevolucion,)
         }
     }
 
@@ -114,12 +116,14 @@ class MediosPagosLiteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mediopagoViewModels.isLoading.observe(viewLifecycleOwner, Observer {
-            requireActivity().runOnUiThread {
+       /* mediopagoViewModels.isLoading.observe(viewLifecycleOwner, Observer {
+           *//* requireActivity().runOnUiThread {
                 binding.cardCargando.isVisible = it
                 binding.rvMediosDePago.isVisible = !it
-            }
-        })
+            }*//*
+            binding.cardCargando.isVisible = it
+            binding.rvMediosDePago.isVisible = !it
+        })*/
     }
 
     override fun onCreateView(
@@ -141,38 +145,44 @@ class MediosPagosLiteFragment : Fragment() {
             adapterMediosDePagos = ItemTipoMedioPago(ArrayList<DTMedioPago>(it))
             adapterMediosDePagos.setOnItemClickListener(object: ItemTipoMedioPago.onItemClickListener {
                 override fun onItemClick(position: Int) {
+                    Globales.IDTransaccionActual = ""
                     mediopagoViewModels.AgregarMedio(adapterMediosDePagos.mediosDepago[position],binding.etMontoTotal.text.toString().toDouble(),esDevolucion)
                 }
             })
-            binding.rvMediosDePago.layoutManager = LinearLayoutManager(activity)
+            binding.rvMediosDePago.layoutManager = GridLayoutManager(activity,2)
             binding.rvMediosDePago.adapter = adapterMediosDePagos
             if (!esDevolucion)
                 (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Seleccione entre estos ${adapterMediosDePagos.mediosDepago.count()} métodos de pago"
         })
-        mediopagoViewModels.TransaccionFinalizada.observe(viewLifecycleOwner, Observer {
-            Snackbar.make(requireView(), it.errorMensaje, Snackbar.LENGTH_SHORT)
-                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                .setBackgroundTint(resources.getColor(R.color.green))
-                .show()
-            //IMPRIMIR DOCUMENTO
-            when (Globales.ImpresionSeleccionada)
-            {
-                Globales.eTipoImpresora.FISERV.codigo -> Globales.ControladoraFiservPrint.Print(it.Impresion.impresionTicket,requireActivity())
+
+        mediopagoViewModels.TransaccionFinalizada.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            try {
+                Snackbar.make(requireView(), it.errorMensaje, Snackbar.LENGTH_SHORT)
+                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                    .setBackgroundTint(resources.getColor(R.color.green))
+                    .show()
+                //IMPRIMIR DOCUMENTO en hilo secundario
+                when (Globales.ImpresionSeleccionada)
+                {
+                    Globales.eTipoImpresora.FISERV.codigo -> {
+                        Globales.ControladoraFiservPrint.Print(it.Impresion.impresionTicket,requireActivity())
+                    }
+                }
+                Globales.IDTransaccionActual = ""
+                findNavController().popBackStack()
             }
-            Globales.IDTransaccionActual = ""
-            findNavController().popBackStack()
+            catch (e:Exception)
+            {
+                AlertView.showError("Error al finalizar la transaccion",e.message,requireContext())
+            }
         })
         //
         mediopagoViewModels.compraMercadoPago.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
             AbrirMercadoPago()
         })
-        //
-       /* mediopagoViewModels.isLoading.observe(viewLifecycleOwner, Observer {
-            requireActivity().runOnUiThread {
-                binding.cardCargando.isVisible = it
-                binding.rvMediosDePago.isVisible = !it
-            }
-        })*/
+        mediopagoViewModels.compraTarjetaAuxOCheque.observe(viewLifecycleOwner,SingleLiveEvent.EventObserver {
+            AbrirTarjetaAux(it)
+        })
         //VIEWMODELS
         mediopagoViewModels.mostrarEstado.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
             binding.tvMensajeAccion.text = it
@@ -181,14 +191,15 @@ class MediosPagosLiteFragment : Fragment() {
             DialogoPersonalizado("Ocurrió el siguiente error",it,true)
         })
         mediopagoViewModels.mostrarErrorServer.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
-            DialogoPersonalizado("Error devuelto por FISERV",it,true)
+            DialogoPersonalizado("¡Atención ser produjo un error!",it,true)
+            //binding.tvMensajeServer.text = it
         })
-        mediopagoViewModels.mostrarInforme.observe(viewLifecycleOwner,
-            SingleLiveEvent.EventObserver {
-                AlertView.showAlert("Informe de transacción", it, requireContext())
-            })
-        mediopagoViewModels.transaccionTarjeta.observe(viewLifecycleOwner, Observer {
-            DialogoDevolucion(it.AplicaAnulacion,it.TransaccionId)
+        mediopagoViewModels.transaccionTarjeta.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            DialogoDevolucion(it.AplicaAnulacion,it.TransaccionId,it.Proveedor,it.MedioPagoId,it.TicketPos,it.Acquirer)
+        })
+        mediopagoViewModels.isLoading.observe(viewLifecycleOwner, Observer {
+            binding.cardCargando.isVisible = it
+            binding.rvMediosDePago.isVisible = !it
         })
         //SALIR DEL MEDIO DE PAGO
         val callback = object : OnBackPressedCallback(true) {
@@ -209,17 +220,13 @@ class MediosPagosLiteFragment : Fragment() {
             R.id.tvVerTransacciones ->
             {
                 Globales.IDTransaccionActual = ""
-                var idMedioPago:String = ""
-                //TODO ("PONER QUE ID DE MEDIO DE PAGO SEA EL CORRECTO")
+                Globales.MediosPagoDocumento = ArrayList()
                 adapterMediosDePagos.mediosDepago.forEach {
-                    if (it.Proveedor == Globales.TProveedorTarjeta.FISERV.valor)
-                    {
-                        idMedioPago = it.Id
-                    }
+                    Globales.MediosPagoDocumento.add(it)
                 }
-                if (idMedioPago.isNotEmpty())
+                if (Globales.MediosPagoDocumento != null)
                 {
-                    val action = MediosPagosLiteFragmentDirections.actionMediosPagosLiteFragmentToTransaccionesITDFragment(idMedioPago.toInt(),esDevolucion,true)
+                    val action = MediosPagosLiteFragmentDirections.actionMediosPagosLiteFragmentToTransaccionesITDFragment(true,esDevolucion)
                     view?.findNavController()?.navigate(action)
                     //ESCUCHO QUE DEVUELVE EL FRAGMENT DE TRANSACCIONES
                     parentFragmentManager.setFragmentResultListener("resultadoTransaccionKey",this@MediosPagosLiteFragment)
@@ -289,6 +296,46 @@ class MediosPagosLiteFragment : Fragment() {
                 else
                 {
                     AlertView.showAlert("¡Atención!","No se ha podido procesar el pago de Mercadopago, intentelo nuevamente",requireContext())
+                }
+            }
+        }
+        catch (e:Exception)
+        {
+            AlertView.showAlert("¡Atención!","${e.message}",requireContext())
+        }
+    }
+
+    fun AbrirTarjetaAux(tipoMedioPago:String)
+    {
+        try {
+            //ADD PAGO CON TarjetaAuxiliar
+            //ABRO LA VENTANA DE TARJETA AUXILIAR
+            val action = MediosPagosLiteFragmentDirections.actionMediosPagosLiteFragmentToTarjetaManualFragment(tipoMedioPago)
+            view?.findNavController()?.navigate(action)
+            //ESCUCHO QUE DEVUELVE EL FRAGMENT DE TARJETA AUXILIAR
+            parentFragmentManager.setFragmentResultListener("resultadoKey",this@MediosPagosLiteFragment)
+            { _, bundle ->
+                val resultadoPago = bundle.getParcelable<DTDocPago>("resultadoTarjetaAux")
+                // RECIBO EL DTDOCPAGO DE LA VENTANA DE TARJETA AUX
+                if (resultadoPago != null) {
+                    resultadoPago.importe= binding.etMontoTotal.text.toString().toDouble()
+                    resultadoPago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
+                    resultadoPago.medioPagoCodigo = mediopagoViewModels.pagoseleccionado
+                    resultadoPago.monedaCodigo = Globales.DocumentoEnProceso.valorizado!!.monedaCodigo
+                    resultadoPago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
+                    if (resultadoPago.fechaVto.isNullOrEmpty())
+                    {
+                        resultadoPago.fechaVto = Globales.DocumentoEnProceso.cabezal!!.fecha
+                    }
+                    mediopagoViewModels.pagos.add(resultadoPago)
+                    if (esDevolucion)
+                        mediopagoViewModels.DevolverVenta()
+                    else
+                        mediopagoViewModels.FinalizarVenta()
+                }
+                else
+                {
+                    AlertView.showAlert("¡Atención!","No se ha podido procesar el pago de Tarjeta Aux, intentelo nuevamente",requireContext())
                 }
             }
         }
@@ -399,7 +446,7 @@ class MediosPagosLiteFragment : Fragment() {
         dialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isVisible = cerrar
     }
 
-    private fun DialogoDevolucion(habilitaAnulacion:Boolean,nroTransaccion: String)
+    private fun DialogoDevolucion(habilitaAnulacion:Boolean,nroTransaccion: String,proveedor:String,mediopagoid:Int, ticketPos:Int,acquirerId:Int)
     {
         if (dialogDevolucion == null)
         {
@@ -409,10 +456,10 @@ class MediosPagosLiteFragment : Fragment() {
                 .setMessage("Devolución (Cuando la venta a devolver es de otro cierre de lote)\r\n" +
                             "Anulación (Dentro del mismo cierre de lote)")
                 .setPositiveButton("Anulación") { _, _ ->
-                    mediopagoViewModels.CrearAnulacionITD(nroTransaccion)
+                    mediopagoViewModels.CrearAnulacionITD(nroTransaccion,proveedor,mediopagoid,ticketPos, acquirerId)
                 }
                 .setNegativeButton("Devolución") { _, _ ->
-                    mediopagoViewModels.CrearDevolucionITD(nroTransaccion)
+                    mediopagoViewModels.CrearDevolucionITD(nroTransaccion,mediopagoid)
                 }
                 .setCancelable(true)
                 .create()

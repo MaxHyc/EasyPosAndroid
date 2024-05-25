@@ -6,5 +6,5 @@ import com.devhyc.easypos.data.model.Resultado
 import javax.inject.Inject
 
 class GetTestDeConexionITDUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(nroTerminal: String): Resultado<Boolean> = repository.getTestDeConexionITD(nroTerminal)
+    suspend operator fun invoke(medioPago:Int): Resultado<Boolean> = repository.getTestDeConexionITD(medioPago)
 }

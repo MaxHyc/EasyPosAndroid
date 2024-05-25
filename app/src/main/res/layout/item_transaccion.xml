@@ -66,6 +66,13 @@
                     android:layout_height="wrap_content"
                     android:text="Fecha Hora: Fechahorastring" />
 
+                <TextView
+                    android:id="@+id/tvProveedorItd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="PROVEEDOR"
+                    android:textStyle="bold" />
+
             </LinearLayout>
 
             <LinearLayout

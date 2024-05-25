@@ -26,7 +26,6 @@ class ItemDevolucionAdapter(var items:ArrayList<ITDTransaccionLista>,var mostrar
     interface OnItemClickListener
     {
         fun onConsultarButtonClick(position: Int)
-        fun onAnularButtonClick(position: Int)
         fun onSeleccionarPagoButtonClick(position: Int)
     }
 
@@ -93,14 +92,12 @@ class ItemDevolucionAdapter(var items:ArrayList<ITDTransaccionLista>,var mostrar
                 }
             }
 
+            binding.tvProveedorItd.text = d.Proveedor
             binding.tvTipoDev.text = d.Tipo
             binding.tvFechaHoraDev.text = "Fecha Hora: ${Globales.Herramientas.TransformarFecha(d.FechaHora,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)}"
 
             binding.btnConsultarTransaccion.setOnClickListener {
                 listener.onConsultarButtonClick(adapterPosition)
-            }
-            binding.btnAnularTransaccion.setOnClickListener {
-                listener.onAnularButtonClick(adapterPosition)
             }
             binding.btnSeleccionarPago.setOnClickListener {
                 listener.onSeleccionarPagoButtonClick(adapterPosition)

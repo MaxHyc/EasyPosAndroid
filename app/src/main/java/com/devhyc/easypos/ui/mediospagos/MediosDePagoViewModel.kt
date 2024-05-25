@@ -95,7 +95,7 @@ class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosD
 
     fun CrearTransaccionITD(montopago:Double)
     {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             mensajeDelServer.postValue("Creando transacción")
             isLoading.postValue(true)
             val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
@@ -144,12 +144,12 @@ class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosD
                 mensajeErrorDelServer.postValue(resultCon.mensaje)
             }
             isLoading.postValue(false)
-        }
+        }*/
     }
 
     fun ConsultarTransaccionITD(nroTransaccion:String)
     {
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             isLoading.postValue(true)
             val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
             if (resultCon.ok)
@@ -167,7 +167,7 @@ class MediosDePagoViewModel @Inject constructor(val getMediosDePagos: GetMediosD
                 }
             }
             isLoading.postValue(false)
-        }
+        }*/
     }
 
    /* fun CancelarTransaccionITD(nroTransaccion:String)

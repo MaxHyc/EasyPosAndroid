@@ -50,10 +50,10 @@ class ListaDeDocAdapter (var documentos:ArrayList<DTDocLista>): RecyclerView.Ada
         {
             try
             {
-                binding.tvVistaNroDoc.text = "${i.NroDoc.toString()}"
+                binding.tvVistaNroDoc.text = i.NroDoc.toString()
                 binding.tvVistaMonedaSignoDoc.text = i.MonedaSigno
                 binding.tvVistaTotalDoc.text = i.Total.toString()
-                binding.tvVistaTipoDocCod.text = "${i.TipoDocCodigo}"
+                binding.tvVistaTipoDocCod.text = i.TipoDocCodigo
                 //
                 if (i.SerieCfe.isNotEmpty())
                 {
@@ -67,13 +67,17 @@ class ListaDeDocAdapter (var documentos:ArrayList<DTDocLista>): RecyclerView.Ada
                 }
                 if (i.NroCfe.compareTo(4) == 0)
                 {
-                    binding.tvVistaNroCFE.text = "Nro CFE: ${i.NroCfe.toString()}"
+                    binding.tvVistaNroCFE.text = "Nro CFE: ${i.NroCfe}"
                     binding.tvVistaNroCFE.visibility = View.VISIBLE
                 }
                 if (i.ClienteNombre != "")
                 {
                     binding.tvVistaClienteNombre.text = i.ClienteNombre
                     binding.tvVistaClienteNombre.visibility = View.VISIBLE
+                }
+                else
+                {
+                    binding.tvVistaClienteNombre.visibility = View.GONE
                 }
             }
             catch (e: Exception)

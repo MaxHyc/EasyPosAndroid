@@ -39,6 +39,7 @@ public class Globales {
     //Fiserv
     public static FiservITD fiserv = new FiservITD();
     public static String IDTransaccionActual="";
+    public static String ProveedorActual="";
     //FISERV
     public static Transaction transactionApi;
     public static TransactionLauncherPresenter transactionLauncherPresenter;
@@ -46,6 +47,7 @@ public class Globales {
     public static IDeviceService deviceService;
     public static DeviceApi deviceApi;
     public static String currencySelected = "UYU";
+    public static Integer TiempoEntreImpresion=0;
 
     //Fecha
     public static String FechaJson = "yyyy-MM-dd'T'HH:mm:ss";

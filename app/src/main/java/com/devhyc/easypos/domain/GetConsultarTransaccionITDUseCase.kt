@@ -7,6 +7,6 @@ import com.devhyc.easypos.fiserv.model.ITDRespuesta
 import javax.inject.Inject
 
 class GetConsultarTransaccionITDUseCase @Inject constructor(private val repository: Repository) {
-    suspend operator fun invoke(nroTransaccion: String): Resultado<ITDRespuesta>? =
-        repository.getConsultarTransaccionITD(nroTransaccion)
+    suspend operator fun invoke(nroTransaccion: String, proveedor:String): Resultado<ITDRespuesta>? =
+        repository.getConsultarTransaccionITD(nroTransaccion,proveedor)
 }

@@ -17,7 +17,9 @@ import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
 import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -25,304 +27,341 @@ import javax.inject.Inject
 class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: GetNuevoDocumentoUseCase, val postDevolverDocumentoUseCase: PostDevolverDocumentoUseCase,val getMediosDePagos: GetMediosDePagos, val getConsultarTransaccion: GetConsultarTransaccion, val postEmitirDocumento: PostEmitirDocumento, val postValidarDocumento: PostValidarDocumento, val postCrearTransaccionITDUseCase: postCrearTransaccionITDUseCase, val testDeConexionITDUseCase: GetTestDeConexionITDUseCase, val getConsultarTransaccionITDUseCase: GetConsultarTransaccionITDUseCase, val postValidarTransaccionITDUseCase: PostValidarTransaccionITDUseCase,val postCrearDevolucionITDUseCase: postCrearDevolucionITDUseCase, val postCrearAnulacionITDUseCase: PostCrearAnulacionITDUseCase) : ViewModel() {
     val LMedioPago = MutableLiveData<List<DTMedioPago>>()
     val Impresion = MutableLiveData<DTImpresion>()
-    var TransaccionFinalizada = MutableLiveData<DTDocTransaccion>()
+    var TransaccionFinalizada = SingleLiveEvent<DTDocTransaccion>()
     var pagos:ArrayList<DTDocPago> = ArrayList()
     var pagoseleccionado:Int = 0
-    var transaccionTarjeta = MutableLiveData<ITDValidacion>()
+    var transaccionTarjeta = SingleLiveEvent<ITDValidacion>()
     val isLoading = MutableLiveData<Boolean>()
-    //
-    private val _compraMercadoPago = SingleLiveEvent<Boolean>()
-    val compraMercadoPago: LiveData<Boolean> = _compraMercadoPago
-    fun compraMercadoPago(value:Boolean)
-    {
-        _compraMercadoPago.value = value
-    }
-    //
-    private val _mostrarEstado = MutableLiveData<String>()
-    val mostrarEstado: LiveData<String> = _mostrarEstado
-    fun mostrarEstado(mensaje:String)
-    {
-        _mostrarEstado.value = mensaje
-    }
-    //
-    private val _errorlocal = SingleLiveEvent<String>()
-    val mostrarErrorLocal: LiveData<String> = _errorlocal
+    val compraTarjetaAuxOCheque = SingleLiveEvent<String>()
+    val compraMercadoPago = SingleLiveEvent<Boolean>()
+    val mostrarErrorServer = SingleLiveEvent<String>()
+    val mostrarEstado = SingleLiveEvent<String>()
+    val mostrarErrorLocal = SingleLiveEvent<String>()
 
-    fun mostrarErrorLocal(message: String) {
-        _errorlocal.value = message
-    }
-    //
-    private val _errorServer = SingleLiveEvent<String>()
-    val mostrarErrorServer: LiveData<String> = _errorServer
-
-    fun mostrarErrorServer(message: String) {
-        _errorServer.value = message
-    }
-    //
-    private val _informe = SingleLiveEvent<String>()
-    val mostrarInforme: LiveData<String> = _informe
-
-    fun mostrarInforme(message: String) {
-        _informe.value = message
-    }
-    //
     fun AgregarMedio(medio:DTMedioPago,monto:Double,esDevolucion: Boolean)
     {
-        isLoading.postValue(true)
-        viewModelScope.launch {
-            try {
-                mostrarEstado("Agregando medio de pago")
-                pagoseleccionado = medio.Id.toInt()
-                when (medio.Tipo) {
-                    Globales.TMedioPago.TARJETA.codigo.toString() -> {
-                        if (medio.Proveedor == Globales.TProveedorTarjeta.FISERV.valor) {
-                            mostrarEstado("Agregando pago FISERV")
-                            if (esDevolucion)
-                                ObtenerNroTransaccionITD(medio.Proveedor, monto)
+        try
+        {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
+                {
+                    isLoading.postValue(true)
+                    mostrarEstado.postValue("Agregando medio de pago")
+                    pagoseleccionado = medio.Id
+                    when (medio.Tipo) {
+                        Globales.TMedioPago.TARJETA.codigo.toString() -> {
+                            if (medio.Proveedor.isNullOrEmpty())
+                            {
+                                compraTarjetaAuxOCheque.postValue(medio.Tipo)
+                            }
                             else
-                                CrearTransaccionITD(monto)
+                            {
+                                if (medio.Proveedor == "DOM")
+                                {
+                                    pagos.add(CrearPagoSimple(monto,pagoseleccionado))
+                                    if (esDevolucion)
+                                        DevolverVenta()
+                                    else
+                                        FinalizarVenta()
+                                }
+                                else
+                                {
+                                    mostrarEstado.postValue("Agregando pago ${medio.Nombre}")
+                                    if (esDevolucion)
+                                        ObtenerNroTransaccionITD(medio.ProveedorItd, pagoseleccionado,monto)
+                                    else
+                                        CrearTransaccionITD(monto,pagoseleccionado)
+                                }
+                            }
+                        }
+                        Globales.TMedioPago.MERCADOP.codigo.toString() -> {
+                            mostrarEstado.postValue("Agregando pago MercadoPago")
+                            compraMercadoPago.postValue(true)
+                        }
+                        Globales.TMedioPago.CHEQUE.codigo.toString() -> {
+                            compraTarjetaAuxOCheque.postValue(medio.Tipo)
+                        }
+                        else -> {
+                            pagos.add(CrearPagoSimple(monto,pagoseleccionado))
+                            if (esDevolucion)
+                                DevolverVenta()
+                            else
+                                FinalizarVenta()
                         }
                     }
-                    Globales.TMedioPago.MERCADOP.codigo.toString() -> {
-                        mostrarEstado("Agregando pago MercadoPago")
-                        compraMercadoPago(true)
-                    }
-                    else -> {
-                        //ADD PAGO CON OTRO MEDIO
-                        var pago = DTDocPago()
-                        pago.importe = monto
-                        pago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
-                        pago.medioPagoCodigo = pagoseleccionado
-                        pago.monedaCodigo = Globales.DocumentoEnProceso.valorizado!!.monedaCodigo
-                        pago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
-                        pago.fechaVto = Globales.DocumentoEnProceso.cabezal!!.fecha
-                        pagos.add(pago)
-                        if (esDevolucion)
-                            DevolverVenta()
-                        else
-                            FinalizarVenta()
-                    }
+                    isLoading.postValue(false)
                 }
-
-            } catch (e: Exception) {
-                mostrarErrorLocal(e.message.toString())
-            } finally {
-                isLoading.postValue(false)
+                //isLoading.postValue(false)
             }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
         }
     }
 
+    fun CrearPagoSimple(monto:Double,mediopagoid: Int): DTDocPago
+    {
+            //ADD PAGO CON OTRO MEDIO
+            var pago = DTDocPago()
+            pago.importe = monto
+            pago.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
+            pago.medioPagoCodigo = mediopagoid
+            pago.monedaCodigo = Globales.DocumentoEnProceso.valorizado!!.monedaCodigo
+            pago.fecha = Globales.DocumentoEnProceso.cabezal!!.fecha
+            pago.fechaVto = Globales.DocumentoEnProceso.cabezal!!.fecha
+            return pago
+    }
+
     fun ListarMediosDePago() {
-        isLoading.postValue(true)
+        try {
         viewModelScope.launch {
-            try {
+            isLoading.postValue(true)
+            withContext(Dispatchers.IO)
+            {
                 val result = getMediosDePagos()
                 if (result != null) {
                     if (result.ok) {
-                                    LMedioPago.postValue(result.elemento!!)
+                        LMedioPago.postValue(result.elemento!!)
                     }
                 }
             }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
-                isLoading.postValue(false)
-            }
+            isLoading.postValue(false)
+        }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
         }
     }
 
     //FISERV
 
-    fun CrearTransaccionITD(montopago: Double) {
-        isLoading.postValue(true)
-        viewModelScope.launch {
-            try
-            {
-                mostrarEstado("Creando transacción")
-                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-                if (resultCon.ok) {
-                    mostrarEstado(resultCon.mensaje)
-                    //SI HAY CONEXIÓN CON ITD
-                    //CREO LA TRANSACCION
-                    var transaccion = ITDTransaccionNueva(
-                        Globales.DocumentoEnProceso.cabezal!!.terminal,
-                        Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
-                        Globales.DocumentoEnProceso.cabezal!!.nroDoc,
-                        Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
-                        Globales.UsuarioLoggueado.funcionarioId.toString(),
-                        Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
-                        Globales.TotalesDocumento.total,
-                        Globales.TotalesDocumento.subtotalGravadoConDto,
-                        Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
-                        montopago,
-                        Globales.DocumentoEnProceso.valorizado!!.tipoCambio,
-                        false,
-                        1,
-                        0
-                    )
-                    if (Globales.DocumentoEnProceso.receptor != null) {
-                        if (Globales.DocumentoEnProceso.receptor!!.receptorTipoDoc == 0)
-                            transaccion.conRut = true
-                    }
-                    //
-                    val result = postCrearTransaccionITDUseCase(transaccion)
-                    if (result!!.ok) {
-                        mostrarEstado("Transacción creada")
-                        Globales.IDTransaccionActual = result.elemento!!.transaccionId
-                        mostrarEstado("Abriendo App FISERV")
-                        Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionCompra(BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)))
-                    }
-                    else
-                    {
-                        mostrarErrorServer(result.mensaje)
-                    }
-                }
-                else
+    fun CrearTransaccionITD(montopago: Double,mediopagoid:Int) {
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
                 {
-                    mostrarErrorServer(resultCon.mensaje)
-                }
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
-                isLoading.postValue(false)
-            }
-        }
-    }
-
-    fun CrearDevolucionITD(nroTransaccion: String) {
-        isLoading.postValue(true)
-        viewModelScope.launch {
-            try
-            {
-                mostrarEstado("Creando transacción de devolución")
-                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-                if (resultCon.ok) {
-                    mostrarEstado(resultCon.mensaje)
-                    //
-                    var restDocNuevo = nuevoDocumentoUseCase(Globales.UsuarioLoggueado.usuario,Globales.Terminal.Codigo,Globales.Terminal.Documentos.DevContado)
-                    if (restDocNuevo!!.ok)
-                    {
-                        //OBTENGO NUEVO DOCUMENTO
+                    isLoading.postValue(true)
+                    mostrarEstado.postValue("Creando transacción")
+                    val resultCon = testDeConexionITDUseCase(mediopagoid)
+                    if (resultCon.ok) {
+                        mostrarEstado.postValue(resultCon.mensaje)
                         //SI HAY CONEXIÓN CON ITD
                         //CREO LA TRANSACCION
                         var transaccion = ITDTransaccionNueva(
-                            Globales.Terminal.Codigo,
-                            Globales.Terminal.Documentos.DevContado,
-                            restDocNuevo.elemento!!.documento.cabezal!!.nroDoc,
-                            Globales.Terminal.SucursalDoc,
+                            mediopagoid,
+                            Globales.DocumentoEnProceso.cabezal!!.terminal,
+                            Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
+                            Globales.DocumentoEnProceso.cabezal!!.nroDoc,
+                            Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
                             Globales.UsuarioLoggueado.funcionarioId.toString(),
                             Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
                             Globales.TotalesDocumento.total,
                             Globales.TotalesDocumento.subtotalGravadoConDto,
                             Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
-                            Globales.TotalesDocumento.total,
+                            montopago,
                             Globales.DocumentoEnProceso.valorizado!!.tipoCambio,
                             false,
                             1,
-                            0
+                            0,
+                            false
                         )
                         if (Globales.DocumentoEnProceso.receptor != null) {
                             if (Globales.DocumentoEnProceso.receptor!!.receptorTipoDoc == 0)
                                 transaccion.conRut = true
                         }
                         //
-                        val result = postCrearDevolucionITDUseCase(transaccion,nroTransaccion)
+                        val result = postCrearTransaccionITDUseCase(transaccion)
                         if (result!!.ok) {
-                            mostrarEstado("Transacción de devolucion creada")
+                            mostrarEstado.postValue("Transacción creada")
                             Globales.IDTransaccionActual = result.elemento!!.transaccionId
-                            mostrarEstado("Abriendo App FISERV")
-                            Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionDevolucion(BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)))
-                        } else {
-                            mostrarErrorServer(result.mensaje)
+                            Globales.ProveedorActual = result.elemento!!.Proveedor
+                            if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
+                            {
+                                mostrarEstado.postValue("Abriendo App FISERV")
+                                Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionCompra(BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)))
+                            }
+                            else
+                            {
+                                TODO("crear Bucle proceso de itd")
+                            }
+                        }
+                        else
+                        {
+                            mostrarErrorServer.postValue(result.mensaje)
                         }
                     }
-                } else {
-                    mostrarErrorServer(resultCon.mensaje)
-                }
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
-                isLoading.postValue(false)
-            }
-        }
-    }
-
-    fun CrearAnulacionITD(nroTransaccion:String)
-    {
-        isLoading.postValue(true)
-        viewModelScope.launch {
-            try
-            {
-                mostrarEstado("Creando transacción de anulación")
-                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-                if (resultCon.ok) {
-                    mostrarEstado(resultCon.mensaje)
-                    //SI HAY CONEXIÓN CON ITD
-                    //CREO LA TRANSACCION DE ANULACION
-                    var transaccion = ITDTransaccionAnular(
-                        nroTransaccion,
-                        Globales.Terminal.Codigo,
-                        Globales.Terminal.Documentos.DevContado,
-                        Globales.UsuarioLoggueado.funcionarioId.toString(),
-                        Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
-                    )
-                    //
-                    val result = postCrearAnulacionITDUseCase(transaccion)
-                    if (result!!.ok) {
-                        mostrarEstado("Transacción de anulación creada")
-                        Globales.IDTransaccionActual = result.elemento!!.transaccionId
-                        mostrarEstado("Abriendo App FISERV")
-                        Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionAnulacion(
-                            BigDecimal.valueOf(Globales.TotalesDocumento.total).scaleByPowerOfTen(2)))
-                    } else {
-                        mostrarErrorServer(result.mensaje)
+                    else
+                    {
+                        mostrarErrorServer.postValue(resultCon.mensaje)
                     }
-                } else {
-                    mostrarErrorServer(resultCon.mensaje)
+                    isLoading.postValue(false)
                 }
+                //isLoading.postValue(false)
             }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
-                isLoading.postValue(false)
-            }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
         }
     }
 
-    fun ConsultarTransaccionITD(nroTransaccion: String, esDevolucion:Boolean) {
-        isLoading.postValue(true)
-        viewModelScope.launch {
-            try {
-                //SI HAY CONEXIÓN CON ITD
-                var contador=0
-                var tespera=15
-                while(contador<tespera)
+    fun CrearDevolucionITD(nroTransaccion: String,mediopagoid: Int) {
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
                 {
-                    mostrarEstado("Consultando transacción: Intentos $contador de $tespera")
-                    val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
+                    mostrarEstado.postValue("Creando transacción de devolución")
+                    val resultCon = testDeConexionITDUseCase(mediopagoid)
                     if (resultCon.ok) {
-                        val result = getConsultarTransaccionITDUseCase(nroTransaccion)
+                        mostrarEstado.postValue(resultCon.mensaje)
+                        //
+                        var restDocNuevo = nuevoDocumentoUseCase(Globales.UsuarioLoggueado.usuario,Globales.Terminal.Codigo,Globales.Terminal.Documentos.DevContado)
+                        if (restDocNuevo!!.ok)
+                        {
+                            //OBTENGO NUEVO DOCUMENTO
+                            //SI HAY CONEXIÓN CON ITD
+                            //CREO LA TRANSACCION
+                            var transaccion = ITDTransaccionNueva(
+                                mediopagoid,
+                                Globales.Terminal.Codigo,
+                                Globales.Terminal.Documentos.DevContado,
+                                restDocNuevo.elemento!!.documento.cabezal!!.nroDoc,
+                                Globales.Terminal.SucursalDoc,
+                                Globales.UsuarioLoggueado.funcionarioId.toString(),
+                                Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
+                                Globales.TotalesDocumento.total,
+                                Globales.TotalesDocumento.subtotalGravadoConDto,
+                                Globales.DocumentoEnProceso.valorizado!!.monedaCodigo,
+                                Globales.TotalesDocumento.total,
+                                Globales.DocumentoEnProceso.valorizado!!.tipoCambio,
+                                false,
+                                1,
+                                0,
+                                false
+                            )
+                            if (Globales.DocumentoEnProceso.receptor != null) {
+                                if (Globales.DocumentoEnProceso.receptor!!.receptorTipoDoc == 0)
+                                    transaccion.conRut = true
+                            }
+                            //
+                            val result = postCrearDevolucionITDUseCase(transaccion,nroTransaccion)
+                            if (result!!.ok) {
+                                mostrarEstado.postValue("Transacción de devolucion creada")
+                                Globales.IDTransaccionActual = result.elemento!!.transaccionId
+                                Globales.ProveedorActual = result.elemento!!.Proveedor
+                                if(Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
+                                {
+                                    mostrarEstado.postValue("Abriendo App FISERV")
+                                    Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionDevolucion(BigDecimal.valueOf(transaccion.totalPago).scaleByPowerOfTen(2)))
+                                }
+                                else
+                                {
+                                    TODO("Bulcle de devolucion")
+                                }
+                            }
+                            else
+                            {
+                                mostrarErrorServer.postValue(result.mensaje)
+                            }
+                        }
+                    }
+                    else
+                    {
+                        mostrarErrorServer.postValue(resultCon.mensaje)
+                    }
+                }
+                isLoading.postValue(false)
+            }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
+        }
+    }
+
+    fun CrearAnulacionITD(nroTransaccion:String,proveedor: String,mediopagoid: Int, ticketPos:Int,acquirerId:Int)
+    {
+        try
+        {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
+                {
+                    mostrarEstado.postValue("Creando transacción de anulación")
+                    val resultCon = testDeConexionITDUseCase(mediopagoid)
+                    if (resultCon.ok) {
+                        mostrarEstado.postValue(resultCon.mensaje)
+                        //SI HAY CONEXIÓN CON ITD
+                        //CREO LA TRANSACCION DE ANULACION
+                        var transaccion = ITDTransaccionAnular(
+                            nroTransaccion,
+                            proveedor,
+                            Globales.Terminal.Codigo,
+                            Globales.Terminal.Documentos.DevContado,
+                            Globales.UsuarioLoggueado.funcionarioId.toString(),
+                            Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
+                        )
+                        //
+                        val result = postCrearAnulacionITDUseCase(transaccion)
                         if (result!!.ok) {
+                            mostrarEstado.postValue("Transacción de anulación creada")
+                            Globales.IDTransaccionActual = result.elemento!!.transaccionId
+                            Globales.ProveedorActual = result.elemento!!.Proveedor
+                            if(Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
+                            {
+                                mostrarEstado.postValue("Abriendo App FISERV")
+                                Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionAnulacion(BigDecimal.valueOf(Globales.TotalesDocumento.total).scaleByPowerOfTen(2),ticketPos,acquirerId))
+                            }
+                            else
+                            {
+                                TODO("Blocle de anulacion")
+                            }
+                        } else {
+                            mostrarErrorServer.postValue(result.mensaje)
+                        }
+                    } else {
+                        mostrarErrorServer.postValue(resultCon.mensaje)
+                    }
+                }
+                isLoading.postValue(false)
+            }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
+        }
+    }
+
+    fun ConsultarTransaccionITD(nroTransaccion: String,proveedor: String, esDevolucion:Boolean) {
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
+                {
+                    //SI HAY CONEXIÓN CON ITD
+                    var contador=0
+                    var tespera=15
+                    while(contador<tespera)
+                    {
+                        mostrarEstado.postValue("Consultando transacción: Intentos $contador de $tespera")
+                        val result = getConsultarTransaccionITDUseCase(nroTransaccion,proveedor)
+                        if (result!!.ok)
+                        {
                             if (result.elemento!!.conError)
                             {
                                 if (result.elemento!!.accion == "CANCELAR")
                                 {
                                     contador = tespera
-                                    mostrarErrorServer(result.elemento!!.mensaje)
+                                    mostrarErrorServer.postValue(result.elemento!!.mensaje)
                                 }
                                 else
                                 {
-                                    mostrarEstado("Intentando conectar con FISERV intento $contador de $tespera")
+                                    mostrarEstado.postValue("Intentando conectar con FISERV intento $contador de $tespera")
                                     contador += 1
                                     Thread.sleep(1000)
                                 }
@@ -336,7 +375,7 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
                                     result.elemento!!.pago!!.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
                                     //AGREGO EL PAGO DE FISERV
                                     pagos.add(result.elemento!!.pago!!)
-                                    mostrarEstado("Listo para procesar la transacción")
+                                    mostrarEstado.postValue("Listo para procesar la transacción")
                                     if (esDevolucion)
                                         DevolverVenta()
                                     else
@@ -346,41 +385,34 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
                         }
                         else
                         {
-                            mostrarErrorServer(result.mensaje + "(Intentos $contador de $tespera)" )
+                            mostrarErrorServer.postValue(result.mensaje + "(Intentos $contador de $tespera)" )
                             contador+=1
                             Thread.sleep(1000)
                         }
                     }
-                    else
-                    {
-                        mostrarEstado("Intentando conectar con FISERV intento $contador de $tespera")
-                        contador += 1
-                        Thread.sleep(1000)
-                    }
                 }
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
                 isLoading.postValue(false)
             }
         }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
+        }
     }
 
-    fun ObtenerNroTransaccionITD(proveedor: String,montopago: Double)
+    fun ObtenerNroTransaccionITD(proveedor: String,mediopagoid: Int,montopago: Double)
     {
-        isLoading.postValue(true)
-        viewModelScope.launch {
-            try {
-                mostrarEstado("COMPROBANDO CONEXIÓN CON FISERV")
-                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-                if (resultCon.ok) {
-                    mostrarEstado("CONEXIÓN OK")
+        try {
+            viewModelScope.launch {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
+                {
+                    mostrarEstado.postValue("COMPROBANDO CONEXIÓN CON FISERV")
+                    mostrarEstado.postValue("CONEXIÓN OK")
                     //SI HAY CONEXIÓN CON ITD
                     val result = postValidarTransaccionITDUseCase(
-                        ITDValidacionConsulta(proveedor,
+                        ITDValidacionConsulta(
+                            proveedor,
                             Globales.DocumentoEnProceso.cabezal!!.terminal,
                             Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
                             Globales.DocumentoEnProceso.cabezal!!.nroDoc,
@@ -388,22 +420,23 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
                             Globales.DocumentoEnProceso.valorizado!!.monedaCodigo))
                     if (result!!.ok)
                     {
-                        mostrarEstado("NRO TRANSACCIÓN OBTENIDO")
-                        transaccionTarjeta.postValue(result!!.elemento)
+                        mostrarEstado.postValue("NRO TRANSACCIÓN OBTENIDO")
+                        var validacion = result!!.elemento
+                        //alidacion!!.Proveedor = proveedor
+                        validacion!!.MedioPagoId = mediopagoid
+                        transaccionTarjeta.postValue(validacion)
                     }
                     else
                     {
-                        mostrarErrorServer(result.mensaje)
+                        mostrarErrorServer.postValue(result.mensaje)
                     }
                 }
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
                 isLoading.postValue(false)
             }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
         }
     }
 
@@ -427,13 +460,13 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
         )
     }
 
-    private fun createTransactionAnulacion(monto: BigDecimal): TransactionInputData {
+    private fun createTransactionAnulacion(monto: BigDecimal, TicketPos:Int,AcquirerId:Int): TransactionInputData {
         return TransactionInputData(
             transactionType = TransactionTypes.VOID,
             monto,
-            null,
+            TicketPos,
             currency = convertToCurrencyType(Globales.currencySelected),
-            null
+            AcquirerId
         )
     }
 
@@ -452,19 +485,22 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
 
     fun FinalizarVenta()
     {
+        try {
             viewModelScope.launch {
-                try {
+                isLoading.postValue(true)
+                withContext(Dispatchers.IO)
+                {
                     isLoading.postValue(true)
                     //AGREGO LOS PAGOS Y SELECCIONO EL DEPOSITO
                     Globales.DocumentoEnProceso.valorizado!!.pagos = pagos
                     Globales.DocumentoEnProceso.complemento!!.codigoDeposito = Globales.Terminal.Deposito
                     //
-                    mostrarEstado("Validando documento")
+                    mostrarEstado.postValue("Validando documento")
                     val result = postValidarDocumento(Globales.DocumentoEnProceso)
                     if (result != null) {
                         if (result.ok)
                         {
-                            mostrarEstado("Emitiendo documento")
+                            mostrarEstado.postValue("Emitiendo documento")
                             var trans = postEmitirDocumento(Globales.DocumentoEnProceso)
                             if (trans != null)
                             {
@@ -480,12 +516,12 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
                                         trans = getConsultarTransaccion(nroTrans)!!
                                         if (trans.elemento!!.finalizada)
                                         {
-                                            mostrarEstado("Transacción finalizada")
+                                            mostrarEstado.postValue("Transacción finalizada")
                                             cont = tiempoEspera
                                         }
                                         else
                                         {
-                                            mostrarEstado("Consultando transacción $cont / $tiempoEspera")
+                                            mostrarEstado.postValue("Consultando transacción $cont / $tiempoEspera")
                                             cont += 1
                                             Thread.sleep(1000)
                                         }
@@ -499,102 +535,101 @@ class MediosPagosLiteViewModel @Inject constructor(val nuevoDocumentoUseCase: Ge
                                         }
                                         else if(trans.elemento!!.errorCodigo != 0)
                                         {
-                                            mostrarErrorServer(trans.elemento!!.errorMensaje)
+                                            mostrarErrorServer.postValue(trans.elemento!!.errorMensaje)
                                         }
                                     }
                                     else
                                     {
-                                        mostrarErrorServer(trans.mensaje)
+                                        mostrarErrorServer.postValue(trans.mensaje)
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            mostrarErrorServer(result.mensaje)
+                            mostrarErrorServer.postValue(result.mensaje)
                         }
                     }
                 }
-                catch (e:Exception)
-                {
-                    mostrarErrorLocal(e.message.toString())
-                }
-                finally {
-                    isLoading.postValue(false)
-                }
+                isLoading.postValue(false)
             }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
+        }
     }
 
     fun DevolverVenta()
     {
-        viewModelScope.launch {
-            try {
+        try {
+            viewModelScope.launch {
                 isLoading.postValue(true)
-                var docdevolucion = DTDocDevolucion(
-                    Globales.UsuarioLoggueado.usuario,
-                    Globales.Terminal.Codigo,
-                    Globales.Terminal.Documentos.DevContado,
-                    Globales.DocumentoEnProceso.cabezal!!.terminal,
-                    Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
-                    Globales.DocumentoEnProceso.cabezal!!.nroDoc,
-                    true,
-                    null,
-                    pagos)
-
-                mostrarEstado("Devolviendo documento")
-                var trans = postDevolverDocumentoUseCase(docdevolucion)
-                if (trans != null)
+                withContext(Dispatchers.IO)
                 {
-                    //CONSULTO EL ESTADO DE LA TRANSACCION POR ESE NRO DE TRANSACCION
-                    if (trans.elemento!!.nroTransaccion.isNotEmpty())
+                    var docdevolucion = DTDocDevolucion(
+                        Globales.UsuarioLoggueado.usuario,
+                        Globales.Terminal.Codigo,
+                        Globales.Terminal.Documentos.DevContado,
+                        Globales.DocumentoEnProceso.cabezal!!.terminal,
+                        Globales.DocumentoEnProceso.cabezal!!.tipoDocCodigo,
+                        Globales.DocumentoEnProceso.cabezal!!.nroDoc,
+                        true,
+                        null,
+                        pagos)
+
+                    mostrarEstado.postValue("Devolviendo documento")
+                    var trans = postDevolverDocumentoUseCase(docdevolucion)
+                    if (trans != null)
                     {
-                        mostrarEstado("Consultando transacción")
-                        var nroTrans = trans.elemento!!.nroTransaccion
-                        var cont = 0
-                        var tiempoEspera = trans.elemento!!.tiempoEsperaSeg
-                        while (cont < tiempoEspera)
+                        //CONSULTO EL ESTADO DE LA TRANSACCION POR ESE NRO DE TRANSACCION
+                        if (trans.elemento!!.nroTransaccion.isNotEmpty())
                         {
-                            //CONSULTO LA TRANSACCION POR EL NUMERO
-                            trans = getConsultarTransaccion(nroTrans)!!
-                            if (trans.elemento!!.finalizada)
+                            mostrarEstado.postValue("Consultando transacción")
+                            var nroTrans = trans.elemento!!.nroTransaccion
+                            var cont = 0
+                            var tiempoEspera = trans.elemento!!.tiempoEsperaSeg
+                            while (cont < tiempoEspera)
                             {
-                                mostrarEstado("Transacción finalizada")
-                                cont = tiempoEspera
+                                //CONSULTO LA TRANSACCION POR EL NUMERO
+                                trans = getConsultarTransaccion(nroTrans)!!
+                                if (trans.elemento!!.finalizada)
+                                {
+                                    mostrarEstado.postValue("Transacción finalizada")
+                                    cont = tiempoEspera
+                                }
+                                else
+                                {
+                                    mostrarEstado.postValue("Consultando transaccion $cont / $tiempoEspera")
+                                    cont += 1
+                                    Thread.sleep(1000)
+                                }
+                            }
+                            if(trans!!.ok)
+                            {
+                                if (trans.elemento!!.errorCodigo == 0)
+                                {
+                                    Globales.isEmitido = true
+                                    TransaccionFinalizada.postValue(trans.elemento)
+                                }
+                                else if(trans.elemento!!.errorCodigo != 0)
+                                {
+                                    mostrarErrorServer.postValue(trans.elemento!!.errorMensaje)
+                                }
                             }
                             else
                             {
-                                mostrarEstado("Consultando transaccion $cont / $tiempoEspera")
-                                cont += 1
-                                Thread.sleep(1000)
+                                mostrarErrorServer.postValue(trans.mensaje)
                             }
-                        }
-                        if(trans!!.ok)
-                        {
-                            if (trans.elemento!!.errorCodigo == 0)
-                            {
-                                Globales.isEmitido = true
-                                TransaccionFinalizada.postValue(trans.elemento)
-                            }
-                            else if(trans.elemento!!.errorCodigo != 0)
-                            {
-                                mostrarErrorServer(trans.elemento!!.errorMensaje)
-                            }
-                        }
-                        else
-                        {
-                            mostrarErrorServer(trans.mensaje)
                         }
                     }
                 }
-
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
                 isLoading.postValue(false)
             }
+        }
+        catch (e:Exception)
+        {
+            mostrarErrorLocal.postValue(e.message.toString())
         }
     }
 }

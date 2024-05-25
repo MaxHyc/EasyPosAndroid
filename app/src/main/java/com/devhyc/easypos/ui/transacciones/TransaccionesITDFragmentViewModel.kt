@@ -13,7 +13,9 @@ import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.ingenico.fiservitdapi.transaction.constants.TransactionTypes
 import com.ingenico.fiservitdapi.transaction.data.TransactionInputData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -22,170 +24,155 @@ class TransaccionesITDFragmentViewModel @Inject constructor(val getListadoTransa
     val isLoading = MutableLiveData<Boolean>()
     val MensajeServer = MutableLiveData<String>()
     val ListadoDocumentos = MutableLiveData<ArrayList<ITDTransaccionLista>>()
-    val ActualizarLista = MutableLiveData<String>()
     val MedioPagoCargado = MutableLiveData<DTDocPago>()
-
-    private val _mostrarEstado = MutableLiveData<String>()
-    val mostrarEstado: LiveData<String> = _mostrarEstado
-    fun mostrarEstado(mensaje:String)
-    {
-        _mostrarEstado.value = mensaje
-    }
+    val mostrarEstado = SingleLiveEvent<String>()
+    val mostrarErrorLocal = SingleLiveEvent<String>()
+    val mostrarErrorServer = SingleLiveEvent<String>()
     //
-    private val _errorlocal = SingleLiveEvent<String>()
-    val mostrarErrorLocal: LiveData<String> = _errorlocal
-
-    fun mostrarErrorLocal(message: String) {
-        _errorlocal.value = message
-    }
-    //
-    private val _errorServer = SingleLiveEvent<String>()
-    val mostrarErrorServer: LiveData<String> = _errorServer
-
-    fun mostrarErrorServer(message: String) {
-        _errorServer.value = message
-    }
-    //
-    private val _informe = SingleLiveEvent<String>()
-    val mostrarInforme: LiveData<String> = _informe
-
-    fun mostrarInforme(message: String) {
-        _informe.value = message
-    }
 
     fun ListarDocumentosITD() {
+
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                //
-                val resultcaja = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
-                if (resultcaja!!.ok)
+                withContext(Dispatchers.IO)
                 {
-                    if(resultcaja!!.elemento == null)
-                        mostrarErrorLocal("No hay una caja abierta")
-                    else
+                    isLoading.postValue(true)
+                    //
+                    val resultcaja = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
+                    if (resultcaja!!.ok)
                     {
-                        //
-                        val result = getListadoTransaccionesITDUseCase(Globales.Terminal.Codigo,resultcaja.elemento!!.Nro.toLong())
-                        if (result != null)
+                        if(resultcaja!!.elemento == null)
+                            mostrarErrorLocal.postValue("No hay una caja abierta")
+                        else
                         {
-                            if (result.ok)
+                            //
+                            val result = getListadoTransaccionesITDUseCase(Globales.Terminal.Codigo,resultcaja.elemento!!.Nro.toLong())
+                            if (result != null)
                             {
-                                ListadoDocumentos.postValue(result.elemento!!)
-                            }
-                            else
-                            {
-                                MensajeServer.postValue(result.mensaje)
+                                if (result.ok)
+                                {
+                                    ListadoDocumentos.postValue(result.elemento!!)
+                                }
+                                else
+                                {
+                                    MensajeServer.postValue(result.mensaje)
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        mostrarErrorLocal.postValue("No hay una caja abierta")
+                    }
                 }
-                else
-                {
-                    mostrarErrorLocal("No hay una caja abierta")
-                }
+                isLoading.postValue(false)
             }
         }
         catch (e:Exception)
         {
             MensajeServer.postValue(e.message)
-        }
-        finally {
-            isLoading.postValue(false)
         }
     }
 
     fun ListarDocumentosSinAsociarITD() {
+
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                //
-                val resultcaja = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
-                if (resultcaja!!.ok)
+                withContext(Dispatchers.IO)
                 {
-                    if(resultcaja!!.elemento == null)
-                        mostrarErrorLocal("No hay una caja abierta")
-                    else
+                    isLoading.postValue(true)
+                    //
+                    val resultcaja = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
+                    if (resultcaja!!.ok)
                     {
-                        //
-                        val result = getListadoTransacionesSinAsociarITDUseCase(Globales.Terminal.Codigo)
-                        if (result != null)
+                        if(resultcaja!!.elemento == null)
+                            mostrarErrorLocal.postValue("No hay una caja abierta")
+                        else
                         {
-                            if (result.ok)
+                            //
+                            val result = getListadoTransacionesSinAsociarITDUseCase(Globales.Terminal.Codigo)
+                            if (result != null)
                             {
-                                ListadoDocumentos.postValue(result.elemento!!)
-                            }
-                            else
-                            {
-                                MensajeServer.postValue(result.mensaje)
+                                if (result.ok)
+                                {
+                                    ListadoDocumentos.postValue(result.elemento!!)
+                                }
+                                else
+                                {
+                                    MensajeServer.postValue(result.mensaje)
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        mostrarErrorLocal.postValue("No hay una caja abierta")
+                    }
                 }
-                else
-                {
-                    mostrarErrorLocal("No hay una caja abierta")
-                }
+                isLoading.postValue(false)
             }
         }
         catch (e:Exception)
         {
             MensajeServer.postValue(e.message)
         }
-        finally {
-            isLoading.postValue(false)
-        }
     }
 
-    fun ConsultarEstadoTransaccion(nroTransaccion:String,transacionessinasociar:Boolean)
+    fun ConsultarEstadoTransaccion(nroTransaccion:String,proveedor: String,transacionessinasociar:Boolean)
     {
+
         try {
             viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = postConsultarEstadoTransaccionITDUseCase(nroTransaccion)
-                if (result != null)
+                withContext(Dispatchers.IO)
                 {
-                    if (result.ok)
+                    isLoading.postValue(true)
+                    val result = postConsultarEstadoTransaccionITDUseCase(nroTransaccion,proveedor)
+                    if (result != null)
                     {
-                        if (transacionessinasociar)
-                            ListarDocumentosSinAsociarITD()
+                        if (result.ok)
+                        {
+                            if (transacionessinasociar)
+                                ListarDocumentosSinAsociarITD()
+                            else
+                                ListarDocumentosITD()
+                        }
                         else
-                            ListarDocumentosITD()
-                        ActualizarLista.postValue(result.mensaje)
-                    }
-                    else
-                    {
-                        MensajeServer.postValue(result.mensaje)
+                        {
+                            MensajeServer.postValue(result.mensaje)
+                        }
                     }
                 }
+                isLoading.postValue(false)
             }
         }
         catch (e:Exception)
         {
             MensajeServer.postValue(e.message)
         }
-        finally {
-            isLoading.postValue(false)
-        }
     }
 
-    fun ConsultarTransaccionITD(nroTransaccion: String, esDevolucion:Boolean, codigoMedioPago:Int) {
-        viewModelScope.launch {
-            try {
+    fun ConsultarTransaccionITD(nroTransaccion: String, proveedor:String) {
+
+        try {
+            viewModelScope.launch {
                 isLoading.postValue(true)
-                //SI HAY CONEXIÓN CON ITD
-                var contador=0
-                var tespera=15
-                while(contador<tespera)
+                withContext(Dispatchers.IO)
                 {
-                    mostrarEstado("Consultando transacción: Intentos $contador de $tespera")
-                    val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-                    if (resultCon.ok) {
-                        val result = getConsultarTransaccionITDUseCase(nroTransaccion)
+                    isLoading.postValue(true)
+                    //SI HAY CONEXIÓN CON ITD
+                    var contador=0
+                    var tespera=15
+                    while(contador<tespera)
+                    {
+                        mostrarEstado.postValue("Consultando transacción: Intentos $contador de $tespera")
+                        val result = getConsultarTransaccionITDUseCase(nroTransaccion,proveedor)
                         if (result!!.ok) {
                             if (result.elemento!!.conError)
                             {
-                                mostrarEstado("Intentando conectar con FISERV intento $contador de $tespera")
+                                mostrarEstado.postValue("Intentando conectar con FISERV intento $contador de $tespera")
                                 contador += 1
                                 Thread.sleep(1000)
                             }
@@ -194,99 +181,40 @@ class TransaccionesITDFragmentViewModel @Inject constructor(val getListadoTransa
                                 contador = tespera
                                 if (result.elemento!!.pago != null)
                                 {
-                                    result.elemento!!.pago!!.medioPagoCodigo = codigoMedioPago
-                                    result.elemento!!.pago!!.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
-                                    MedioPagoCargado.postValue(result.elemento!!.pago)
+                                    var idmediopago:Int=0
+                                    Globales.MediosPagoDocumento.forEach {
+                                        if(it.ProveedorItd == proveedor)
+                                        {
+                                            idmediopago = it.Id
+                                        }
+                                    }
+                                    if (idmediopago!=0)
+                                    {
+                                        result.elemento!!.pago!!.medioPagoCodigo = idmediopago
+                                        result.elemento!!.pago!!.tipoCambio = Globales.DocumentoEnProceso.valorizado!!.tipoCambio
+                                        MedioPagoCargado.postValue(result.elemento!!.pago)
+                                    }
+                                    else
+                                    {
+                                        mostrarErrorLocal.postValue("No hay medio de pago configurado para el pago seleccionado")
+                                    }
                                 }
                             }
                         }
                         else
                         {
-                            mostrarErrorServer(result.mensaje + "(Intentos $contador de $tespera)" )
+                            mostrarErrorServer.postValue(result.mensaje + "(Intentos $contador de $tespera)" )
                             contador+=1
                             Thread.sleep(1000)
                         }
                     }
-                    else
-                    {
-                        mostrarEstado("Intentando conectar con FISERV intento $contador de $tespera")
-                        contador += 1
-                        Thread.sleep(1000)
-                    }
                 }
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
                 isLoading.postValue(false)
             }
         }
-    }
-
-    fun AnularTransaccion(nroTransaccion: String)
-    {
-        viewModelScope.launch {
-            try
-            {
-                isLoading.postValue(true)
-                mostrarEstado("Creando transacción de anulación")
-                val resultCon = testDeConexionITDUseCase(Globales.Terminal.Codigo)
-                if (resultCon.ok) {
-                    mostrarEstado(resultCon.mensaje)
-                    //SI HAY CONEXIÓN CON ITD
-                    //CREO LA TRANSACCION DE ANULACION
-                    var transaccion = ITDTransaccionAnular(
-                        nroTransaccion,
-                        Globales.Terminal.Codigo,
-                        Globales.Terminal.Documentos.DevContado,
-                        Globales.UsuarioLoggueado.funcionarioId.toString(),
-                        Globales.DocumentoEnProceso.complemento!!.codigoSucursal,
-                    )
-                    //
-                    val result = postCrearAnulacionITDUseCase(transaccion)
-                    if (result!!.ok) {
-                        mostrarEstado("Transacción de anulación creada")
-                        Globales.IDTransaccionActual = result.elemento!!.transaccionId
-                        mostrarEstado("Abriendo App FISERV")
-                        Globales.transactionLauncherPresenter.onConfirmClicked(createTransactionInputData(
-                            BigDecimal.valueOf(0).scaleByPowerOfTen(2)))
-                    } else {
-                        mostrarErrorServer(result.mensaje)
-                    }
-                } else {
-                    mostrarErrorServer(resultCon.mensaje)
-                }
-            }
-            catch (e:Exception)
-            {
-                mostrarErrorLocal(e.message.toString())
-            }
-            finally {
-                isLoading.postValue(false)
-            }
-        }
-    }
-
-    private fun createTransactionInputData(monto: BigDecimal): TransactionInputData {
-        return TransactionInputData(
-            transactionType = TransactionTypes.REFUND,
-            monto,
-            null,
-            currency = convertToCurrencyType(Globales.currencySelected),
-            null
-        )
-    }
-
-    private fun convertToCurrencyType(currencyType: String): Int {
-        return when (currencyType) {
-            "USD" ->
-                840
-            "UYU" ->
-                858
-            else ->
-                840
+        catch (e:Exception)
+        {
+            MensajeServer.postValue(e.message)
         }
     }
 }

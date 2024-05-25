@@ -11,7 +11,9 @@ import com.devhyc.easypos.domain.LoginControlUseCase
 import com.devhyc.easypos.domain.LoginUseCase
 import com.devhyc.easypos.utilidades.Globales
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,23 +32,25 @@ class LoginActivityViewModel @Inject constructor(val loginUseCase: LoginUseCase,
     {
         viewModelScope.launch {
             isLoadingControlLogin.postValue(true)
-            var userlogin = DTLoginRequest(user,pass)
-            val result = loginControlUseCase(userlogin)
-            if (result!!.ok)
+            withContext(Dispatchers.IO)
             {
-                Globales.UsuarioLoggueadoConfig = result.elemento!!
-                Globales.DireccionServidor = result.elemento!!.urlServicio
-                //Globales.NroCaja = result.elemento!!.terminalCodigo
-                Globales.NroCaja = "2"
-                NetworkModule.provideRetrofit().newBuilder()
-                if (automatico)
-                    iniciarSessionAutomatico(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)
+                var userlogin = DTLoginRequest(user,pass)
+                val result = loginControlUseCase(userlogin)
+                if (result!!.ok)
+                {
+                    Globales.UsuarioLoggueadoConfig = result.elemento!!
+                    Globales.DireccionServidor = result.elemento!!.urlServicio
+                    Globales.NroCaja = result.elemento!!.terminalCodigo
+                    NetworkModule.provideRetrofit().newBuilder()
+                    if (automatico)
+                        iniciarSessionAutomatico(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)
                     else
-                    iniciarSesion(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)
-            }
-            else
-            {
-                mensaje.postValue(result.mensaje)
+                        iniciarSesion(result.elemento!!.sistemaUsuario,result.elemento!!.sistemaPass)
+                }
+                else
+                {
+                    mensaje.postValue(result.mensaje)
+                }
             }
             isLoadingControlLogin.postValue(false)
         }

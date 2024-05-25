@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devhyc.easypos.R
@@ -18,9 +19,13 @@ import com.devhyc.easypos.ui.documento.adapter.ItemDocAdapter
 import com.devhyc.easypos.ui.mediospagoslite.MediosPagosLiteFragmentDirections
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class DocumentoVistaFragment : Fragment() {
@@ -79,10 +84,18 @@ class DocumentoVistaFragment : Fragment() {
             //DocumentoVistaViewModel.ObtenerDocumentoEmitido(terminal,tipo,nro.toString())
         }
         DocumentoVistaViewModel.Impresion.observe(viewLifecycleOwner, Observer {
-            Globales.ControladoraFiservPrint.Print(it,requireContext())
+            when (Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo -> {
+                    Globales.ControladoraFiservPrint.Print(it,requireActivity())
+                }
+            }
         })
-        DocumentoVistaViewModel.MensajeServer.observe(viewLifecycleOwner, Observer {
+        DocumentoVistaViewModel.MensajeServer.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
             AlertView.showServerError("¡Atención!",it,requireContext())
+        })
+        DocumentoVistaViewModel.MensajeErrorLocal.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            AlertView.showError("¡Atención!",it,requireContext())
         })
         DocumentoVistaViewModel.DocumentoObtenido.observe(viewLifecycleOwner, Observer {
             Globales.DocumentoEnProceso = it
@@ -174,7 +187,7 @@ class DocumentoVistaFragment : Fragment() {
                     //SI TIENE PAGOS ASOCIADOS
                     var pagosdoc:String=""
                     oDocumento.valorizado!!.pagos.forEach { pago ->
-                        pagosdoc += listaMediosPagos.find { pago.medioPagoCodigo.toString() == it.Id }!!.Nombre
+                        pagosdoc += listaMediosPagos.find { pago.medioPagoCodigo == it.Id }!!.Nombre
                     }
                     binding.tvPagosVista.text = pagosdoc
                     binding.tvPagosVista.visibility = View.VISIBLE

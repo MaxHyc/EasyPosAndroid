@@ -7,5 +7,4 @@ data class ITDValidacionConsulta(@SerializedName("proveedor") var proveedor:Stri
                                  @SerializedName("tipoDocCodigo") var tipoDocCodigo:String,
                                  @SerializedName("nroDoc") var nroDoc:Long,
                                  @SerializedName("importe") var importe:Double,
-                                 @SerializedName("monedaCodigo") var monedaCodigo:String
-                                )
+                                 @SerializedName("monedaCodigo") var monedaCodigo:String)

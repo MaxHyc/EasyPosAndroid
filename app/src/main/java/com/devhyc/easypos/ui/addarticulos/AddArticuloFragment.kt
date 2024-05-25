@@ -22,6 +22,7 @@ import com.devhyc.easypos.data.model.DTDocDetalle
 import com.devhyc.easypos.databinding.FragmentAddArticuloBinding
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -220,10 +221,13 @@ class AddArticuloFragment(var art:DTArticulo?, var listener: (art:DTDocDetalle?)
                 binding.btnCancelarAdd.visibility = View.VISIBLE
             }
         })
-        AddArtViewModel.mostrarMensaje.observe(viewLifecycleOwner, Observer {
+        AddArtViewModel.mostrarMensaje.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
             /*if (Globales.UsarTTS)
                 Globales.ttsManager!!.initQueue(it)*/
             MostrarMensaje(it, R.color.red)
+        })
+        AddArtViewModel.mostrarErrorLocal.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            AlertView.showError("Ocurrio un error",it,requireContext())
         })
         AddArtViewModel.listaSerieEncontradas.observe(viewLifecycleOwner, Observer {
             if (it != null)

@@ -772,10 +772,10 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
-    suspend fun getTestDeConexionITD(nroTerminal: String): Resultado<Boolean> {
+    suspend fun getTestDeConexionITD(medioPago: Int): Resultado<Boolean> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<Boolean>> = api.getTestDeConexionITD(nroTerminal)
+            val response: Response<Resultado<Boolean>> = api.getTestDeConexionITD(medioPago)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -789,10 +789,10 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
-    suspend fun getConsultarTransaccionITD(nroTransaccion: String): Resultado<ITDRespuesta> {
+    suspend fun getConsultarTransaccionITD(nroTransaccion: String, proveedor:String): Resultado<ITDRespuesta> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<ITDRespuesta>> = api.getConsultarTransaccionITD(nroTransaccion)
+            val response: Response<Resultado<ITDRespuesta>> = api.getConsultarTransaccionITD(nroTransaccion,proveedor)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -806,10 +806,10 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
-    suspend fun getCancelarTransaccionITD(nroTerminal:String,nroTransaccion: String): Resultado<ITDRespuesta> {
+    suspend fun getCancelarTransaccionITD(nroTerminal:String,nroTransaccion: String,proveedor:String,confirm:Boolean): Resultado<ITDRespuesta> {
         return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<ITDRespuesta>> = api.getCancelarTransaccionITD(nroTerminal, nroTransaccion)
+            val response: Response<Resultado<ITDRespuesta>> = api.getCancelarTransaccionITD(nroTerminal, nroTransaccion,proveedor, confirm)
             if (response.isSuccessful)
             {
                 response.body()!!
@@ -857,10 +857,10 @@ class ApiService @Inject constructor(private val api:ApiClient,private val apiLo
         }
     }
 
-    suspend fun postConsultarEstadoTransaccionITD(nroTerminal:String): Resultado<Boolean> {
+    suspend fun postConsultarEstadoTransaccionITD(nroTerminal:String, proveedor:String): Resultado<Boolean> {
        return withContext(Dispatchers.IO)
         {
-            val response: Response<Resultado<Boolean>> = api.postConsultarEstadoTransaccion(nroTerminal)
+            val response: Response<Resultado<Boolean>> = api.postConsultarEstadoTransaccion(nroTerminal,proveedor)
             if (response.isSuccessful)
             {
                 response.body()!!

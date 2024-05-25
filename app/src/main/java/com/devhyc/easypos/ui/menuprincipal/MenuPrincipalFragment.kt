@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.devhyc.easypos.BuildConfig
@@ -18,6 +19,7 @@ import com.devhyc.easypos.ui.documento.DocumentoPrincipalViewModel
 import com.devhyc.easypos.ui.login.LoginActivity
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
@@ -59,6 +61,20 @@ class MenuPrincipalFragment : Fragment() {
             else
             {
                 binding.tvInfoAbierto.text= ""
+            }
+            //MUESTRO LOGO DE FISERV SINO LOGO POR DEFECTO
+            binding.buttonVerTransaccionesIntegrador.text = "Transacciones"
+            binding.buttonVerTransaccionesIntegrador.textSize = 12F
+            when(Globales.ImpresionSeleccionada)
+            {
+                Globales.eTipoImpresora.FISERV.codigo ->
+                {
+                    binding.buttonVerTransaccionesIntegrador.setIconResource(R.drawable.fiservlogo)
+                }
+                else ->
+                {
+                    binding.buttonVerTransaccionesIntegrador.setIconResource(R.drawable.ic_baseline_compare_arrows_24)
+                }
             }
             HabilitarModulos()
             //
@@ -102,7 +118,7 @@ class MenuPrincipalFragment : Fragment() {
         }
         catch (e:Exception)
         {
-            AlertView.showError("¡Atención!",e.message,requireContext())
+            //AlertView.showError("¡Atención!",e.message,requireContext())
         }
     }
 
@@ -135,15 +151,11 @@ class MenuPrincipalFragment : Fragment() {
         }
         binding.buttonIRmantenimiento.setOnClickListener {
             //IR A MANTEMIENTO
-            //val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToListaDeArticulosFragment()
-            //view?.findNavController()?.navigate(action)
             val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToMenuMantenimientoFragment()
             view?.findNavController()?.navigate(action)
         }
-        binding.buttonIrFiserv.setOnClickListener {
-            //val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToConfiguracionDeCajaFragment()
-            //view?.findNavController()?.navigate(action)
-            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToTransaccionesITDFragment(0,false,false)
+        binding.buttonVerTransaccionesIntegrador.setOnClickListener {
+            val action = MenuPrincipalFragmentDirections.actionMenuPrincipalFragmentToTransaccionesITDFragment()
             view?.findNavController()?.navigate(action)
         }
         binding.buttonIrDocumentos.setOnClickListener {

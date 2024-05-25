@@ -56,7 +56,7 @@ class ItemMedioPago(var mediosDepago:ArrayList<DTDocPago>, var lmoneda:ArrayList
                     it.codigo == i.monedaCodigo
                 }!!.signo
                 binding.tvNombreMedioPago.text = mp.find {
-                    it.Id == i.medioPagoCodigo.toString()
+                    it.Id == i.medioPagoCodigo
                 }!!.Nombre
                 binding.tvMontoMedioPago.text = i.importe.toString()
                 //

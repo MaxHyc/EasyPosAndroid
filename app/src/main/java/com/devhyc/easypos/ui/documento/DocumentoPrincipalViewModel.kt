@@ -8,7 +8,9 @@ import com.devhyc.easypos.domain.*
 import com.devhyc.easypos.utilidades.Globales
 import com.integration.easyposkotlin.data.model.DTCaja
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,32 +22,33 @@ class DocumentoPrincipalViewModel @Inject constructor(val postCalcularDocumento:
 
     fun ObtenerCajaAbierta()
     {
-        viewModelScope.launch {
-            try
-            {
+        try {
+            viewModelScope.launch {
                 isLoading.postValue(true)
-                val result = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
-                if (result!!.ok)
+                withContext(Dispatchers.IO)
                 {
-                    if(result!!.elemento == null)
-                        caja.postValue(null)
+                    isLoading.postValue(true)
+                    val result = getCajaAbiertaUseCase(Globales.Terminal.Codigo)
+                    if (result!!.ok)
+                    {
+                        if(result!!.elemento == null)
+                            caja.postValue(null)
+                        else
+                        {
+                            caja.postValue(result.elemento!!)
+                        }
+                    }
                     else
                     {
-                        caja.postValue(result.elemento!!)
+                        caja.postValue(null)
                     }
                 }
-                else
-                {
-                    caja.postValue(null)
-                }
-            }
-            catch (e:Exception)
-            {
-                mensajeDelServer.postValue(e.message)
-            }
-            finally {
                 isLoading.postValue(false)
             }
+        }
+        catch (e:Exception)
+        {
+            mensajeDelServer.postValue(e.message)
         }
     }
 }

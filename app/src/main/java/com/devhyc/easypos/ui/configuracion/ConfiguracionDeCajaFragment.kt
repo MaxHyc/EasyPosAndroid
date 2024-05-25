@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.navigation.findNavController
 import com.devhyc.easypos.R
 import com.devhyc.easypos.databinding.FragmentConfiguracionDeCajaBinding
+import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -51,10 +52,11 @@ class ConfiguracionDeCajaFragment : Fragment() {
                     binding.radioFiservPrint.isChecked = true
                 }
             }
+            binding.etTiempoEntreImpresion.setText(Globales.TiempoEntreImpresion.toString())
         }
         catch (e: Exception)
         {
-            Toast.makeText(activity,"Error al cargar las opciones: ${e.message}", Toast.LENGTH_SHORT).show()
+            AlertView.showError("Error al guardar las opciones",e.message,activity)
         }
     }
 
@@ -72,6 +74,8 @@ class ConfiguracionDeCajaFragment : Fragment() {
                 editor.putInt("tipo_impresora",Globales.eTipoImpresora.FISERV.codigo)
                 Globales.ImpresionSeleccionada = Globales.eTipoImpresora.FISERV.codigo
             }
+            Globales.TiempoEntreImpresion = binding.etTiempoEntreImpresion.text.toString().toInt()
+            editor.putInt("tiempo_entre_impresion",Globales.TiempoEntreImpresion)
             editor.apply()
             //
             Snackbar.make(requireView(),"Configuraciones guardadas",Snackbar.LENGTH_SHORT).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show()
@@ -79,7 +83,7 @@ class ConfiguracionDeCajaFragment : Fragment() {
         }
         catch (e: Exception)
         {
-            Toast.makeText(activity,"Error al cargar las opciones: ${e.message}",Toast.LENGTH_SHORT).show()
+            AlertView.showError("Error al guardar las opciones",e.message,activity)
         }
     }
 

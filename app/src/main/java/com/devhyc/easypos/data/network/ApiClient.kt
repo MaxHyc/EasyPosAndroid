@@ -182,17 +182,17 @@ interface ApiClient {
     @GET("itd/configuracion/{nroTerminal}")
     suspend fun getConfiguracionTerminalITD(@Path("nroTerminal") nroTerminal: String): Response<Resultado<ITDConfiguracion>>
 
-    @GET("itd/test/true/{nroTerminal}")
-    suspend fun getTestDeConexionITD(@Path("nroTerminal") nroTerminal: String): Response<Resultado<Boolean>>
+    @GET("itd/test/{mediopago}")
+    suspend fun getTestDeConexionITD(@Path("mediopago") medioPago: Int): Response<Resultado<Boolean>>
 
     @POST("itd")
     suspend fun postCrearTransaccionITD(@Body transaccion: ITDTransaccionNueva?): Response<Resultado<ITDRespuesta>>
 
-    @GET("itd/{idTransaccion}")
-    suspend fun getConsultarTransaccionITD(@Path("idTransaccion") nroTransaccion:String): Response<Resultado<ITDRespuesta>>
+    @GET("itd/{idTransaccion}/{proveedor}")
+    suspend fun getConsultarTransaccionITD(@Path("idTransaccion") nroTransaccion:String,@Path("proveedor") proveedor:String): Response<Resultado<ITDRespuesta>>
 
-    @GET("itd/cancelar/{nroTerminal}/{nroTransaccion}")
-    suspend fun getCancelarTransaccionITD(@Path("nroTerminal") nroTerminal: String?, @Path("nroTransaccion") nroTransaccion: String?): Response<Resultado<ITDRespuesta>>
+    @GET("itd/cancelar/{nroTerminal}/{nroTransaccion}/{proveedor}/{confirm}")
+    suspend fun getCancelarTransaccionITD(@Path("nroTerminal") nroTerminal: String, @Path("nroTransaccion") nroTransaccion: String, @Path("proveedor") proveedor:String,@Path("confirm") confirm:Boolean): Response<Resultado<ITDRespuesta>>
 
     @GET("itd/transacciones/{nroTerminal}/{nroCaja}")
     suspend fun getListarTransacciones(@Path("nroTerminal") nroTerminal: String?, @Path("nroCaja") nroCaja: Long): Response<Resultado<ArrayList<ITDTransaccionLista>>>
@@ -200,8 +200,8 @@ interface ApiClient {
     @GET("itd/sinasociar/{terminal}")
     suspend fun getTransaccionesSinAsociarITD(@Path("terminal") nroTerminal: String?): Response<Resultado<ArrayList<ITDTransaccionLista>>>
 
-    @POST("itd/consultar/{nroTransaccion}")
-    suspend fun postConsultarEstadoTransaccion(@Path("nroTransaccion") nroTransaccion: String): Response<Resultado<Boolean>>
+    @POST("itd/consultar/{nroTransaccion}/{proveedor}")
+    suspend fun postConsultarEstadoTransaccion(@Path("nroTransaccion") nroTransaccion: String,@Path("proveedor") proveedor: String ): Response<Resultado<Boolean>>
 
     @POST("itd/anulacion")
     suspend fun postCrearAnulacionITD(@Body transaccion: ITDTransaccionAnular?): Response<Resultado<ITDRespuesta>>

@@ -111,6 +111,45 @@
                             app:iconGravity="textStart" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:id="@+id/llidcli"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/textView26"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="ID"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:id="@+id/tvIdCliente"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:id="@+id/textView35"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="Código"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:id="@+id/tvCodCliente"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/textView24"
                         android:layout_width="match_parent"
@@ -130,34 +169,36 @@
                     <RadioGroup
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:orientation="horizontal">
 
                         <RadioButton
                             android:id="@+id/radioRut"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:text="RUT" />
 
                         <RadioButton
                             android:id="@+id/radioCI"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:text="CI" />
 
                         <RadioButton
                             android:id="@+id/radioPP"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:text="Pasaporte" />
+                            android:text="Pasaporte"
+                            android:textSize="12sp" />
 
                         <RadioButton
                             android:id="@+id/radioOtro"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:text="Otro" />
                     </RadioGroup>

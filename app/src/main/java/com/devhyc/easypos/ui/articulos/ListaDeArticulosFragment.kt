@@ -29,6 +29,7 @@ import com.devhyc.easypos.ui.articulos.adapter.customSpinnerAdapter
 import com.devhyc.easypos.ui.articulos.adapter.customSpinnerSubFamiliaAdapter
 import com.devhyc.easypos.utilidades.AlertView
 import com.devhyc.easypos.utilidades.Globales
+import com.devhyc.easypos.utilidades.SingleLiveEvent
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.integration.easyposkotlin.data.model.DTArticulo
@@ -184,7 +185,9 @@ class ListaDeArticulosFragment() : Fragment() {
             else
                 binding.shimmerSeleccionArt.visibility = View.GONE
         })
-
+        ListaDeArticulosViewModel.mensajeDeError.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            AlertView.showError("Ocurrio un error",it,requireContext())
+        })
         //
         binding.editTextTextPersonName8.addTextChangedListener {
             if (EsRubro)
@@ -243,8 +246,8 @@ class ListaDeArticulosFragment() : Fragment() {
                 Toast.makeText(requireActivity(),"${e.message}", Toast.LENGTH_SHORT).show()
             }
         })
-        ListaDeArticulosViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {
-            AlertView.showAlert("¡Atención!",it,requireActivity())
+        ListaDeArticulosViewModel.mensajeDelServer.observe(viewLifecycleOwner, SingleLiveEvent.EventObserver {
+            AlertView.showServerError("¡Atención!",it,requireActivity())
         })
         //Esto es para que se muestren los botones en el AppBar
         setHasOptionsMenu(true)

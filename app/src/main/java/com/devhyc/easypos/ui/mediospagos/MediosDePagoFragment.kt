@@ -335,7 +335,7 @@ class MediosDePagoFragment : Fragment() {
                 Globales.TMedioPago.TARJETA.codigo.toString() -> {
                     //ADD PAGO CON TARJETA
                     // TODO: CONTROLAR QUE ESTE HABILITADO EL MEDIO DE PAGO FISERV
-                    mediosViewModels.CrearTransaccionITD(binding.etMontoPago.text.toString().toDouble())
+                    //mediosViewModels.CrearTransaccionITD(binding.etMontoPago.text.toString().toDouble(),pago.medioPagoCodigo)
                     //ME VOY DE LA FUNCION
                     return
                 }

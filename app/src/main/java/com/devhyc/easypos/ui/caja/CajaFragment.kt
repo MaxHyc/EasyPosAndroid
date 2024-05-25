@@ -69,6 +69,7 @@ class CajaFragment : Fragment() {
             binding.tvFechaHora.text = "Apertura: ${Globales.Herramientas.TransformarFecha(it.FechaHora,Globales.FechaJson,Globales.Fecha_dd_MM_yyyy_HH_mm_ss)}"
             (activity as? AppCompatActivity)?.supportActionBar?.title = "Caja N° ${it.Nro}"
             ncaja = it.Nro.toString()
+            Globales.CajaActual = it
         })
         cajaViewModel.mensajeDelServer.observe(viewLifecycleOwner, Observer {
             AlertView.showError("¡Atención!",it,requireActivity())
@@ -86,6 +87,7 @@ class CajaFragment : Fragment() {
                 binding.btnCierreCaja.visibility= View.GONE
                 binding.animationOpen.isVisible = false
                 binding.animationClose.isVisible = true
+                Globales.CajaActual = null
             }
             else
             {

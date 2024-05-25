@@ -30,4 +30,8 @@ class AppProvider  @Inject constructor()  {
     var ParametrosTipoDoc: Resultado<DTDocParametros>? = null
     //
     var listadoPaises: List<Country>? = emptyList()
+    //
+    var listadoPaisesAMano: List<Country> = listOf(
+        Country("URUGUAY","MONTEVIDEO",0),
+        Country("ARGENTINA","BUENOS AIRES",0))
 }

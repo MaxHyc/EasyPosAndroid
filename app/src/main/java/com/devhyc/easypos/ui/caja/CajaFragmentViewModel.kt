@@ -18,9 +18,7 @@ class CajaFragmentViewModel @Inject constructor(val getCajaAbiertaUseCase: GetCa
     val existeCaja = MutableLiveData<Boolean>()
     val caja = MutableLiveData<DTCaja>()
     val mensajeDelServer = MutableLiveData<String>()
-    val impresionInicio = MutableLiveData<DTImpresion>()
     val mensaje = MutableLiveData<String>()
-    val iniciarCaja = MutableLiveData<DTCaja>()
 
     fun ObtenerCajaAbierta()
     {

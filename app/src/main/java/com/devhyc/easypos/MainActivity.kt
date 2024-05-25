@@ -161,15 +161,12 @@ class MainActivity : AppCompatActivity() {
             Globales.NroCaja = Globales.sharedPreferences.getString(getString(R.string._nrocaja),"1")
             Globales.DireccionServidor = BuildConfig.DIRECCION_URL
             Globales.DireccionPlexo = BuildConfig.DIRECCION_PLEXO
-            Globales.ImpresionSeleccionada = Globales.sharedPreferences.getInt(getString(R.string._tipo_impresora),0)
+            Globales.ImpresionSeleccionada = Globales.sharedPreferences.getInt(getString(R.string._tipo_impresora),Globales.eTipoImpresora.FISERV.codigo)
             Globales.DireccionMac = Globales.sharedPreferences.getString(getString(R.string._mac),"")
-            /*if (Globales.ImpresionSeleccionada == Globales.eTipoImpresora.FISERV.codigo)
-            {
-                //Globales.ControladoraFiservPrint.InstanciarImpresora(this)
-            }*/
             Globales.SesionViva = Globales.sharedPreferences.getBoolean("sesionviva",false)
             Globales.UsuarioAnterior = Globales.sharedPreferences.getString("usuarioanterior","")
             Globales.PassAnterior = Globales.sharedPreferences.getString("passanterior","")
+            Globales.TiempoEntreImpresion = Globales.sharedPreferences.getInt("tiempo_entre_impresion",5000)
         }
         catch (e: Exception)
         {
@@ -184,7 +181,7 @@ class MainActivity : AppCompatActivity() {
         }
         else
         {
-            DialogoCerrarSesion()
+            //DialogoCerrarSesion()
         }
     }
 
